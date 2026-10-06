@@ -1360,8 +1360,7 @@ async def test_reconcile_list_error_does_not_dispatch_partial() -> None:
     events = FakeAsyncEvents(
         list_events=[_tool_use("tu_1", "inc", {})],
         list_raises=_api_status_error(500),
-        stream_events=[_terminated()],  # no live tool_use either
-    )
+        stream_events=[_terminated()],  # no live tool_use either )
 
     items = [item async for item in _run_with_fakes(events=events, tools=[tool])]
 

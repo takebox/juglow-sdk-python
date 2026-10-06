@@ -129,8 +129,7 @@ class TestRefusalFallback:
 
     @pytest.mark.respx(base_url=base_url)
     def test_pins_the_conversation_to_the_accepted_fallback_via_state(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         respx_mock.post("/v1/messages").mock(
             side_effect=[refusal("primary-model"), message("fallback-model"), message("fallback-model")]
         )
@@ -166,8 +165,7 @@ class TestRefusalFallback:
 
     @pytest.mark.respx(base_url=base_url)
     def test_warns_once_when_falling_back_without_a_state(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         respx_mock.post("/v1/messages").mock(
             side_effect=[
                 refusal("primary-model"),
@@ -743,8 +741,7 @@ class TestBetaFallbackState:
 class TestErrorLogging:
     @pytest.mark.respx(base_url=base_url)
     def test_nothing_is_logged_for_non_streaming_retries(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         respx_mock.post("/v1/messages").mock(
             side_effect=[refusal("primary-model", "credit-token"), message("fallback-model")]
         )

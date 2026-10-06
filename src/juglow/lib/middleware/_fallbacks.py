@@ -338,8 +338,7 @@ class BetaRefusalFallbackMiddleware(Middleware):
             or request.method.lower() != "post"
             or url.path != _MESSAGES_PATH
             or url.params.get("beta") != "true"
-            or body is None
-        ):
+            or body is None ):
             return None
         if body.get("fallbacks") is not None:
             raise JuglowError(
@@ -1565,8 +1564,7 @@ def _serialize_sse(*, event: str | None, data: str) -> str:
 
 
 def _to_iteration_usage(
-    type: Literal["message", "fallback_message"], model: str, usage: dict[str, Any] | None
-) -> dict[str, Any]:
+    type: Literal["message", "fallback_message"], model: str, usage: dict[str, Any] | None ) -> dict[str, Any]:
     u = usage or {}
     return {
         "type": type,
@@ -1590,8 +1588,7 @@ def _backfill(primary: dict[str, Any] | None, fallback: dict[str, Any] | None) -
 
 
 def _spliced_http_response(
-    original: httpx.Response, stream: httpx.SyncByteStream | httpx.AsyncByteStream
-) -> httpx.Response:
+    original: httpx.Response, stream: httpx.SyncByteStream | httpx.AsyncByteStream ) -> httpx.Response:
     """A synthetic response standing in for `original`, with `stream` as its body.
 
     The spliced frames are emitted post-decode, so the original's

@@ -31,7 +31,7 @@ class Batches(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return BatchesWithRawResponse(self)
 
@@ -40,7 +40,7 @@ class Batches(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return BatchesWithStreamingResponse(self)
 
@@ -88,8 +88,7 @@ class Batches(SyncAPIResource):
             "/v1/messages/batches",
             body=maybe_transform({"requests": requests}, batch_create_params.BatchCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=MessageBatch,
         )
 
@@ -129,8 +128,7 @@ class Batches(SyncAPIResource):
         return self._get(
             path_template("/v1/messages/batches/{message_batch_id}", message_batch_id=message_batch_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=MessageBatch,
         )
 
@@ -230,8 +228,7 @@ class Batches(SyncAPIResource):
         return self._delete(
             path_template("/v1/messages/batches/{message_batch_id}", message_batch_id=message_batch_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=DeletedMessageBatch,
         )
 
@@ -277,8 +274,7 @@ class Batches(SyncAPIResource):
         return self._post(
             path_template("/v1/messages/batches/{message_batch_id}/cancel", message_batch_id=message_batch_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=MessageBatch,
         )
 
@@ -327,8 +323,7 @@ class Batches(SyncAPIResource):
         return self._get(
             path_template(batch.results_url, message_batch_id=message_batch_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=JSONLDecoder[MessageBatchIndividualResponse],
             stream=True,
         )
@@ -341,7 +336,7 @@ class AsyncBatches(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncBatchesWithRawResponse(self)
 
@@ -350,7 +345,7 @@ class AsyncBatches(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncBatchesWithStreamingResponse(self)
 
@@ -398,8 +393,7 @@ class AsyncBatches(AsyncAPIResource):
             "/v1/messages/batches",
             body=await async_maybe_transform({"requests": requests}, batch_create_params.BatchCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=MessageBatch,
         )
 
@@ -439,8 +433,7 @@ class AsyncBatches(AsyncAPIResource):
         return await self._get(
             path_template("/v1/messages/batches/{message_batch_id}", message_batch_id=message_batch_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=MessageBatch,
         )
 
@@ -540,8 +533,7 @@ class AsyncBatches(AsyncAPIResource):
         return await self._delete(
             path_template("/v1/messages/batches/{message_batch_id}", message_batch_id=message_batch_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=DeletedMessageBatch,
         )
 
@@ -587,8 +579,7 @@ class AsyncBatches(AsyncAPIResource):
         return await self._post(
             path_template("/v1/messages/batches/{message_batch_id}/cancel", message_batch_id=message_batch_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=MessageBatch,
         )
 
@@ -637,8 +628,7 @@ class AsyncBatches(AsyncAPIResource):
         return await self._get(
             path_template(batch.results_url, message_batch_id=message_batch_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=AsyncJSONLDecoder[MessageBatchIndividualResponse],
             stream=True,
         )

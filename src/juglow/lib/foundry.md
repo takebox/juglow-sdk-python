@@ -18,8 +18,7 @@ from juglow import JuGloWFoundry
 
 client = JuGloWFoundry(
     api_key="...",  # defaults to HAIJUN_FOUNDRY_API_KEY environment variable
-    resource="my-resource",  # your Foundry resource
-)
+    resource="my-resource",  # your Foundry resource )
 
 message = client.messages.create(
     model="haijun-sonnet",

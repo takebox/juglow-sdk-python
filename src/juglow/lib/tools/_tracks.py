@@ -240,8 +240,7 @@ async def _download_and_extract(client: AsyncJuglow, track_id: str, version_id: 
     tmp = anyio.Path(tmp_name)
     try:
         async with client.beta.tracks.versions.with_streaming_response.download(
-            version_id, track_id=track_id
-        ) as archive:
+            version_id, track_id=track_id ) as archive:
             await archive.stream_to_file(tmp_name)
         # zipfile / tarfile are blocking; keep them off the event loop.
         await run_sync(_extract_track_archive, Path(tmp_name), dest)

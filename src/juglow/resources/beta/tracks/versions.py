@@ -54,7 +54,7 @@ class Versions(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return VersionsWithRawResponse(self)
 
@@ -63,7 +63,7 @@ class Versions(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return VersionsWithStreamingResponse(self)
 
@@ -127,8 +127,7 @@ class Versions(SyncAPIResource):
             body=maybe_transform(body, version_create_params.VersionCreateParams),
             files=extracted_files,
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=VersionCreateResponse,
         )
 
@@ -185,8 +184,7 @@ class Versions(SyncAPIResource):
         return self._get(
             path_template("/v1/tracks/{track_id}/versions/{version}?beta=true", track_id=track_id, version=version),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=VersionRetrieveResponse,
         )
 
@@ -313,8 +311,7 @@ class Versions(SyncAPIResource):
         return self._delete(
             path_template("/v1/tracks/{track_id}/versions/{version}?beta=true", track_id=track_id, version=version),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=VersionDeleteResponse,
         )
 
@@ -371,11 +368,9 @@ class Versions(SyncAPIResource):
         extra_headers = {"juglow-beta": "tracks-2025-10-02", **(extra_headers or {})}
         return self._get(
             path_template(
-                "/v1/tracks/{track_id}/versions/{version}/content?beta=true", track_id=track_id, version=version
-            ),
+                "/v1/tracks/{track_id}/versions/{version}/content?beta=true", track_id=track_id, version=version ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BinaryAPIResponse,
         )
 
@@ -387,7 +382,7 @@ class AsyncVersions(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncVersionsWithRawResponse(self)
 
@@ -396,7 +391,7 @@ class AsyncVersions(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncVersionsWithStreamingResponse(self)
 
@@ -460,8 +455,7 @@ class AsyncVersions(AsyncAPIResource):
             body=await async_maybe_transform(body, version_create_params.VersionCreateParams),
             files=extracted_files,
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=VersionCreateResponse,
         )
 
@@ -518,8 +512,7 @@ class AsyncVersions(AsyncAPIResource):
         return await self._get(
             path_template("/v1/tracks/{track_id}/versions/{version}?beta=true", track_id=track_id, version=version),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=VersionRetrieveResponse,
         )
 
@@ -646,8 +639,7 @@ class AsyncVersions(AsyncAPIResource):
         return await self._delete(
             path_template("/v1/tracks/{track_id}/versions/{version}?beta=true", track_id=track_id, version=version),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=VersionDeleteResponse,
         )
 
@@ -704,11 +696,9 @@ class AsyncVersions(AsyncAPIResource):
         extra_headers = {"juglow-beta": "tracks-2025-10-02", **(extra_headers or {})}
         return await self._get(
             path_template(
-                "/v1/tracks/{track_id}/versions/{version}/content?beta=true", track_id=track_id, version=version
-            ),
+                "/v1/tracks/{track_id}/versions/{version}/content?beta=true", track_id=track_id, version=version ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=AsyncBinaryAPIResponse,
         )
 

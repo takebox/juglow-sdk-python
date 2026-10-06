@@ -21,8 +21,7 @@ import os
 from juglow import JuGloW
 
 client = JuGloW(
-    api_key=os.environ.get("HAIJUN_API_KEY"),  # This is the default and can be omitted
-)
+    api_key=os.environ.get("HAIJUN_API_KEY"),  # This is the default and can be omitted )
 
 message = client.messages.create(
     max_tokens=1024,

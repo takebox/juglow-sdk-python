@@ -1,5 +1,5 @@
 event: message_start
-data: {"type":"message_start","message":{"model":"claude-fable-5","id":"msg_fixture_a_0001","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":28,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":5,"service_tier":"standard","inference_geo":"global"}}               }
+data: {"type":"message_start","message":{"model":"haijun-fable-5","id":"msg_fixture_a_0001","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":28,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":5,"service_tier":"standard","inference_geo":"global"}}               }
 
 event: content_block_start
 data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}  }
@@ -14,7 +14,7 @@ event: content_block_delta
 data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ational question about what a solar eclipse is. This is benign general knowledge — definitions are fine. Also the user called"}          }
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" me \"claudius\" — I'm Claude. Minor correction or just roll with it politely."}          }
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" me \"claudius\" — I'm Haijun. Minor correction or just roll with it politely."}          }
 
 event: content_block_delta
 data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":""}               }

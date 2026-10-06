@@ -34,7 +34,7 @@ class Events(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return EventsWithRawResponse(self)
 
@@ -43,7 +43,7 @@ class Events(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return EventsWithStreamingResponse(self)
 
@@ -116,9 +116,7 @@ class Events(SyncAPIResource):
                 ),
             ),
             model=cast(
-                Any, BetaManagedAgentsSessionEvent
-            ),  # Union types cannot be passed in as arguments in the type system
-        )
+                Any, BetaManagedAgentsSessionEvent ),  # Union types cannot be passed in as arguments in the type system )
 
     def stream(
         self,
@@ -188,8 +186,7 @@ class Events(SyncAPIResource):
                 query=maybe_transform({"event_deltas": event_deltas}, event_stream_params.EventStreamParams),
             ),
             cast_to=cast(
-                Any, BetaManagedAgentsStreamSessionThreadEvents
-            ),  # Union types cannot be passed in as arguments in the type system
+                Any, BetaManagedAgentsStreamSessionThreadEvents ),  # Union types cannot be passed in as arguments in the type system
             stream=True,
             stream_cls=Stream[BetaManagedAgentsStreamSessionThreadEvents],
         )
@@ -202,7 +199,7 @@ class AsyncEvents(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncEventsWithRawResponse(self)
 
@@ -211,7 +208,7 @@ class AsyncEvents(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncEventsWithStreamingResponse(self)
 
@@ -284,9 +281,7 @@ class AsyncEvents(AsyncAPIResource):
                 ),
             ),
             model=cast(
-                Any, BetaManagedAgentsSessionEvent
-            ),  # Union types cannot be passed in as arguments in the type system
-        )
+                Any, BetaManagedAgentsSessionEvent ),  # Union types cannot be passed in as arguments in the type system )
 
     async def stream(
         self,
@@ -354,12 +349,10 @@ class AsyncEvents(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform(
-                    {"event_deltas": event_deltas}, event_stream_params.EventStreamParams
-                ),
+                    {"event_deltas": event_deltas}, event_stream_params.EventStreamParams ),
             ),
             cast_to=cast(
-                Any, BetaManagedAgentsStreamSessionThreadEvents
-            ),  # Union types cannot be passed in as arguments in the type system
+                Any, BetaManagedAgentsStreamSessionThreadEvents ),  # Union types cannot be passed in as arguments in the type system
             stream=True,
             stream_cls=AsyncStream[BetaManagedAgentsStreamSessionThreadEvents],
         )

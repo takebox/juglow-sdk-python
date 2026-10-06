@@ -89,8 +89,7 @@ def snapshot_client(
     http_snapshot: inline_snapshot.Snapshot[Any],
 ) -> Iterator[JuGloW]:
     with HttpxSyncSnapshotClient(
-        http_snapshot, is_recording, serializer_options=http_snapshot_serializer_options
-    ) as snapshot_client:
+        http_snapshot, is_recording, serializer_options=http_snapshot_serializer_options ) as snapshot_client:
         with JuGloW(http_client=snapshot_client, api_key=None if is_recording else api_key) as client:
             yield client
 
@@ -102,8 +101,7 @@ async def async_snapshot_client(
     http_snapshot: inline_snapshot.Snapshot[Any],
 ) -> AsyncIterator[AsyncJuGloW]:
     async with HttpxAsyncSnapshotClient(
-        http_snapshot, is_recording, serializer_options=http_snapshot_serializer_options
-    ) as snapshot_client:
+        http_snapshot, is_recording, serializer_options=http_snapshot_serializer_options ) as snapshot_client:
         client = AsyncJuGloW(http_client=snapshot_client, api_key=None if is_recording else api_key)
         yield client
 
@@ -129,6 +127,5 @@ async def async_client(request: FixtureRequest) -> AsyncIterator[AsyncJuGloW]:
         raise TypeError(f"Unexpected fixture parameter type {type(param)}, expected bool or dict")
 
     async with AsyncJuGloW(
-        base_url=base_url, api_key=api_key, _strict_response_validation=strict, http_client=http_client
-    ) as client:
+        base_url=base_url, api_key=api_key, _strict_response_validation=strict, http_client=http_client ) as client:
         yield client

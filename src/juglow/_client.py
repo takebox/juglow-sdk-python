@@ -208,8 +208,7 @@ class Juglow(SyncAPIClient):
             or auth_token is not None
             or credentials is not None
             or config is not None
-            or profile is not None
-        )
+            or profile is not None )
         if not has_explicit_credential:
             api_key = os.environ.get("HAIJUN_API_KEY")
             auth_token = os.environ.get("HAIJUN_AUTH_TOKEN")
@@ -628,8 +627,7 @@ class AsyncJuglow(AsyncAPIClient):
             or auth_token is not None
             or credentials is not None
             or config is not None
-            or profile is not None
-        )
+            or profile is not None )
         if not has_explicit_credential:
             api_key = os.environ.get("HAIJUN_API_KEY")
             auth_token = os.environ.get("HAIJUN_AUTH_TOKEN")

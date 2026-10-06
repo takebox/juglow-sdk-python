@@ -328,8 +328,7 @@ class AsyncPaginator(Generic[_T, AsyncPageT]):
         # https://github.com/microsoft/pyright/issues/3464
         page = cast(
             AsyncPageT,
-            await self,  # type: ignore
-        )
+            await self,  # type: ignore )
         async for item in page:
             yield item
 
@@ -731,8 +730,7 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
     def _validate_headers(
         self,
         headers: Headers,  # noqa: ARG002
-        custom_headers: Headers,  # noqa: ARG002
-    ) -> None:
+        custom_headers: Headers,  # noqa: ARG002 ) -> None:
         """Validate the given default headers and custom headers.
 
         Does nothing by default.
@@ -774,7 +772,7 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
         if expected_time > default_time or (max_nonstreaming_tokens and max_tokens > max_nonstreaming_tokens):
             raise ValueError(
                 "Streaming is required for operations that may take longer than 10 minutes. "
-                + "See https://github.com/Juglows/Juglow-sdk-python#long-requests for more details",
+                + "See https://github.com/takebox/juglow-sdk-python#long-requests for more details",
             )
         return Timeout(
             default_time,
@@ -1063,15 +1061,13 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
 
     def _prepare_options(
         self,
-        options: FinalRequestOptions,  # noqa: ARG002
-    ) -> FinalRequestOptions:
+        options: FinalRequestOptions,  # noqa: ARG002 ) -> FinalRequestOptions:
         """Hook for mutating the given options"""
         return options
 
     def _prepare_request(
         self,
-        request: httpx.Request,  # noqa: ARG002
-    ) -> None:
+        request: httpx.Request,  # noqa: ARG002 ) -> None:
         """This method is used as a callback for mutating the `Request` object
         after it has been constructed.
         This is useful for cases where you want to add certain headers based off of
@@ -1135,8 +1131,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
             try:
                 if chain is None:
                     response, prepared = self._attempt_request(
-                        model_copy(input_options), stream=stream, retries_taken=retries_taken
-                    )
+                        model_copy(input_options), stream=stream, retries_taken=retries_taken )
                     if response.is_success:
                         return self._process_response(
                             cast_to=cast_to,
@@ -1321,8 +1316,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
         return response, options
 
     def _sleep_for_retry(
-        self, *, retries_taken: int, max_retries: int, options: FinalRequestOptions, response: httpx.Response | None
-    ) -> None:
+        self, *, retries_taken: int, max_retries: int, options: FinalRequestOptions, response: httpx.Response | None ) -> None:
         remaining_retries = max_retries - retries_taken
         if remaining_retries == 1:
             log.debug("1 retry left")
@@ -1531,8 +1525,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
                 stacklevel=2,
             )
         opts = FinalRequestOptions.construct(
-            method="post", url=path, json_data=body, content=content, files=to_httpx_files(files), **options
-        )
+            method="post", url=path, json_data=body, content=content, files=to_httpx_files(files), **options )
         return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
 
     def patch(
@@ -1557,8 +1550,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
                 stacklevel=2,
             )
         opts = FinalRequestOptions.construct(
-            method="patch", url=path, json_data=body, content=content, files=to_httpx_files(files), **options
-        )
+            method="patch", url=path, json_data=body, content=content, files=to_httpx_files(files), **options )
         return self.request(cast_to, opts)
 
     def put(
@@ -1583,8 +1575,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
                 stacklevel=2,
             )
         opts = FinalRequestOptions.construct(
-            method="put", url=path, json_data=body, content=content, files=to_httpx_files(files), **options
-        )
+            method="put", url=path, json_data=body, content=content, files=to_httpx_files(files), **options )
         return self.request(cast_to, opts)
 
     def delete(
@@ -1802,15 +1793,13 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
 
     async def _prepare_options(
         self,
-        options: FinalRequestOptions,  # noqa: ARG002
-    ) -> FinalRequestOptions:
+        options: FinalRequestOptions,  # noqa: ARG002 ) -> FinalRequestOptions:
         """Hook for mutating the given options"""
         return options
 
     async def _prepare_request(
         self,
-        request: httpx.Request,  # noqa: ARG002
-    ) -> None:
+        request: httpx.Request,  # noqa: ARG002 ) -> None:
         """This method is used as a callback for mutating the `Request` object
         after it has been constructed.
         This is useful for cases where you want to add certain headers based off of
@@ -1879,8 +1868,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
             try:
                 if chain is None:
                     response, prepared = await self._attempt_request(
-                        model_copy(input_options), stream=stream, retries_taken=retries_taken
-                    )
+                        model_copy(input_options), stream=stream, retries_taken=retries_taken )
                     if response.is_success:
                         return await self._process_response(
                             cast_to=cast_to,
@@ -1955,8 +1943,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
         async def base_handler(req: APIRequest) -> AsyncAPIResponse[Any]:
             options = _prepare_middleware_options(req)
             response, prepared = await self._attempt_request(
-                options, stream=req.stream, retries_taken=req.retries_taken
-            )
+                options, stream=req.stream, retries_taken=req.retries_taken )
             return cast(
                 "AsyncAPIResponse[Any]",
                 await self._process_response(
@@ -2073,8 +2060,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
         return response, options
 
     async def _sleep_for_retry(
-        self, *, retries_taken: int, max_retries: int, options: FinalRequestOptions, response: httpx.Response | None
-    ) -> None:
+        self, *, retries_taken: int, max_retries: int, options: FinalRequestOptions, response: httpx.Response | None ) -> None:
         remaining_retries = max_retries - retries_taken
         if remaining_retries == 1:
             log.debug("1 retry left")
@@ -2271,8 +2257,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
                 stacklevel=2,
             )
         opts = FinalRequestOptions.construct(
-            method="post", url=path, json_data=body, content=content, files=await async_to_httpx_files(files), **options
-        )
+            method="post", url=path, json_data=body, content=content, files=await async_to_httpx_files(files), **options )
         return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
 
     async def patch(
@@ -2328,8 +2313,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
                 stacklevel=2,
             )
         opts = FinalRequestOptions.construct(
-            method="put", url=path, json_data=body, content=content, files=await async_to_httpx_files(files), **options
-        )
+            method="put", url=path, json_data=body, content=content, files=await async_to_httpx_files(files), **options )
         return await self.request(cast_to, opts)
 
     async def delete(

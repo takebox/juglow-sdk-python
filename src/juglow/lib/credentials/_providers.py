@@ -643,8 +643,7 @@ class CredentialsFile:
                 if (
                     access_token
                     and expires_at is not None
-                    and time.time() < float(expires_at) - MANDATORY_REFRESH_SECONDS
-                ):
+                    and time.time() < float(expires_at) - MANDATORY_REFRESH_SECONDS ):
                     return AccessToken(token=str(_unwrap_secret(access_token)), expires_at=int(expires_at))
             except (TypeError, ValueError):
                 # corrupted expires_at â€” fall through to re-exchange and overwrite

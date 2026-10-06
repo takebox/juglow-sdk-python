@@ -55,7 +55,7 @@ class MemoryStores(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return MemoryStoresWithRawResponse(self)
 
@@ -64,7 +64,7 @@ class MemoryStores(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return MemoryStoresWithStreamingResponse(self)
 
@@ -132,8 +132,7 @@ class MemoryStores(SyncAPIResource):
                 memory_store_create_params.MemoryStoreCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsMemoryStore,
         )
 
@@ -179,8 +178,7 @@ class MemoryStores(SyncAPIResource):
         return self._get(
             path_template("/v1/memory_stores/{memory_store_id}?beta=true", memory_store_id=memory_store_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsMemoryStore,
         )
 
@@ -248,8 +246,7 @@ class MemoryStores(SyncAPIResource):
                 memory_store_update_params.MemoryStoreUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsMemoryStore,
         )
 
@@ -373,8 +370,7 @@ class MemoryStores(SyncAPIResource):
         return self._delete(
             path_template("/v1/memory_stores/{memory_store_id}?beta=true", memory_store_id=memory_store_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsDeletedMemoryStore,
         )
 
@@ -420,8 +416,7 @@ class MemoryStores(SyncAPIResource):
         return self._post(
             path_template("/v1/memory_stores/{memory_store_id}/archive?beta=true", memory_store_id=memory_store_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsMemoryStore,
         )
 
@@ -441,7 +436,7 @@ class AsyncMemoryStores(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncMemoryStoresWithRawResponse(self)
 
@@ -450,7 +445,7 @@ class AsyncMemoryStores(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncMemoryStoresWithStreamingResponse(self)
 
@@ -518,8 +513,7 @@ class AsyncMemoryStores(AsyncAPIResource):
                 memory_store_create_params.MemoryStoreCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsMemoryStore,
         )
 
@@ -565,8 +559,7 @@ class AsyncMemoryStores(AsyncAPIResource):
         return await self._get(
             path_template("/v1/memory_stores/{memory_store_id}?beta=true", memory_store_id=memory_store_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsMemoryStore,
         )
 
@@ -634,8 +627,7 @@ class AsyncMemoryStores(AsyncAPIResource):
                 memory_store_update_params.MemoryStoreUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsMemoryStore,
         )
 
@@ -759,8 +751,7 @@ class AsyncMemoryStores(AsyncAPIResource):
         return await self._delete(
             path_template("/v1/memory_stores/{memory_store_id}?beta=true", memory_store_id=memory_store_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsDeletedMemoryStore,
         )
 
@@ -806,8 +797,7 @@ class AsyncMemoryStores(AsyncAPIResource):
         return await self._post(
             path_template("/v1/memory_stores/{memory_store_id}/archive?beta=true", memory_store_id=memory_store_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsMemoryStore,
         )
 

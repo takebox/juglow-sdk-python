@@ -151,8 +151,7 @@ def iter_work(
             ack_attempt += 1
             wait = _backoff(ack_attempt) + _jitter(0.0, 1.0)
             log.warning(
-                "ack failed, backing off work_id=%s attempt=%d backoff=%.1fs error=%s", item.id, ack_attempt, wait, e
-            )
+                "ack failed, backing off work_id=%s attempt=%d backoff=%.1fs error=%s", item.id, ack_attempt, wait, e )
             time.sleep(wait)
             continue
         ack_attempt = 0
@@ -244,8 +243,7 @@ async def aiter_work(
             ack_attempt += 1
             wait = _backoff(ack_attempt) + _jitter(0.0, 1.0)
             log.warning(
-                "ack failed, backing off work_id=%s attempt=%d backoff=%.1fs error=%s", item.id, ack_attempt, wait, e
-            )
+                "ack failed, backing off work_id=%s attempt=%d backoff=%.1fs error=%s", item.id, ack_attempt, wait, e )
             await anyio.sleep(wait)
             continue
         ack_attempt = 0
@@ -267,8 +265,7 @@ async def aiter_work(
 
 
 async def _aforce_stop_quietly(
-    work: AsyncWork, work_id: str, *, environment_id: str, extra_headers: Headers | None = None
-) -> None:
+    work: AsyncWork, work_id: str, *, environment_id: str, extra_headers: Headers | None = None ) -> None:
     """Async version of :func:`_force_stop_quietly`."""
     try:
         await work.stop(work_id, environment_id=environment_id, force=True, extra_headers=extra_headers)

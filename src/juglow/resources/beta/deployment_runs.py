@@ -31,7 +31,7 @@ class DeploymentRuns(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return DeploymentRunsWithRawResponse(self)
 
@@ -40,7 +40,7 @@ class DeploymentRuns(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return DeploymentRunsWithStreamingResponse(self)
 
@@ -86,8 +86,7 @@ class DeploymentRuns(SyncAPIResource):
         return self._get(
             path_template("/v1/deployment_runs/{deployment_run_id}?beta=true", deployment_run_id=deployment_run_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsDeploymentRun,
         )
 
@@ -192,7 +191,7 @@ class AsyncDeploymentRuns(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncDeploymentRunsWithRawResponse(self)
 
@@ -201,7 +200,7 @@ class AsyncDeploymentRuns(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncDeploymentRunsWithStreamingResponse(self)
 
@@ -247,8 +246,7 @@ class AsyncDeploymentRuns(AsyncAPIResource):
         return await self._get(
             path_template("/v1/deployment_runs/{deployment_run_id}?beta=true", deployment_run_id=deployment_run_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsDeploymentRun,
         )
 

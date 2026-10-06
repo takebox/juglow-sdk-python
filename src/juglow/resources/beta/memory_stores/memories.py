@@ -40,7 +40,7 @@ class Memories(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return MemoriesWithRawResponse(self)
 
@@ -49,7 +49,7 @@ class Memories(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return MemoriesWithStreamingResponse(self)
 
@@ -357,9 +357,7 @@ class Memories(SyncAPIResource):
                 ),
             ),
             model=cast(
-                Any, BetaManagedAgentsMemoryListItem
-            ),  # Union types cannot be passed in as arguments in the type system
-        )
+                Any, BetaManagedAgentsMemoryListItem ),  # Union types cannot be passed in as arguments in the type system )
 
     def delete(
         self,
@@ -418,8 +416,7 @@ class Memories(SyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=maybe_transform(
-                    {"expected_content_sha256": expected_content_sha256}, memory_delete_params.MemoryDeleteParams
-                ),
+                    {"expected_content_sha256": expected_content_sha256}, memory_delete_params.MemoryDeleteParams ),
             ),
             cast_to=BetaManagedAgentsDeletedMemory,
         )
@@ -432,7 +429,7 @@ class AsyncMemories(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncMemoriesWithRawResponse(self)
 
@@ -441,7 +438,7 @@ class AsyncMemories(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncMemoriesWithStreamingResponse(self)
 
@@ -749,9 +746,7 @@ class AsyncMemories(AsyncAPIResource):
                 ),
             ),
             model=cast(
-                Any, BetaManagedAgentsMemoryListItem
-            ),  # Union types cannot be passed in as arguments in the type system
-        )
+                Any, BetaManagedAgentsMemoryListItem ),  # Union types cannot be passed in as arguments in the type system )
 
     async def delete(
         self,
@@ -810,8 +805,7 @@ class AsyncMemories(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform(
-                    {"expected_content_sha256": expected_content_sha256}, memory_delete_params.MemoryDeleteParams
-                ),
+                    {"expected_content_sha256": expected_content_sha256}, memory_delete_params.MemoryDeleteParams ),
             ),
             cast_to=BetaManagedAgentsDeletedMemory,
         )

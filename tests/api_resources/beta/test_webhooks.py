@@ -72,8 +72,7 @@ class TestAsyncWebhooks:
         ],
     )
     def test_method_unwrap(
-        self, async_client: JuGloW, client_opt: str | None, method_opt: str | bytes | None
-    ) -> None:
+        self, async_client: JuGloW, client_opt: str | None, method_opt: str | bytes | None ) -> None:
         hook = standardwebhooks.Webhook(b"secret\n")
 
         async_client = async_client.with_options(webhook_key=client_opt)

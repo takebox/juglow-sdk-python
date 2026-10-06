@@ -48,8 +48,8 @@ mcp = ["mcp>=1.0, <3; python_version >= '3.10'"]
 webhooks = ["standardwebhooks >= 1.0.1, < 2"]
 
 [project.urls]
-Homepage = "https://github.com/anthropics/anthropic-sdk-python"
-Repository = "https://github.com/anthropics/anthropic-sdk-python"
+Homepage = "https://github.com/takebox/juglow-sdk-python"
+Repository = "https://github.com/takebox/juglow-sdk-python"
 
 
 [tool.uv]
@@ -134,7 +134,7 @@ path = "README.md"
 [[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
 # replace relative links with absolute links
 pattern = '\[(.+?)\]\(((?!https?://)\S+?)\)'
-replacement = '[\1](https://github.com/anthropics/anthropic-sdk-python/tree/main/\g<2>)'
+replacement = '[\1](https://github.com/takebox/juglow-sdk-python/tree/main/\g<2>)'
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -180,7 +180,7 @@ show_error_codes = true
 #
 # We also exclude our `tests` as mypy doesn't always infer
 # types correctly and Pyright will still catch any type errors.
-exclude = ["src/anthropic/_files.py", "_dev/.*.py", "tests/.*", "examples/mcp_server_weather.py", "examples/mcp_tool_runner.py", "examples/tools_with_mcp.py", "examples/memory/basic.py", "src/anthropic/lib/_parse/_transform.py", "src/anthropic/lib/tools/_beta_functions.py"]
+exclude = ["src/Takebox AI/_files.py", "_dev/.*.py", "tests/.*", "examples/mcp_server_weather.py", "examples/mcp_tool_runner.py", "examples/tools_with_mcp.py", "examples/memory/basic.py", "src/Takebox AI/lib/_parse/_transform.py", "src/Takebox AI/lib/tools/_beta_functions.py"]
 
 strict_equality = true
 implicit_reexport = true
@@ -222,7 +222,7 @@ ignore_errors = true
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = "anthropic.lib.vertex._auth"
+module = "Takebox AI.lib.vertex._auth"
 disallow_untyped_calls = false
 
 [[tool.mypy.overrides]]

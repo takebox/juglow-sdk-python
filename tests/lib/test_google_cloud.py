@@ -265,8 +265,7 @@ async def test_token_provider_attaches_bearer_async(respx_mock: MockRouter) -> N
 
 @pytest.mark.respx()
 async def test_sync_token_provider_on_async_client_runs_off_event_loop(
-    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch
-) -> None:
+    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch ) -> None:
     respx_mock.post(re.compile(r"https://example\.test/.*")).mock(return_value=httpx.Response(200, json={"foo": "bar"}))
 
     offloaded: list[Any] = []
@@ -282,8 +281,7 @@ async def test_sync_token_provider_on_async_client_runs_off_event_loop(
         return "sync-token"
 
     client = AsyncJuGloWGoogleCloud(
-        base_url="https://example.test/", workspace_id="wrkspc_x", token_provider=provider
-    )
+        base_url="https://example.test/", workspace_id="wrkspc_x", token_provider=provider )
     await client.messages.create(max_tokens=16, messages=[{"role": "user", "content": "hi"}], model="haijun-haiku")
 
     calls = cast("list[Any]", respx_mock.calls)
@@ -394,8 +392,7 @@ def test_explicit_credential_suppresses_adc(
 
 @pytest.mark.respx()
 async def test_explicit_credential_suppresses_adc_async(
-    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch
-) -> None:
+    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch ) -> None:
     respx_mock.post(re.compile(r"https://example\.test/.*")).mock(return_value=httpx.Response(200, json={"foo": "bar"}))
 
     def _fail() -> Any:
@@ -492,8 +489,7 @@ def test_custom_headers_env_flows_through(respx_mock: MockRouter, monkeypatch: p
 
 @pytest.mark.respx()
 def test_custom_headers_env_authorization_never_conflicts(
-    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch
-) -> None:
+    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch ) -> None:
     # An env-supplied Authorization wins under the only-if-absent contract â€” and
     # exactly one Authorization header goes out, never two conflicting ones.
     monkeypatch.setenv("HAIJUN_CUSTOM_HEADERS", "Authorization: Bearer env-token")
@@ -550,8 +546,7 @@ def test_project_backfilled_from_adc_on_first_request(respx_mock: MockRouter, mo
 
 @pytest.mark.respx()
 def test_backfill_happens_even_with_caller_authorization(
-    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch
-) -> None:
+    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch ) -> None:
     # The back-fill is decoupled from token attachment: a first request carrying
     # its own Authorization header must still resolve the deferred base URL.
     respx_mock.post(re.compile(r"https://haijun\.googleapis\.com/.*")).mock(
@@ -614,8 +609,7 @@ def test_post_construction_base_url_assignment_wins(respx_mock: MockRouter) -> N
 
 @pytest.mark.respx()
 def test_copy_of_deferred_client_still_backfills_and_shares_adc(
-    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch
-) -> None:
+    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch ) -> None:
     respx_mock.post(re.compile(r"https://haijun\.googleapis\.com/.*")).mock(
         return_value=httpx.Response(200, json={"foo": "bar"})
     )
@@ -642,8 +636,7 @@ def test_copy_of_deferred_client_still_backfills_and_shares_adc(
 
 @pytest.mark.respx()
 async def test_project_backfilled_from_adc_on_first_request_async(
-    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch
-) -> None:
+    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch ) -> None:
     respx_mock.post(re.compile(r"https://haijun\.googleapis\.com/.*")).mock(
         return_value=httpx.Response(200, json={"foo": "bar"})
     )
@@ -720,8 +713,7 @@ class TestCopy:
             raise AssertionError("inherited token_provider must not be used after copy(credentials=...)")
 
         client = JuGloWGoogleCloud(
-            base_url="https://example.test/", workspace_id="wrkspc_x", token_provider=provider
-        )
+            base_url="https://example.test/", workspace_id="wrkspc_x", token_provider=provider )
         clone = client.copy(credentials=cast(Any, _FakeCredentials(token="cred-token")))
         clone.messages.create(max_tokens=16, messages=[{"role": "user", "content": "hi"}], model="haijun-haiku")
 
@@ -979,8 +971,7 @@ def profile_config_dir(tmp_path: pathlib.Path) -> pathlib.Path:
 
 @pytest.mark.respx()
 def test_resolvable_profile_cannot_leak(
-    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch, profile_config_dir: pathlib.Path
-) -> None:
+    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch, profile_config_dir: pathlib.Path ) -> None:
     # An HAIJUN_PROFILE / HAIJUN_CONFIG_DIR pointing at a real on-disk profile
     # must not be able to attach its base_url or oauth token to this client's requests.
     monkeypatch.setenv("HAIJUN_CONFIG_DIR", str(profile_config_dir))
@@ -1005,8 +996,7 @@ def test_resolvable_profile_cannot_leak(
 
 @pytest.mark.respx()
 async def test_resolvable_profile_cannot_leak_async(
-    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch, profile_config_dir: pathlib.Path
-) -> None:
+    respx_mock: MockRouter, monkeypatch: pytest.MonkeyPatch, profile_config_dir: pathlib.Path ) -> None:
     monkeypatch.setenv("HAIJUN_CONFIG_DIR", str(profile_config_dir))
     monkeypatch.setenv("HAIJUN_PROFILE", "default")
     respx_mock.post(re.compile(r"https://example\.test/.*")).mock(return_value=httpx.Response(200, json={"foo": "bar"}))

@@ -51,7 +51,7 @@ class Agents(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AgentsWithRawResponse(self)
 
@@ -60,7 +60,7 @@ class Agents(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AgentsWithStreamingResponse(self)
 
@@ -154,8 +154,7 @@ class Agents(SyncAPIResource):
                 agent_create_params.AgentCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsAgent,
         )
 
@@ -318,8 +317,7 @@ class Agents(SyncAPIResource):
                 agent_update_params.AgentUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsAgent,
         )
 
@@ -438,8 +436,7 @@ class Agents(SyncAPIResource):
         return self._post(
             path_template("/v1/agents/{agent_id}/archive?beta=true", agent_id=agent_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsAgent,
         )
 
@@ -455,7 +452,7 @@ class AsyncAgents(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncAgentsWithRawResponse(self)
 
@@ -464,7 +461,7 @@ class AsyncAgents(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncAgentsWithStreamingResponse(self)
 
@@ -558,8 +555,7 @@ class AsyncAgents(AsyncAPIResource):
                 agent_create_params.AgentCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsAgent,
         )
 
@@ -722,8 +718,7 @@ class AsyncAgents(AsyncAPIResource):
                 agent_update_params.AgentUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsAgent,
         )
 
@@ -842,8 +837,7 @@ class AsyncAgents(AsyncAPIResource):
         return await self._post(
             path_template("/v1/agents/{agent_id}/archive?beta=true", agent_id=agent_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsAgent,
         )
 

@@ -169,8 +169,7 @@ class BaseSyncToolRunner(BaseToolRunner[BetaRunnableTool, ResponseFormatT], Gene
 
         self._iterator = self.__run__()
         self._last_message: (
-            Callable[[], ParsedBetaMessage[ResponseFormatT]] | ParsedBetaMessage[ResponseFormatT] | None
-        ) = None
+            Callable[[], ParsedBetaMessage[ResponseFormatT]] | ParsedBetaMessage[ResponseFormatT] | None ) = None
 
     def __next__(self) -> RunnerItemT:
         return self._iterator.__next__()
@@ -424,8 +423,7 @@ class BetaStreamingToolRunner(BaseSyncToolRunner[BetaMessageStream[ResponseForma
 
 
 class BaseAsyncToolRunner(
-    BaseToolRunner[BetaAsyncRunnableTool, ResponseFormatT], Generic[RunnerItemT, ResponseFormatT], ABC
-):
+    BaseToolRunner[BetaAsyncRunnableTool, ResponseFormatT], Generic[RunnerItemT, ResponseFormatT], ABC ):
     def __init__(
         self,
         *,
@@ -458,8 +456,7 @@ class BaseAsyncToolRunner(
         self._last_message: (
             Callable[[], Coroutine[None, None, ParsedBetaMessage[ResponseFormatT]]]
             | ParsedBetaMessage[ResponseFormatT]
-            | None
-        ) = None
+            | None ) = None
 
     async def __anext__(self) -> RunnerItemT:
         return await self._iterator.__anext__()

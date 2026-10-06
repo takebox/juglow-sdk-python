@@ -168,8 +168,7 @@ class JuglowBedrock(BaseBedrockClient[httpx.Client, Stream[Any]], SyncAPIClient)
             aws_access_key is not None
             or aws_secret_key is not None
             or aws_session_token is not None
-            or aws_profile is not None
-        )
+            or aws_profile is not None )
         if api_key is not None and has_aws_credentials:
             raise ValueError(
                 "Cannot specify both `api_key` and AWS credentials (`aws_access_key`, `aws_secret_key`, `aws_session_token`, `aws_profile`)"
@@ -348,8 +347,7 @@ class AsyncJuglowBedrock(BaseBedrockClient[httpx.AsyncClient, AsyncStream[Any]],
             aws_access_key is not None
             or aws_secret_key is not None
             or aws_session_token is not None
-            or aws_profile is not None
-        )
+            or aws_profile is not None )
         if api_key is not None and has_aws_credentials:
             raise ValueError(
                 "Cannot specify both `api_key` and AWS credentials (`aws_access_key`, `aws_secret_key`, `aws_session_token`, `aws_profile`)"

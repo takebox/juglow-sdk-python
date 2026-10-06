@@ -100,7 +100,7 @@ class Messages(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return MessagesWithRawResponse(self)
 
@@ -109,7 +109,7 @@ class Messages(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return MessagesWithStreamingResponse(self)
 
@@ -1073,8 +1073,7 @@ class Messages(SyncAPIResource):
                 else message_create_params.MessageCreateParamsNonStreaming,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=Message,
             stream=stream or False,
             stream_cls=Stream[RawMessageStreamEvent],
@@ -1186,8 +1185,7 @@ class Messages(SyncAPIResource):
                 message_create_params.MessageCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=Message,
             stream=True,
             stream_cls=Stream[RawMessageStreamEvent],
@@ -1578,8 +1576,7 @@ class Messages(SyncAPIResource):
                 message_count_tokens_params.MessageCountTokensParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=MessageTokensCount,
         )
 
@@ -1595,7 +1592,7 @@ class AsyncMessages(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncMessagesWithRawResponse(self)
 
@@ -1604,7 +1601,7 @@ class AsyncMessages(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncMessagesWithStreamingResponse(self)
 
@@ -2568,8 +2565,7 @@ class AsyncMessages(AsyncAPIResource):
                 else message_create_params.MessageCreateParamsNonStreaming,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=Message,
             stream=stream or False,
             stream_cls=AsyncStream[RawMessageStreamEvent],
@@ -2680,8 +2676,7 @@ class AsyncMessages(AsyncAPIResource):
                 message_create_params.MessageCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=Message,
             stream=True,
             stream_cls=AsyncStream[RawMessageStreamEvent],
@@ -3072,8 +3067,7 @@ class AsyncMessages(AsyncAPIResource):
                 message_count_tokens_params.MessageCountTokensParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=MessageTokensCount,
         )
 

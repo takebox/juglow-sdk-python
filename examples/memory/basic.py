@@ -209,8 +209,7 @@ def conversation_loop():
 
                 elif content.type == "tool_use" and content.name == "memory":
                     tool_input = TypeAdapter[BetaMemoryTool20250818Command](
-                        BetaMemoryTool20250818Command
-                    ).validate_python(content.input)
+                        BetaMemoryTool20250818Command ).validate_python(content.input)
 
                     print(f"\n[Memory tool called: {tool_input.command}]")
                     assistant_content.append(

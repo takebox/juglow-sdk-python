@@ -112,8 +112,7 @@ class TestFunctionTool:
         ],
     )
     def test_function_call_with_invalid_input(
-        self, input_data: dict[str, Any], expected_error_type: type[BaseException], expected_error_msg: str
-    ) -> None:
+        self, input_data: dict[str, Any], expected_error_type: type[BaseException], expected_error_msg: str ) -> None:
         def add_numbers(a: int, b: int) -> str:
             return str(a + b)
 

@@ -98,8 +98,7 @@ class TestBetaLocalFilesystemMemoryTool:
         assert dir_snapshot == {"memories/deep/nested/file.txt": "Nested file"}
 
     def test_create_error_if_file_already_exists(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         sync_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(
                 command="create",
@@ -187,8 +186,7 @@ class TestBetaLocalFilesystemMemoryTool:
             )
 
     def test_view_error_for_files_with_too_many_lines(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         too_many_lines = "\n".join(["line"] * 1000000)
         sync_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(
@@ -230,8 +228,7 @@ class TestBetaLocalFilesystemMemoryTool:
         assert dir_snapshot == {"memories/replace_test.txt": "Line 1\nNew Text\nLine 3"}
 
     def test_str_replace_error_when_string_not_found(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         sync_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(
                 command="create",
@@ -254,8 +251,7 @@ class TestBetaLocalFilesystemMemoryTool:
             )
 
     def test_str_replace_error_when_string_appears_multiple_times(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         sync_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(
                 command="create",
@@ -278,8 +274,7 @@ class TestBetaLocalFilesystemMemoryTool:
             )
 
     def test_str_replace_error_for_non_existent_file(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(
             ToolError, match="The path /memories/nonexistent.txt does not exist. Please provide a valid path."
         ):
@@ -342,8 +337,7 @@ class TestBetaLocalFilesystemMemoryTool:
         assert dir_snapshot == {"memories/insert_test.txt": "Line 1\nLine 2\nLast Line\n"}
 
     def test_insert_error_for_non_existent_file(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(
             ToolError, match="The path /memories/nonexistent.txt does not exist. Please provide a valid path."
         ):
@@ -354,8 +348,7 @@ class TestBetaLocalFilesystemMemoryTool:
             )
 
     def test_insert_error_for_invalid_insert_line(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         sync_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(
                 command="create", file_text="Line 1\nLine 2", path="/memories/insert_test.txt"
@@ -407,8 +400,7 @@ class TestBetaLocalFilesystemMemoryTool:
             )
 
     def test_delete_not_allow_deleting_memories_directory(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(ToolError, match="Cannot delete the /memories directory itself"):
             sync_local_filesystem_tool.delete(BetaMemoryTool20250818DeleteCommand(command="delete", path="/memories"))
 
@@ -445,8 +437,7 @@ class TestBetaLocalFilesystemMemoryTool:
         assert dir_snapshot == {"memories/nested/dir/file.txt": "Content"}
 
     def test_rename_error_when_source_not_found(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(ToolError, match="The path /memories/nonexistent.txt does not exist"):
             sync_local_filesystem_tool.rename(
                 BetaMemoryTool20250818RenameCommand(
@@ -455,8 +446,7 @@ class TestBetaLocalFilesystemMemoryTool:
             )
 
     def test_rename_error_when_destination_exists(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         sync_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(command="create", file_text="File 1", path="/memories/file1.txt")
         )
@@ -473,16 +463,14 @@ class TestBetaLocalFilesystemMemoryTool:
             )
 
     def test_path_validation_reject_paths_not_starting_with_memories(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(ToolError, match="Path must start with /memories"):
             sync_local_filesystem_tool.create(
                 BetaMemoryTool20250818CreateCommand(command="create", file_text="Invalid", path="/invalid/path.txt")
             )
 
     def test_path_validation_reject_paths_trying_to_escape_memories(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(ToolError, match="Path /memories/../../../etc/passwd would escape /memories directory"):
             sync_local_filesystem_tool.create(
                 BetaMemoryTool20250818CreateCommand(
@@ -491,8 +479,7 @@ class TestBetaLocalFilesystemMemoryTool:
             )
 
     def test_symlink_validation_reject_symlink_pointing_outside_memories(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         with tempfile.TemporaryDirectory() as outside_dir:
             Path(outside_dir, "secret.txt").write_text("sensitive data", encoding="utf-8")
 
@@ -507,8 +494,7 @@ class TestBetaLocalFilesystemMemoryTool:
                 )
 
     def test_symlink_validation_reject_creating_files_through_symlink_pointing_outside(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         with tempfile.TemporaryDirectory() as outside_dir:
             memories_path = sync_local_filesystem_tool.memory_root
             symlink_path = memories_path / "bad_link"
@@ -523,8 +509,7 @@ class TestBetaLocalFilesystemMemoryTool:
                 )
 
     def test_symlink_validation_reject_parent_directory_that_is_symlink_pointing_outside(
-        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool
-    ) -> None:
+        self, sync_local_filesystem_tool: BetaLocalFilesystemMemoryTool ) -> None:
         with tempfile.TemporaryDirectory() as outside_dir:
             memories_path = sync_local_filesystem_tool.memory_root
             symlink_dir_path = memories_path / "subdir"
@@ -570,8 +555,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
         assert dir_snapshot == {"memories/test_file.txt": "Hello, World!"}
 
     async def test_create_nested_directories(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         result = await async_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(
                 command="create",
@@ -584,8 +568,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
         assert dir_snapshot == {"memories/deep/nested/file.txt": "Nested file"}
 
     async def test_create_error_if_file_already_exists(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         await async_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(
                 command="create",
@@ -665,8 +648,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
         )
 
     async def test_view_error_for_non_existent_file(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(
             ToolError, match="The path /memories/nonexistent.txt does not exist. Please provide a valid path."
         ):
@@ -675,8 +657,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
             )
 
     async def test_view_error_for_files_with_too_many_lines(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         too_many_lines = "\n".join(["line"] * 1000000)
         await async_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(
@@ -718,8 +699,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
         assert dir_snapshot == {"memories/replace_test.txt": "Line 1\nNew Text\nLine 3"}
 
     async def test_str_replace_error_when_string_not_found(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         await async_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(
                 command="create",
@@ -742,8 +722,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
             )
 
     async def test_str_replace_error_when_string_appears_multiple_times(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         await async_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(
                 command="create",
@@ -766,8 +745,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
             )
 
     async def test_str_replace_error_for_non_existent_file(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(
             ToolError, match="The path /memories/nonexistent.txt does not exist. Please provide a valid path."
         ):
@@ -798,8 +776,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
         assert dir_snapshot == {"memories/insert_test.txt": "Line 1\nInserted Line\nLine 2\n"}
 
     async def test_insert_at_beginning_of_file(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         await async_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(
                 command="create", file_text="Line 1\nLine 2", path="/memories/insert_test.txt"
@@ -832,8 +809,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
         assert dir_snapshot == {"memories/insert_test.txt": "Line 1\nLine 2\nLast Line\n"}
 
     async def test_insert_error_for_non_existent_file(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(
             ToolError, match="The path /memories/nonexistent.txt does not exist. Please provide a valid path."
         ):
@@ -844,8 +820,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
             )
 
     async def test_insert_error_for_invalid_insert_line(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         await async_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(
                 command="create", file_text="Line 1\nLine 2", path="/memories/insert_test.txt"
@@ -891,16 +866,14 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
         assert dir_snapshot == {}
 
     async def test_delete_error_when_file_not_found(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(ToolError, match="The path /memories/nonexistent.txt does not exist"):
             await async_local_filesystem_tool.delete(
                 BetaMemoryTool20250818DeleteCommand(command="delete", path="/memories/nonexistent.txt")
             )
 
     async def test_delete_not_allow_deleting_memories_directory(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(ToolError, match="Cannot delete the /memories directory itself"):
             await async_local_filesystem_tool.delete(
                 BetaMemoryTool20250818DeleteCommand(command="delete", path="/memories")
@@ -939,8 +912,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
         assert dir_snapshot == {"memories/nested/dir/file.txt": "Content"}
 
     async def test_rename_error_when_source_not_found(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(ToolError, match="The path /memories/nonexistent.txt does not exist"):
             await async_local_filesystem_tool.rename(
                 BetaMemoryTool20250818RenameCommand(
@@ -949,8 +921,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
             )
 
     async def test_rename_error_when_destination_exists(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         await async_local_filesystem_tool.create(
             BetaMemoryTool20250818CreateCommand(command="create", file_text="File 1", path="/memories/file1.txt")
         )
@@ -967,16 +938,14 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
             )
 
     async def test_path_validation_reject_paths_not_starting_with_memories(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(ToolError, match="Path must start with /memories"):
             await async_local_filesystem_tool.create(
                 BetaMemoryTool20250818CreateCommand(command="create", file_text="Invalid", path="/invalid/path.txt")
             )
 
     async def test_path_validation_reject_paths_trying_to_escape_memories(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         with pytest.raises(ToolError, match="Path /memories/../../../etc/passwd would escape /memories directory"):
             await async_local_filesystem_tool.create(
                 BetaMemoryTool20250818CreateCommand(
@@ -985,8 +954,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
             )
 
     async def test_validate_path_returns_resolved_path_not_symlink_target(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         """_validate_path must return the resolved path so that subsequent file
         operations hit the real location, not the (potentially swappable) symlink.
 
@@ -1016,8 +984,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
         assert str(legit_dir.resolve()) in result_str
 
     async def test_symlink_validation_reject_symlink_pointing_outside_memories(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         with tempfile.TemporaryDirectory() as outside_dir:
             Path(outside_dir, "secret.txt").write_text("sensitive data", encoding="utf-8")
 
@@ -1033,8 +1000,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
                 )
 
     async def test_symlink_validation_reject_creating_files_through_symlink_pointing_outside(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         with tempfile.TemporaryDirectory() as outside_dir:
             memories_path = Path(str(async_local_filesystem_tool.memory_root))
             memories_path.mkdir(parents=True, exist_ok=True)
@@ -1050,8 +1016,7 @@ class TestBetaAsyncLocalFilesystemMemoryTool:
                 )
 
     async def test_symlink_validation_reject_parent_directory_that_is_symlink_pointing_outside(
-        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool
-    ) -> None:
+        self, async_local_filesystem_tool: BetaAsyncLocalFilesystemMemoryTool ) -> None:
         with tempfile.TemporaryDirectory() as outside_dir:
             memories_path = Path(str(async_local_filesystem_tool.memory_root))
             memories_path.mkdir(parents=True, exist_ok=True)

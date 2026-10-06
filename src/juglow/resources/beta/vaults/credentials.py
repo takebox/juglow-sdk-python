@@ -31,7 +31,7 @@ class Credentials(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return CredentialsWithRawResponse(self)
 
@@ -40,7 +40,7 @@ class Credentials(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return CredentialsWithStreamingResponse(self)
 
@@ -104,8 +104,7 @@ class Credentials(SyncAPIResource):
                 credential_create_params.CredentialCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsCredential,
         )
 
@@ -158,8 +157,7 @@ class Credentials(SyncAPIResource):
                 credential_id=credential_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsCredential,
         )
 
@@ -230,8 +228,7 @@ class Credentials(SyncAPIResource):
                 credential_update_params.CredentialUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsCredential,
         )
 
@@ -352,8 +349,7 @@ class Credentials(SyncAPIResource):
                 credential_id=credential_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsDeletedCredential,
         )
 
@@ -406,8 +402,7 @@ class Credentials(SyncAPIResource):
                 credential_id=credential_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsCredential,
         )
 
@@ -460,8 +455,7 @@ class Credentials(SyncAPIResource):
                 credential_id=credential_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsCredentialValidation,
         )
 
@@ -473,7 +467,7 @@ class AsyncCredentials(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncCredentialsWithRawResponse(self)
 
@@ -482,7 +476,7 @@ class AsyncCredentials(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncCredentialsWithStreamingResponse(self)
 
@@ -546,8 +540,7 @@ class AsyncCredentials(AsyncAPIResource):
                 credential_create_params.CredentialCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsCredential,
         )
 
@@ -600,8 +593,7 @@ class AsyncCredentials(AsyncAPIResource):
                 credential_id=credential_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsCredential,
         )
 
@@ -672,8 +664,7 @@ class AsyncCredentials(AsyncAPIResource):
                 credential_update_params.CredentialUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsCredential,
         )
 
@@ -794,8 +785,7 @@ class AsyncCredentials(AsyncAPIResource):
                 credential_id=credential_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsDeletedCredential,
         )
 
@@ -848,8 +838,7 @@ class AsyncCredentials(AsyncAPIResource):
                 credential_id=credential_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsCredential,
         )
 
@@ -902,8 +891,7 @@ class AsyncCredentials(AsyncAPIResource):
                 credential_id=credential_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsCredentialValidation,
         )
 

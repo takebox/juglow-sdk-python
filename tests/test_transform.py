@@ -265,8 +265,7 @@ class DateDictWithRequiredAlias(TypedDict, total=False):
 async def test_datetime_with_alias(use_async: bool) -> None:
     assert await transform({"required_prop": None}, DateDictWithRequiredAlias, use_async) == {"prop": None}  # type: ignore[comparison-overlap]
     assert await transform(
-        {"required_prop": date.fromisoformat("2023-02-23")}, DateDictWithRequiredAlias, use_async
-    ) == {"prop": "2023-02-23"}  # type: ignore[comparison-overlap]
+        {"required_prop": date.fromisoformat("2023-02-23")}, DateDictWithRequiredAlias, use_async ) == {"prop": "2023-02-23"}  # type: ignore[comparison-overlap]
 
 
 class MyModel(BaseModel):

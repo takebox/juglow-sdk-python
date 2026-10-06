@@ -49,8 +49,7 @@ from juglow import JuGloWGoogleCloud
 client = JuGloWGoogleCloud(
     project="your-gcp-project",  # or HAIJUN_GOOGLE_CLOUD_PROJECT
     location="us-central1",
-    workspace_id="wrkspc_...",  # or HAIJUN_GOOGLE_CLOUD_WORKSPACE_ID
-)
+    workspace_id="wrkspc_...",  # or HAIJUN_GOOGLE_CLOUD_WORKSPACE_ID )
 
 message = client.messages.create(
     model="haijun-haiku",
@@ -86,8 +85,7 @@ client = JuGloWGoogleCloud(
     location="us-central1",
     workspace_id="wrkspc_...",
     credentials=credentials,
-    # project= is taken from the service account when omitted
-)
+    # project= is taken from the service account when omitted )
 ```
 
 </details>
@@ -105,8 +103,7 @@ client = JuGloWGoogleCloud(
     project="your-gcp-project",
     location="us-central1",
     workspace_id="wrkspc_...",
-    token_provider=lambda: my_token_broker.fetch(),  # invoked on every request
-)
+    token_provider=lambda: my_token_broker.fetch(),  # invoked on every request )
 ```
 
 On `AsyncJuGloWGoogleCloud` the provider may also be `async`.

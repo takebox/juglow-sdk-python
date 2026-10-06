@@ -497,8 +497,7 @@ def beta_bash_tool(ctx: AgentToolContext) -> BetaAsyncFunctionTool[Any]:
         # evaluates these annotations at runtime via pydantic, and PEP 604 union
         # syntax can't be ``eval``'d under Python 3.9 â€” our minimum version.
         async def bash(
-            command: Optional[str] = None, restart: Optional[bool] = None, timeout_ms: Optional[int] = None
-        ) -> str:
+            command: Optional[str] = None, restart: Optional[bool] = None, timeout_ms: Optional[int] = None ) -> str:
             nonlocal session
             if restart:
                 if session is not None:

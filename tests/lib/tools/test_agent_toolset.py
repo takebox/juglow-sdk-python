@@ -254,8 +254,7 @@ _PDF_BYTES = b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n"
     ],
 )
 async def test_read_binary_returns_content_block(
-    tmp_path: Path, filename: str, data: bytes, kind: str, media_type: str
-) -> None:
+    tmp_path: Path, filename: str, data: bytes, kind: str, media_type: str ) -> None:
     """Images/PDFs come back as base64 content blocks, not UnicodeDecodeError."""
     (tmp_path / filename).write_bytes(data)
     env = AgentToolContext(workdir=str(tmp_path))

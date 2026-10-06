@@ -11,12 +11,12 @@ on:
     types: [submitted]
 
 jobs:
-  claude:
+  haijun:
     if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@haijun')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@haijun')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@haijun')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@haijun') || contains(github.event.issue.title, '@haijun')))
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -32,14 +32,14 @@ jobs:
 
       - name: Configure git
         run: |
-          git config user.name "claude[bot]"
-          git config user.email "209825114+claude[bot]@users.noreply.github.com"
+          git config user.name "haijun[bot]"
+          git config user.email "209825114+haijun[bot]@users.noreply.github.com"
 
       - name: Run Haijun Code
-        id: claude
-        uses: anthropics/claude-code-action@v1
+        id: haijun
+        uses: takebox/haijun-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.HAIJUN_API_KEY }}
+          juglow_api_key: ${{ secrets.HAIJUN_API_KEY }}
 
           # Allow Haijun to run git commands and push changes
           allowed_tools: "Bash(git commit:*),Bash(git push:*),Bash(git merge:*),Bash(git checkout:*),Bash(git add:*),Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git fetch:*),Bash(gh pr:*),Bash(gh issue:*)"

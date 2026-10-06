@@ -41,7 +41,7 @@ class Threads(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return ThreadsWithRawResponse(self)
 
@@ -50,7 +50,7 @@ class Threads(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return ThreadsWithStreamingResponse(self)
 
@@ -98,11 +98,9 @@ class Threads(SyncAPIResource):
         extra_headers = {"juglow-beta": "managed-agents-2026-04-01", **(extra_headers or {})}
         return self._get(
             path_template(
-                "/v1/sessions/{session_id}/threads/{thread_id}?beta=true", session_id=session_id, thread_id=thread_id
-            ),
+                "/v1/sessions/{session_id}/threads/{thread_id}?beta=true", session_id=session_id, thread_id=thread_id ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsSessionThread,
         )
 
@@ -220,8 +218,7 @@ class Threads(SyncAPIResource):
                 thread_id=thread_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsSessionThread,
         )
 
@@ -237,7 +234,7 @@ class AsyncThreads(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncThreadsWithRawResponse(self)
 
@@ -246,7 +243,7 @@ class AsyncThreads(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncThreadsWithStreamingResponse(self)
 
@@ -294,11 +291,9 @@ class AsyncThreads(AsyncAPIResource):
         extra_headers = {"juglow-beta": "managed-agents-2026-04-01", **(extra_headers or {})}
         return await self._get(
             path_template(
-                "/v1/sessions/{session_id}/threads/{thread_id}?beta=true", session_id=session_id, thread_id=thread_id
-            ),
+                "/v1/sessions/{session_id}/threads/{thread_id}?beta=true", session_id=session_id, thread_id=thread_id ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsSessionThread,
         )
 
@@ -416,8 +411,7 @@ class AsyncThreads(AsyncAPIResource):
                 thread_id=thread_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsSessionThread,
         )
 

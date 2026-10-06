@@ -47,8 +47,7 @@ class TestResolveAuthMode:
                 aws_secret_key=None,
                 aws_profile=None,
             )
-            is False
-        )
+            is False )
 
     def test_explicit_creds_returns_true(self) -> None:
         assert (
@@ -58,8 +57,7 @@ class TestResolveAuthMode:
                 aws_secret_key="secret",
                 aws_profile=None,
             )
-            is True
-        )
+            is True )
 
     def test_access_key_alone_returns_true(self) -> None:
         assert (
@@ -69,8 +67,7 @@ class TestResolveAuthMode:
                 aws_secret_key=None,
                 aws_profile=None,
             )
-            is True
-        )
+            is True )
 
     def test_profile_returns_true(self) -> None:
         assert (
@@ -80,8 +77,7 @@ class TestResolveAuthMode:
                 aws_secret_key=None,
                 aws_profile="my-profile",
             )
-            is True
-        )
+            is True )
 
     def test_env_api_key_returns_false(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("HAIJUN_AWS_API_KEY", "env-key")
@@ -92,8 +88,7 @@ class TestResolveAuthMode:
                 aws_secret_key=None,
                 aws_profile=None,
             )
-            is False
-        )
+            is False )
 
     def test_no_args_no_env_defaults_to_sigv4(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.delenv("HAIJUN_AWS_API_KEY", raising=False)
@@ -104,8 +99,7 @@ class TestResolveAuthMode:
                 aws_secret_key=None,
                 aws_profile=None,
             )
-            is True
-        )
+            is True )
 
     def test_explicit_creds_suppress_env_api_key(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("HAIJUN_AWS_API_KEY", "env-key")
@@ -116,8 +110,7 @@ class TestResolveAuthMode:
                 aws_secret_key="secret",
                 aws_profile=None,
             )
-            is True
-        )
+            is True )
 
     def test_profile_suppresses_env_api_key(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("HAIJUN_AWS_API_KEY", "env-key")
@@ -128,8 +121,7 @@ class TestResolveAuthMode:
                 aws_secret_key=None,
                 aws_profile="my-profile",
             )
-            is True
-        )
+            is True )
 
     def test_api_key_arg_beats_explicit_creds(self) -> None:
         """api_key constructor arg takes highest precedence."""
@@ -140,8 +132,7 @@ class TestResolveAuthMode:
                 aws_secret_key="secret",
                 aws_profile=None,
             )
-            is False
-        )
+            is False )
 
     def test_custom_env_var(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("AWS_BEARER_TOKEN_BEDROCK", "mantle-key")
@@ -154,8 +145,7 @@ class TestResolveAuthMode:
                 aws_profile=None,
                 api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK",),
             )
-            is False
-        )
+            is False )
 
     def test_custom_env_var_not_set_defaults_to_sigv4(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.delenv("AWS_BEARER_TOKEN_BEDROCK", raising=False)
@@ -168,8 +158,7 @@ class TestResolveAuthMode:
                 aws_profile=None,
                 api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK",),
             )
-            is True
-        )
+            is True )
 
     def test_env_var_fallback_chain_first_wins(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """First env var in the chain takes priority."""
@@ -183,8 +172,7 @@ class TestResolveAuthMode:
                 aws_profile=None,
                 api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK", "HAIJUN_AWS_API_KEY"),
             )
-            is False
-        )
+            is False )
 
     def test_env_var_fallback_chain_falls_through(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Falls back to second env var when first is not set."""
@@ -198,8 +186,7 @@ class TestResolveAuthMode:
                 aws_profile=None,
                 api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK", "HAIJUN_AWS_API_KEY"),
             )
-            is False
-        )
+            is False )
 
     def test_env_var_fallback_chain_none_set(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Defaults to SigV4 when no env vars in the chain are set."""
@@ -213,8 +200,7 @@ class TestResolveAuthMode:
                 aws_profile=None,
                 api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK", "HAIJUN_AWS_API_KEY"),
             )
-            is True
-        )
+            is True )
 
 
 # --- resolve_api_key ---
@@ -369,8 +355,7 @@ class TestResolveWorkspaceId:
                 None,
                 workspace_id_env_vars=("HAIJUN_BEDROCK_MANTLE_WORKSPACE_ID", "HAIJUN_AWS_WORKSPACE_ID"),
             )
-            is None
-        )
+            is None )
 
 
 # --- get_auth_headers ---

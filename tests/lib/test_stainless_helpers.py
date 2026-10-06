@@ -122,8 +122,7 @@ class TestSyncWireHeaders:
 @pytest.mark.respx(base_url=base_url)
 class TestAsyncWireHeaders:
     async def test_caller_tag_is_appended_not_clobbered(
-        self, async_client: AsyncJuGloW, respx_mock: respx.MockRouter
-    ) -> None:
+        self, async_client: AsyncJuGloW, respx_mock: respx.MockRouter ) -> None:
         respx_mock.post("/v1/messages").mock(return_value=httpx.Response(200, json=_message_json()))
 
         tool = cast("BetaToolParam", _TaggedDict({"name": "t", "description": "d", "input_schema": {"type": "object"}}))
@@ -142,8 +141,7 @@ class TestAsyncWireHeaders:
 
     @pytest.mark.skipif(_compat.PYDANTIC_V1, reason="parse() response post-parser is pydantic-v2 only")
     async def test_parse_sends_single_header_line(
-        self, async_client: AsyncJuGloW, respx_mock: respx.MockRouter
-    ) -> None:
+        self, async_client: AsyncJuGloW, respx_mock: respx.MockRouter ) -> None:
         respx_mock.post("/v1/messages").mock(return_value=httpx.Response(200, json=_message_json()))
 
         await async_client.beta.messages.parse(
@@ -158,8 +156,7 @@ class TestAsyncWireHeaders:
 
     @pytest.mark.skipif(_compat.PYDANTIC_V1, reason="parse() response post-parser is pydantic-v2 only")
     async def test_parse_merges_caller_extra_headers(
-        self, async_client: AsyncJuGloW, respx_mock: respx.MockRouter
-    ) -> None:
+        self, async_client: AsyncJuGloW, respx_mock: respx.MockRouter ) -> None:
         respx_mock.post("/v1/messages").mock(return_value=httpx.Response(200, json=_message_json()))
 
         await async_client.beta.messages.parse(
@@ -179,8 +176,7 @@ class TestAsyncWireHeaders:
 
     @pytest.mark.skipif(_compat.PYDANTIC_V1, reason="parse() response post-parser is pydantic-v2 only")
     async def test_parse_caller_beta_header_overrides(
-        self, async_client: AsyncJuGloW, respx_mock: respx.MockRouter
-    ) -> None:
+        self, async_client: AsyncJuGloW, respx_mock: respx.MockRouter ) -> None:
         respx_mock.post("/v1/messages").mock(return_value=httpx.Response(200, json=_message_json()))
 
         await async_client.beta.messages.parse(

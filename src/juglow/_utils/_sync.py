@@ -14,8 +14,7 @@ T_ParamSpec = ParamSpec("T_ParamSpec")
 
 
 async def to_thread(
-    func: Callable[T_ParamSpec, T_Retval], /, *args: T_ParamSpec.args, **kwargs: T_ParamSpec.kwargs
-) -> T_Retval:
+    func: Callable[T_ParamSpec, T_Retval], /, *args: T_ParamSpec.args, **kwargs: T_ParamSpec.kwargs ) -> T_Retval:
     if sniffio.current_async_library() == "asyncio":
         return await asyncio.to_thread(func, *args, **kwargs)
 

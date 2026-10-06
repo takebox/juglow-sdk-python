@@ -39,7 +39,7 @@ class MemoryVersions(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return MemoryVersionsWithRawResponse(self)
 
@@ -48,7 +48,7 @@ class MemoryVersions(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return MemoryVersionsWithStreamingResponse(self)
 
@@ -181,8 +181,7 @@ class MemoryVersions(SyncAPIResource):
         extra_headers = {"juglow-beta": "agent-memory-2026-07-22", **(extra_headers or {})}
         return self._get_api_list(
             path_template(
-                "/v1/memory_stores/{memory_store_id}/memory_versions?beta=true", memory_store_id=memory_store_id
-            ),
+                "/v1/memory_stores/{memory_store_id}/memory_versions?beta=true", memory_store_id=memory_store_id ),
             page=SyncPageCursor[BetaManagedAgentsMemoryVersion],
             options=make_request_options(
                 extra_headers=extra_headers,
@@ -256,8 +255,7 @@ class MemoryVersions(SyncAPIResource):
                 memory_version_id=memory_version_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsMemoryVersion,
         )
 
@@ -269,7 +267,7 @@ class AsyncMemoryVersions(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncMemoryVersionsWithRawResponse(self)
 
@@ -278,7 +276,7 @@ class AsyncMemoryVersions(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncMemoryVersionsWithStreamingResponse(self)
 
@@ -339,8 +337,7 @@ class AsyncMemoryVersions(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform(
-                    {"view": view}, memory_version_retrieve_params.MemoryVersionRetrieveParams
-                ),
+                    {"view": view}, memory_version_retrieve_params.MemoryVersionRetrieveParams ),
             ),
             cast_to=BetaManagedAgentsMemoryVersion,
         )
@@ -413,8 +410,7 @@ class AsyncMemoryVersions(AsyncAPIResource):
         extra_headers = {"juglow-beta": "agent-memory-2026-07-22", **(extra_headers or {})}
         return self._get_api_list(
             path_template(
-                "/v1/memory_stores/{memory_store_id}/memory_versions?beta=true", memory_store_id=memory_store_id
-            ),
+                "/v1/memory_stores/{memory_store_id}/memory_versions?beta=true", memory_store_id=memory_store_id ),
             page=AsyncPageCursor[BetaManagedAgentsMemoryVersion],
             options=make_request_options(
                 extra_headers=extra_headers,
@@ -488,8 +484,7 @@ class AsyncMemoryVersions(AsyncAPIResource):
                 memory_version_id=memory_version_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsMemoryVersion,
         )
 

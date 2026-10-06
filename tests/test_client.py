@@ -349,8 +349,7 @@ class TestJuglow:
         # custom timeout given to the httpx client should be used
         with httpx.Client(timeout=None) as http_client:
             client = JuGloW(
-                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
-            )
+                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
             timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
@@ -361,8 +360,7 @@ class TestJuglow:
         # no timeout given to the httpx client should not use the httpx default
         with httpx.Client() as http_client:
             client = JuGloW(
-                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
-            )
+                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
             timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
@@ -373,8 +371,7 @@ class TestJuglow:
         # explicitly passing the default timeout currently results in it being ignored
         with httpx.Client(timeout=HTTPX_DEFAULT_TIMEOUT) as http_client:
             client = JuGloW(
-                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
-            )
+                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
             timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
@@ -983,8 +980,7 @@ class TestJuglow:
     )
     @mock.patch("time.time", mock.MagicMock(return_value=1696004797))
     def test_parse_retry_after_header(
-        self, remaining_retries: int, retry_after: str, timeout: float, client: JuGloW
-    ) -> None:
+        self, remaining_retries: int, retry_after: str, timeout: float, client: JuGloW ) -> None:
         headers = httpx.Headers({"retry-after": retry_after})
         options = FinalRequestOptions(method="get", url="/foo", max_retries=3)
         calculated = client._calculate_retry_timeout(remaining_retries, options, headers)
@@ -1071,8 +1067,7 @@ class TestJuglow:
     @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_omit_retry_count_header(
-        self, client: JuGloW, failures_before_success: int, respx_mock: MockRouter
-    ) -> None:
+        self, client: JuGloW, failures_before_success: int, respx_mock: MockRouter ) -> None:
         client = client.with_options(max_retries=4)
 
         nb_retries = 0
@@ -1104,8 +1099,7 @@ class TestJuglow:
     @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_overwrite_retry_count_header(
-        self, client: JuGloW, failures_before_success: int, respx_mock: MockRouter
-    ) -> None:
+        self, client: JuGloW, failures_before_success: int, respx_mock: MockRouter ) -> None:
         client = client.with_options(max_retries=4)
 
         nb_retries = 0
@@ -1137,8 +1131,7 @@ class TestJuglow:
     @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_retries_taken_new_response_class(
-        self, client: JuGloW, failures_before_success: int, respx_mock: MockRouter
-    ) -> None:
+        self, client: JuGloW, failures_before_success: int, respx_mock: MockRouter ) -> None:
         client = client.with_options(max_retries=4)
 
         nb_retries = 0
@@ -1461,8 +1454,7 @@ class TestAsyncJuGloW:
         # custom timeout given to the httpx client should be used
         async with httpx.AsyncClient(timeout=None) as http_client:
             client = AsyncJuGloW(
-                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
-            )
+                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
             timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
@@ -1473,8 +1465,7 @@ class TestAsyncJuGloW:
         # no timeout given to the httpx client should not use the httpx default
         async with httpx.AsyncClient() as http_client:
             client = AsyncJuGloW(
-                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
-            )
+                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
             timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
@@ -1485,8 +1476,7 @@ class TestAsyncJuGloW:
         # explicitly passing the default timeout currently results in it being ignored
         async with httpx.AsyncClient(timeout=HTTPX_DEFAULT_TIMEOUT) as http_client:
             client = AsyncJuGloW(
-                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
-            )
+                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
             timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
@@ -1844,8 +1834,7 @@ class TestAsyncJuGloW:
 
     @pytest.mark.respx(base_url=base_url)
     async def test_binary_content_upload_with_body_is_deprecated(
-        self, respx_mock: MockRouter, async_client: AsyncJuGloW
-    ) -> None:
+        self, respx_mock: MockRouter, async_client: AsyncJuGloW ) -> None:
         respx_mock.post("/upload").mock(side_effect=mirror_request_content)
 
         file_content = b"Hello, this is a test file."
@@ -1902,8 +1891,7 @@ class TestAsyncJuGloW:
 
     @pytest.mark.respx(base_url=base_url)
     async def test_non_application_json_content_type_for_json_data(
-        self, respx_mock: MockRouter, async_client: AsyncJuGloW
-    ) -> None:
+        self, respx_mock: MockRouter, async_client: AsyncJuGloW ) -> None:
         """
         Response that sets Content-Type to something other than application/json but returns json data
         """
@@ -1925,8 +1913,7 @@ class TestAsyncJuGloW:
 
     async def test_base_url_setter(self) -> None:
         client = AsyncJuGloW(
-            base_url="https://example.com/from_init", api_key=api_key, _strict_response_validation=True
-        )
+            base_url="https://example.com/from_init", api_key=api_key, _strict_response_validation=True )
         assert client.base_url == "https://example.com/from_init/"
 
         client.base_url = "https://example.com/from_setter"  # type: ignore[assignment]
@@ -1944,8 +1931,7 @@ class TestAsyncJuGloW:
         "client",
         [
             AsyncJuGloW(
-                base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True
-            ),
+                base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True ),
             AsyncJuGloW(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
@@ -1970,8 +1956,7 @@ class TestAsyncJuGloW:
         "client",
         [
             AsyncJuGloW(
-                base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True
-            ),
+                base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True ),
             AsyncJuGloW(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
@@ -1996,8 +1981,7 @@ class TestAsyncJuGloW:
         "client",
         [
             AsyncJuGloW(
-                base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True
-            ),
+                base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True ),
             AsyncJuGloW(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
@@ -2110,8 +2094,7 @@ class TestAsyncJuGloW:
     )
     @mock.patch("time.time", mock.MagicMock(return_value=1696004797))
     async def test_parse_retry_after_header(
-        self, remaining_retries: int, retry_after: str, timeout: float, async_client: AsyncJuGloW
-    ) -> None:
+        self, remaining_retries: int, retry_after: str, timeout: float, async_client: AsyncJuGloW ) -> None:
         headers = httpx.Headers({"retry-after": retry_after})
         options = FinalRequestOptions(method="get", url="/foo", max_retries=3)
         calculated = async_client._calculate_retry_timeout(remaining_retries, options, headers)
@@ -2120,8 +2103,7 @@ class TestAsyncJuGloW:
     @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     async def test_retrying_timeout_errors_doesnt_leak(
-        self, respx_mock: MockRouter, async_client: AsyncJuGloW
-    ) -> None:
+        self, respx_mock: MockRouter, async_client: AsyncJuGloW ) -> None:
         respx_mock.post("/v1/messages").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
@@ -2141,8 +2123,7 @@ class TestAsyncJuGloW:
     @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     async def test_retrying_status_errors_doesnt_leak(
-        self, respx_mock: MockRouter, async_client: AsyncJuGloW
-    ) -> None:
+        self, respx_mock: MockRouter, async_client: AsyncJuGloW ) -> None:
         respx_mock.post("/v1/messages").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
@@ -2202,8 +2183,7 @@ class TestAsyncJuGloW:
     @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     async def test_omit_retry_count_header(
-        self, async_client: AsyncJuGloW, failures_before_success: int, respx_mock: MockRouter
-    ) -> None:
+        self, async_client: AsyncJuGloW, failures_before_success: int, respx_mock: MockRouter ) -> None:
         client = async_client.with_options(max_retries=4)
 
         nb_retries = 0
@@ -2235,8 +2215,7 @@ class TestAsyncJuGloW:
     @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     async def test_overwrite_retry_count_header(
-        self, async_client: AsyncJuGloW, failures_before_success: int, respx_mock: MockRouter
-    ) -> None:
+        self, async_client: AsyncJuGloW, failures_before_success: int, respx_mock: MockRouter ) -> None:
         client = async_client.with_options(max_retries=4)
 
         nb_retries = 0
@@ -2268,8 +2247,7 @@ class TestAsyncJuGloW:
     @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     async def test_retries_taken_new_response_class(
-        self, async_client: AsyncJuGloW, failures_before_success: int, respx_mock: MockRouter
-    ) -> None:
+        self, async_client: AsyncJuGloW, failures_before_success: int, respx_mock: MockRouter ) -> None:
         client = async_client.with_options(max_retries=4)
 
         nb_retries = 0
@@ -2351,8 +2329,7 @@ class TestAsyncJuGloW:
 
         with pytest.raises(APIStatusError) as exc_info:
             await async_client.post(
-                "/redirect", body={"key": "value"}, options={"follow_redirects": False}, cast_to=httpx.Response
-            )
+                "/redirect", body={"key": "value"}, options={"follow_redirects": False}, cast_to=httpx.Response )
 
         assert exc_info.value.response.status_code == 302
         assert exc_info.value.response.headers["Location"] == f"{base_url}/redirected"

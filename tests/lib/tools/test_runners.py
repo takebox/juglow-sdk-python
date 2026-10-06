@@ -70,8 +70,7 @@ ParsedBetaMessage(
         output_tokens_details=None,
         server_tool_use=None,
         service_tier='standard',
-        speed=None
-    )
+        speed=None )
 )
 """
         ),
@@ -121,8 +120,7 @@ ParsedBetaMessage(
         output_tokens_details=None,
         server_tool_use=None,
         service_tier='standard',
-        speed=None
-    )
+        speed=None )
 )
 """
         )
@@ -722,8 +720,7 @@ def test_refusal_ends_runner_without_executing_tools_sync(respx_mock: MockRouter
         return json.dumps(_get_weather(location, units))
 
     with JuGloW(
-        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
-    ) as client:
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0 ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
             model="haijun-haiku",
@@ -759,8 +756,7 @@ async def test_refusal_ends_runner_without_executing_tools_async(respx_mock: Moc
         return json.dumps(_get_weather(location, units))
 
     async with AsyncJuGloW(
-        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
-    ) as client:
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0 ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
             model="haijun-haiku",
@@ -872,8 +868,7 @@ def test_tool_removal_routes_call_down_unknown_tool_path_sync(respx_mock: MockRo
         return timezone
 
     with JuGloW(
-        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
-    ) as client:
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0 ) as client:
         with pytest.warns(UserWarning, match="Tool 'get_weather' not found in tool runner"):
             removed_results = _run_sync_tool_use(
                 client,
@@ -930,8 +925,7 @@ def test_tool_addition_re_enables_removed_tool_sync(respx_mock: MockRouter) -> N
         return json.dumps(_get_weather(location, units))
 
     with JuGloW(
-        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
-    ) as client:
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0 ) as client:
         results = _run_sync_tool_use(
             client,
             tools=[get_weather],
@@ -977,8 +971,7 @@ async def test_tool_removal_routes_call_down_unknown_tool_path_async(respx_mock:
         return json.dumps(_get_weather(location, units))
 
     async with AsyncJuGloW(
-        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
-    ) as client:
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0 ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
             model="haijun-haiku",
@@ -1053,8 +1046,7 @@ def test_tool_removal_via_append_messages_between_turns_sync(respx_mock: MockRou
         return f"12:00 {timezone}"
 
     with JuGloW(
-        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
-    ) as client:
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0 ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
             model="haijun-haiku",
@@ -1100,8 +1092,7 @@ def test_tool_removal_via_append_messages_same_turn_sync(respx_mock: MockRouter)
         return json.dumps(_get_weather(location, units))
 
     with JuGloW(
-        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
-    ) as client:
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0 ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
             model="haijun-haiku",
@@ -1156,8 +1147,7 @@ def test_tool_removal_via_set_messages_params_sync(respx_mock: MockRouter) -> No
     ]
 
     with JuGloW(
-        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
-    ) as client:
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0 ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
             model="haijun-haiku",
@@ -1201,8 +1191,7 @@ def test_tool_addition_via_append_messages_re_enables_removed_tool_sync(respx_mo
         return json.dumps(_get_weather(location, units))
 
     with JuGloW(
-        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
-    ) as client:
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0 ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
             model="haijun-haiku",

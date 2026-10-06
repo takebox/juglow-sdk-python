@@ -47,7 +47,7 @@ class Files(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return FilesWithRawResponse(self)
 
@@ -56,7 +56,7 @@ class Files(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return FilesWithStreamingResponse(self)
 
@@ -179,8 +179,7 @@ class Files(SyncAPIResource):
         return self._delete(
             path_template("/v1/files/{file_id}?beta=true", file_id=file_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=DeletedFile,
         )
 
@@ -229,8 +228,7 @@ class Files(SyncAPIResource):
         return self._get(
             path_template("/v1/files/{file_id}/content?beta=true", file_id=file_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BinaryAPIResponse,
         )
 
@@ -278,8 +276,7 @@ class Files(SyncAPIResource):
         return self._get(
             path_template("/v1/files/{file_id}?beta=true", file_id=file_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=FileMetadata,
         )
 
@@ -334,8 +331,7 @@ class Files(SyncAPIResource):
             body=maybe_transform(body, file_upload_params.FileUploadParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=FileMetadata,
         )
 
@@ -347,7 +343,7 @@ class AsyncFiles(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncFilesWithRawResponse(self)
 
@@ -356,7 +352,7 @@ class AsyncFiles(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncFilesWithStreamingResponse(self)
 
@@ -479,8 +475,7 @@ class AsyncFiles(AsyncAPIResource):
         return await self._delete(
             path_template("/v1/files/{file_id}?beta=true", file_id=file_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=DeletedFile,
         )
 
@@ -529,8 +524,7 @@ class AsyncFiles(AsyncAPIResource):
         return await self._get(
             path_template("/v1/files/{file_id}/content?beta=true", file_id=file_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=AsyncBinaryAPIResponse,
         )
 
@@ -578,8 +572,7 @@ class AsyncFiles(AsyncAPIResource):
         return await self._get(
             path_template("/v1/files/{file_id}?beta=true", file_id=file_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=FileMetadata,
         )
 
@@ -634,8 +627,7 @@ class AsyncFiles(AsyncAPIResource):
             body=await async_maybe_transform(body, file_upload_params.FileUploadParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=FileMetadata,
         )
 

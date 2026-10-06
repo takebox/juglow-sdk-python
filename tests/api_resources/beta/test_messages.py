@@ -581,8 +581,7 @@ class TestMessages:
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Test"}],
                 model="haijun-sonnet-5-20250929",
-                output_format=MyModel,  # type: ignore
-            )
+                output_format=MyModel,  # type: ignore )
 
         error_message = str(exc_info.value)
         assert "parse()" in error_message
@@ -1154,8 +1153,7 @@ class TestAsyncMessages:
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Test"}],
                 model="haijun-sonnet-5-20250929",
-                output_format=MyModel,  # type: ignore
-            )
+                output_format=MyModel,  # type: ignore )
 
         error_message = str(exc_info.value)
         assert "parse()" in error_message

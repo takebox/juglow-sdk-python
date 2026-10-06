@@ -88,8 +88,7 @@ def _fake_client(work: _FakeWorkResource, sessions: _FakeSessions) -> Any:
 
 
 def _install_scoped_client(
-    monkeypatch: pytest.MonkeyPatch, work: _FakeWorkResource, sessions: _FakeSessions | None = None
-) -> list[dict[str, Any]]:
+    monkeypatch: pytest.MonkeyPatch, work: _FakeWorkResource, sessions: _FakeSessions | None = None ) -> list[dict[str, Any]]:
     """Intercept the shared bearer-auth client factory.
 
     Returns the list of args the factory was called with so a test can assert
@@ -484,8 +483,7 @@ async def test_heartbeat_starts_before_track_download(monkeypatch: pytest.Monkey
             *,
             environment_id: str,  # noqa: ARG002
             expected_last_heartbeat: str,  # noqa: ARG002
-            extra_headers: Any = None,  # noqa: ARG002
-        ) -> Any:
+            extra_headers: Any = None,  # noqa: ARG002 ) -> Any:
             order.append("heartbeat")
             heartbeat_fired.set()
             # state="running" so the heartbeat loop keeps going (does not stop
@@ -514,8 +512,7 @@ async def test_heartbeat_starts_before_track_download(monkeypatch: pytest.Monkey
         tools: Any,  # noqa: ARG001
         max_idle: Any = None,  # noqa: ARG001
         environment_key: Any = None,  # noqa: ARG001
-        extra_headers: Any = None,  # noqa: ARG001
-    ):
+        extra_headers: Any = None,  # noqa: ARG001 ):
         async def _iter() -> AsyncIterator[Any]:
             return
             yield  # pragma: no cover  (makes this an async generator function)

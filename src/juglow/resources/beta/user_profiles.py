@@ -31,7 +31,7 @@ class UserProfiles(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return UserProfilesWithRawResponse(self)
 
@@ -40,7 +40,7 @@ class UserProfiles(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return UserProfilesWithStreamingResponse(self)
 
@@ -111,8 +111,7 @@ class UserProfiles(SyncAPIResource):
                 user_profile_create_params.UserProfileCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaUserProfile,
         )
 
@@ -158,8 +157,7 @@ class UserProfiles(SyncAPIResource):
         return self._get(
             path_template("/v1/user_profiles/{user_profile_id}?beta=true", user_profile_id=user_profile_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaUserProfile,
         )
 
@@ -233,8 +231,7 @@ class UserProfiles(SyncAPIResource):
                 user_profile_update_params.UserProfileUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaUserProfile,
         )
 
@@ -344,11 +341,9 @@ class UserProfiles(SyncAPIResource):
         extra_headers = {"juglow-beta": "user-profiles-2026-03-24", **(extra_headers or {})}
         return self._post(
             path_template(
-                "/v1/user_profiles/{user_profile_id}/enrollment_url?beta=true", user_profile_id=user_profile_id
-            ),
+                "/v1/user_profiles/{user_profile_id}/enrollment_url?beta=true", user_profile_id=user_profile_id ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaUserProfileEnrollmentURL,
         )
 
@@ -360,7 +355,7 @@ class AsyncUserProfiles(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncUserProfilesWithRawResponse(self)
 
@@ -369,7 +364,7 @@ class AsyncUserProfiles(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncUserProfilesWithStreamingResponse(self)
 
@@ -440,8 +435,7 @@ class AsyncUserProfiles(AsyncAPIResource):
                 user_profile_create_params.UserProfileCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaUserProfile,
         )
 
@@ -487,8 +481,7 @@ class AsyncUserProfiles(AsyncAPIResource):
         return await self._get(
             path_template("/v1/user_profiles/{user_profile_id}?beta=true", user_profile_id=user_profile_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaUserProfile,
         )
 
@@ -562,8 +555,7 @@ class AsyncUserProfiles(AsyncAPIResource):
                 user_profile_update_params.UserProfileUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaUserProfile,
         )
 
@@ -673,11 +665,9 @@ class AsyncUserProfiles(AsyncAPIResource):
         extra_headers = {"juglow-beta": "user-profiles-2026-03-24", **(extra_headers or {})}
         return await self._post(
             path_template(
-                "/v1/user_profiles/{user_profile_id}/enrollment_url?beta=true", user_profile_id=user_profile_id
-            ),
+                "/v1/user_profiles/{user_profile_id}/enrollment_url?beta=true", user_profile_id=user_profile_id ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaUserProfileEnrollmentURL,
         )
 

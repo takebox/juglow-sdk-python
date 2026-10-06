@@ -134,8 +134,7 @@ class TestOutputFormatConversion:
         assert "output_format" not in body
 
     def test_count_tokens_converts_output_format_to_output_config(
-        self, client: JuGloW, respx_mock: MockRouter
-    ) -> None:
+        self, client: JuGloW, respx_mock: MockRouter ) -> None:
         """Verify .count_tokens() converts output_format to output_config.format."""
         respx_mock.post("/v1/messages/count_tokens?beta=true").mock(
             return_value=httpx.Response(200, json={"input_tokens": 10})
@@ -373,8 +372,7 @@ class TestOutputConfigConflict:
                 messages=[{"role": "user", "content": "Test"}],
                 model="haijun-sonnet-5",
                 output_format={"type": "json_schema", "schema": {"type": "object"}},
-                output_config={"effort": "high"},  # No format field, so no conflict
-            )
+                output_config={"effort": "high"},  # No format field, so no conflict )
 
 
 class TestStructuredOutputsBetaHeader:
@@ -494,8 +492,7 @@ class TestAsyncOutputFormatConversion:
     """Test async variants of output_format conversion."""
 
     async def test_async_create_converts_output_format(
-        self, async_client: AsyncJuGloW, respx_mock: MockRouter
-    ) -> None:
+        self, async_client: AsyncJuGloW, respx_mock: MockRouter ) -> None:
         """Verify async .create() converts output_format to output_config.format."""
         respx_mock.post("/v1/messages?beta=true").mock(
             return_value=httpx.Response(
@@ -567,8 +564,7 @@ class TestAsyncOutputFormatConversion:
         assert "output_format" not in body
 
     async def test_async_methods_emit_deprecation_warnings(
-        self, async_client: AsyncJuGloW, respx_mock: MockRouter
-    ) -> None:
+        self, async_client: AsyncJuGloW, respx_mock: MockRouter ) -> None:
         """Verify async methods emit DeprecationWarning."""
         respx_mock.post("/v1/messages?beta=true").mock(
             return_value=httpx.Response(

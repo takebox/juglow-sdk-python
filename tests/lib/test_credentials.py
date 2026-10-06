@@ -411,8 +411,7 @@ class TestCredentialsFile:
 
     @pytest.mark.respx(base_url=BASE_URL)
     def test_workload_identity_disk_cache_stale_reexchange(
-        self, respx_mock: MockRouter, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, tmp_path: pathlib.Path ) -> None:
         """A stale on-disk credentials file is ignored â€” fresh exchange happens
         and the file is rewritten."""
         jwt_path = tmp_path / "jwt"
@@ -439,8 +438,7 @@ class TestCredentialsFile:
 
     @pytest.mark.respx(base_url=BASE_URL)
     def test_workload_identity_disk_cache_corrupt_expires_at_reexchange(
-        self, respx_mock: MockRouter, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, tmp_path: pathlib.Path ) -> None:
         """A non-numeric expires_at in the on-disk credentials file falls
         through to re-exchange instead of raising."""
         jwt_path = tmp_path / "jwt"
@@ -517,8 +515,7 @@ class TestCredentialsFile:
             CredentialsFile()()
 
     def test_workload_identity_token_omitted_uses_env(
-        self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+        self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch ) -> None:
         jwt_path = tmp_path / "jwt"
         jwt_path.write_text("via-env-chain")
         monkeypatch.setenv("HAIJUN_IDENTITY_TOKEN_FILE", str(jwt_path))
@@ -683,8 +680,7 @@ class TestCredentialsFile:
             CredentialsFile("nonexistent")()
 
     def test_default_credentials_explicit_env_propagates_error(
-        self, tmp_path: pathlib.Path, clean_env: pytest.MonkeyPatch
-    ) -> None:
+        self, tmp_path: pathlib.Path, clean_env: pytest.MonkeyPatch ) -> None:
         """When HAIJUN_PROFILE or HAIJUN_CONFIG_DIR is set explicitly, a
         broken config file surfaces immediately â€” not swallowed into a 'no auth
         configured' misdirection."""
@@ -755,8 +751,7 @@ class TestCredentialsFile:
             CredentialsFile()()
 
     def test_credentials_file_group_readable_warns(
-        self, tmp_path: pathlib.Path, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, tmp_path: pathlib.Path, caplog: pytest.LogCaptureFixture ) -> None:
         if os.name != "posix":
             pytest.skip("POSIX mode bits only")
         _write_profile(
@@ -1717,8 +1712,7 @@ class TestDefaultCredentials:
         assert result.provider().token == "from-work"
 
     def test_default_dir_with_configs_triggers_tier1(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         """No env vars but configs/ has files â†’ tier 1 fires via _has_any_config()."""
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(tmp_path, "default", {"type": "external"}, {"access_token": "from-default"})
@@ -1767,8 +1761,7 @@ class TestDefaultCredentials:
 
     @pytest.mark.respx()
     def test_workload_identity_workspace_id_env_empty_treated_unset(
-        self, clean_env: pytest.MonkeyPatch, respx_mock: MockRouter
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, respx_mock: MockRouter ) -> None:
         """``HAIJUN_WORKSPACE_ID=""`` (a defaulted-but-empty CI variable) is
         treated as unset â€” never put ``"workspace_id": ""`` on the wire."""
         clean_env.setenv("HAIJUN_IDENTITY_TOKEN", "literal-jwt")
@@ -1807,8 +1800,7 @@ class TestDefaultCredentials:
         assert default_credentials() is None
 
     def test_env_federation_beats_fallback_on_disk_profile(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         """Step 4 (env federation trio) sits above step 5 (fallback on-disk
         profile) in the precedence spec: a machine with WIF env vars wired
         up must use WIF even if a leftover ``default`` profile exists on
@@ -2030,8 +2022,7 @@ class TestJuglowCredentials:
 
     @pytest.mark.respx()
     def test_zero_config_workload_identity_from_env(
-        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         f = tmp_path / "jwt"
         f.write_text("env-jwt")
         clean_env.setenv("HAIJUN_IDENTITY_TOKEN_FILE", str(f))
@@ -2054,8 +2045,7 @@ class TestJuglowCredentials:
 
     @pytest.mark.respx()
     def test_zero_config_credentials_file_from_env(
-        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         # no_default_creds_file patched _config_dir â†’ empty dir; re-point at tmp_path
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         clean_env.setenv("HAIJUN_CONFIG_DIR", str(tmp_path))
@@ -2106,8 +2096,7 @@ class TestJuglowCredentials:
         assert str(JuGloW().base_url).rstrip("/") == "https://platform.juglow.my.id"
 
     def test_config_dict_base_url_adopted_by_client(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         """Outbound, ``config=`` path: ``JuGloW(config={"base_url": ...})``
         adopts the dict's ``base_url`` for API requests when no kwarg/env is
         set, mirroring the disk-profile behaviour."""
@@ -2130,8 +2119,7 @@ class TestJuglowCredentials:
 
     @pytest.mark.respx()
     def test_workspace_id_header_from_config(
-        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         """workspace_id in the config file â†’ Juglow-workspace-id header on API requests."""
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         clean_env.setenv("HAIJUN_CONFIG_DIR", str(tmp_path))
@@ -2208,8 +2196,7 @@ class TestJuglowCredentials:
 
     @pytest.mark.respx()
     def test_api_key_precedence_preserved(
-        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         # HAIJUN_API_KEY takes precedence over the credential chain â€” credentials
         # stays None and X-Api-Key is used (existing behavior preserved).
         clean_env.setenv("HAIJUN_API_KEY", "sk-ant-api-key")
@@ -2438,8 +2425,7 @@ class TestInMemoryConfig:
 
     @pytest.mark.respx()
     def test_oidc_federation_no_credentials_path_no_disk_cache(
-        self, respx_mock: MockRouter, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, tmp_path: pathlib.Path ) -> None:
         """Without ``authentication.credentials_path``, every call exchanges
         fresh â€” nothing is written to disk."""
         token_route = respx_mock.post(TOKEN_URL).mock(
@@ -2459,8 +2445,7 @@ class TestInMemoryConfig:
 
     @pytest.mark.respx()
     def test_oidc_federation_with_credentials_path_disk_cache(
-        self, respx_mock: MockRouter, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, tmp_path: pathlib.Path ) -> None:
         """With ``authentication.credentials_path`` set, the exchanged token is
         written to that path and a second call returns it without re-exchanging."""
         creds_path = tmp_path / "cache.json"
@@ -2744,16 +2729,14 @@ class TestTypedCredentialErrors:
     """
 
     def test_invalid_profile_name_raises_Juglow_error(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         clean_env.setenv("HAIJUN_PROFILE", "work/dev")
         with pytest.raises(JuGloWError, match="HAIJUN_PROFILE"):
             JuGloW()
 
     def test_profile_name_with_dot_prefix_raises_Juglow_error(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         clean_env.setenv("HAIJUN_PROFILE", ".hidden")
         with pytest.raises(JuGloWError, match="start with a dot"):
@@ -2769,8 +2752,7 @@ class TestTypedCredentialErrors:
             creds.bind_base_url("http://evil.example/")
 
     def test_http_base_url_in_config_file_raises_Juglow_error(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
@@ -2819,8 +2801,7 @@ class TestTypedCredentialErrors:
             provider()
 
     def test_user_oauth_malformed_expires_at_raises_Juglow_error(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         """An ISO8601 string in ``expires_at`` must raise JuGloWError naming the expected shape."""
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
@@ -2951,8 +2932,7 @@ class TestCredentialPrecedence:
     # -- step 1 beats step 2: explicit credentials= beats env static --------
 
     def test_explicit_credentials_beats_env_api_key(
-        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture ) -> None:
         """Per spec, explicit ``credentials=`` is step 1 and beats env
         ``HAIJUN_API_KEY`` (step 2). The credentials provider wins, env
         api_key is ignored entirely, no X-Api-Key on the wire, no warning."""
@@ -2968,8 +2948,7 @@ class TestCredentialPrecedence:
         assert not any("takes precedence" in r.message for r in caplog.records)
 
     def test_explicit_credentials_beats_env_auth_token(
-        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture ) -> None:
         clean_env.setenv("HAIJUN_AUTH_TOKEN", "env-auth-token")
         with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
             client = JuGloW(credentials=StaticToken("bearer-from-creds"))
@@ -2980,8 +2959,7 @@ class TestCredentialPrecedence:
         assert not any("takes precedence" in r.message for r in caplog.records)
 
     def test_explicit_config_beats_env_api_key(
-        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture, tmp_path: pathlib.Path ) -> None:
         """Explicit ``config=`` is also step 1 and beats env api_key."""
         jwt = tmp_path / "jwt"
         jwt.write_text("ext-jwt.ext-jwt.ext-jwt")
@@ -3014,8 +2992,7 @@ class TestCredentialPrecedence:
         assert any("`api_key=`" in r.message for r in caplog.records)
 
     def test_explicit_auth_token_shadows_explicit_credentials_with_warning(
-        self, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, caplog: pytest.LogCaptureFixture ) -> None:
         with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
             client = JuGloW(auth_token="static-bearer", credentials=StaticToken("bearer-from-creds"))
         req = self._walk_sync_auth(client)
@@ -3047,8 +3024,7 @@ class TestCredentialPrecedence:
     # -- step 2 shadows steps 3-5: env static shadows auto-discovery ---------
 
     def test_env_api_key_shadows_env_federation_trio_with_warning(
-        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture, tmp_path: pathlib.Path ) -> None:
         """Env ``HAIJUN_API_KEY`` + env federation trio â†’ api_key wins
         (step 2 beats step 4), warn so the user knows WIF is being shadowed."""
         jwt = tmp_path / "jwt"
@@ -3064,8 +3040,7 @@ class TestCredentialPrecedence:
         assert any("HAIJUN_API_KEY" in r.message and "profile / federation" in r.message for r in caplog.records)
 
     def test_env_api_key_shadows_env_profile_with_warning(
-        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture ) -> None:
         clean_env.setenv("HAIJUN_API_KEY", "sk-from-env")
         clean_env.setenv("HAIJUN_PROFILE", "dev")
         with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
@@ -3075,8 +3050,7 @@ class TestCredentialPrecedence:
         assert any("HAIJUN_API_KEY" in r.message and "profile / federation" in r.message for r in caplog.records)
 
     def test_env_api_key_alone_does_not_warn(
-        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture ) -> None:
         """No shadow if there's nothing to shadow â€” env api_key alone (no
         auto-discoverable credential signals) is just the normal path."""
         clean_env.setenv("HAIJUN_API_KEY", "sk-from-env")
@@ -3098,8 +3072,7 @@ class TestCredentialPrecedence:
     # -- one-shot warning ---------------------------------------------------
 
     def test_shadow_warning_is_one_shot_per_process(
-        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture ) -> None:
         """The shadow warning is emitted once per shadow-key per process so
         repeated client construction doesn't spam logs."""
         clean_env.setenv("HAIJUN_API_KEY", "sk-from-env")
@@ -3126,23 +3099,20 @@ class TestDanglingActiveConfig:
             default_credentials()
 
     def test_pointer_at_missing_profile_raises_via_client(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         (tmp_path / "active_config").write_text("prod")
         with pytest.raises(JuGloWError, match="prod"):
             JuGloW()
 
     def test_empty_pointer_file_is_silent_fallthrough(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         (tmp_path / "active_config").write_text("")
         assert default_credentials() is None
 
     def test_pointer_at_present_profile_loads_normally(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         (tmp_path / "active_config").write_text("prod")
         _write_profile(tmp_path, "prod", {"type": "external"}, {"access_token": "from-prod"})
@@ -3193,8 +3163,7 @@ class TestEmptySecretFieldFalsiness:
             CredentialsFile()()
 
     def test_empty_refresh_token_treated_as_missing(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
@@ -3340,8 +3309,7 @@ class TestNoSecretsInTracebackFrameLocals:
 
     @pytest.mark.respx(base_url=BASE_URL)
     def test_refresh_failure_does_not_retain_refresh_token(
-        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         self._write_refresh_profile(clean_env, tmp_path)
         respx_mock.post(TOKEN_ENDPOINT).mock(return_value=httpx.Response(400, json={"error": "invalid_grant"}))
         with pytest.raises(WorkloadIdentityError) as exc_info:
@@ -3350,8 +3318,7 @@ class TestNoSecretsInTracebackFrameLocals:
 
     @pytest.mark.respx(base_url=BASE_URL)
     def test_refresh_invalid_expires_does_not_retain_new_token(
-        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         self._write_refresh_profile(clean_env, tmp_path)
         respx_mock.post(TOKEN_ENDPOINT).mock(
             return_value=httpx.Response(200, json={"access_token": _SECRET_MINTED, "expires_in": "NaN"})
@@ -3362,8 +3329,7 @@ class TestNoSecretsInTracebackFrameLocals:
 
     @pytest.mark.respx(base_url=BASE_URL)
     def test_refresh_non_json_response_raises_redacted_error(
-        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         """A non-JSON refresh response raises WorkloadIdentityError (it
         previously escaped as a raw json ValueError whose ``.doc`` carries the
         full response body) and retains no secrets."""
@@ -3378,8 +3344,7 @@ class TestNoSecretsInTracebackFrameLocals:
 
     @pytest.mark.respx(base_url=BASE_URL)
     def test_refresh_json_array_response_raises_redacted_error(
-        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         """A JSON-but-non-object refresh body (which can echo the request's
         refresh token) is rejected at the wrap boundary and never bound to a
         frame local."""
@@ -3390,8 +3355,7 @@ class TestNoSecretsInTracebackFrameLocals:
         _assert_not_in_sdk_frame_locals(exc_info.value, "rt-SECRET", "old-access-SECRET")
 
     def test_scalar_credentials_file_does_not_retain_token(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         """A credentials file whose top level is a JSON string (e.g. a bare
         token pasted into the file) must raise a clean error without the
         value surviving in frame locals."""
@@ -3407,8 +3371,7 @@ class TestNoSecretsInTracebackFrameLocals:
 
     @pytest.mark.respx(base_url=BASE_URL)
     def test_refresh_success_writes_raw_tokens_to_disk_and_wire(
-        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         """SecretStr wrapping is an in-memory concern only: the refresh POST
         body and the persisted credentials file must carry the raw values â€”
         including unknown string fields, which are wrapped by default and must
@@ -3442,8 +3405,7 @@ class TestNoSecretsInTracebackFrameLocals:
         assert on_disk["id_token"] == "idt-SECRET"
 
     def test_missing_access_token_does_not_retain_refresh_token(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         """A credentials file that has a refresh_token but no access_token
         raises before any exchange; the on-disk dict must not survive raw in
         frame locals."""
@@ -3459,8 +3421,7 @@ class TestNoSecretsInTracebackFrameLocals:
         _assert_not_in_sdk_frame_locals(exc_info.value, "rt-SECRET")
 
     def test_invalid_json_credentials_does_not_retain_raw_text(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(tmp_path, "default", config={"type": "authorized_user", "client_id": "cid"})
         creds_path = tmp_path / "credentials" / "default.json"
@@ -3476,8 +3437,7 @@ class TestNoSecretsInTracebackFrameLocals:
         assert cause is not None and cause.__traceback__ is None
 
     def test_credentials_type_mismatch_does_not_retain_tokens(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
@@ -3494,8 +3454,7 @@ class TestNoSecretsInTracebackFrameLocals:
         _assert_not_in_sdk_frame_locals(exc_info.value, "at-SECRET", "rt-SECRET")
 
     def test_corrupt_expires_at_does_not_retain_tokens(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         """``_coerce_expires_at`` raises in a secret-free frame, but the error
         propagates through ``_call_user_oauth`` whose locals hold the creds
         dict â€” those locals must render redacted. The ``id_token`` field pins
@@ -3518,8 +3477,7 @@ class TestNoSecretsInTracebackFrameLocals:
         _assert_not_in_sdk_frame_locals(exc_info.value, "at-SECRET", "rt-SECRET", "idt-SECRET")
 
     def test_corrupt_expires_at_external_profile_does_not_retain_token(
-        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         """Same as above via the no-client_id (externally rotated) path."""
         clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
@@ -3534,8 +3492,7 @@ class TestNoSecretsInTracebackFrameLocals:
 
     @pytest.mark.respx(base_url=BASE_URL)
     def test_failed_writeback_after_refresh_does_not_retain_tokens(
-        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
-    ) -> None:
+        self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path ) -> None:
         """A refresh that succeeds but fails to persist raises the write error
         (the refresh token may have rotated server-side) â€” but the propagating
         traceback's frames must not retain the new access token, the new or

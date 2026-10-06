@@ -34,7 +34,7 @@ class Resources(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return ResourcesWithRawResponse(self)
 
@@ -43,7 +43,7 @@ class Resources(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return ResourcesWithStreamingResponse(self)
 
@@ -98,12 +98,9 @@ class Resources(SyncAPIResource):
                     resource_id=resource_id,
                 ),
                 options=make_request_options(
-                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-                ),
+                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
                 cast_to=cast(
-                    Any, ResourceRetrieveResponse
-                ),  # Union types cannot be passed in as arguments in the type system
-            ),
+                    Any, ResourceRetrieveResponse ),  # Union types cannot be passed in as arguments in the type system ),
         )
 
     def update(
@@ -161,15 +158,11 @@ class Resources(SyncAPIResource):
                     resource_id=resource_id,
                 ),
                 body=maybe_transform(
-                    {"authorization_token": authorization_token}, resource_update_params.ResourceUpdateParams
-                ),
+                    {"authorization_token": authorization_token}, resource_update_params.ResourceUpdateParams ),
                 options=make_request_options(
-                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-                ),
+                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
                 cast_to=cast(
-                    Any, ResourceUpdateResponse
-                ),  # Union types cannot be passed in as arguments in the type system
-            ),
+                    Any, ResourceUpdateResponse ),  # Union types cannot be passed in as arguments in the type system ),
         )
 
     def list(
@@ -235,9 +228,7 @@ class Resources(SyncAPIResource):
                 ),
             ),
             model=cast(
-                Any, BetaManagedAgentsSessionResource
-            ),  # Union types cannot be passed in as arguments in the type system
-        )
+                Any, BetaManagedAgentsSessionResource ),  # Union types cannot be passed in as arguments in the type system )
 
     def delete(
         self,
@@ -288,8 +279,7 @@ class Resources(SyncAPIResource):
                 resource_id=resource_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsDeleteSessionResource,
         )
 
@@ -350,8 +340,7 @@ class Resources(SyncAPIResource):
                 resource_add_params.ResourceAddParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsFileResource,
         )
 
@@ -363,7 +352,7 @@ class AsyncResources(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncResourcesWithRawResponse(self)
 
@@ -372,7 +361,7 @@ class AsyncResources(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncResourcesWithStreamingResponse(self)
 
@@ -427,12 +416,9 @@ class AsyncResources(AsyncAPIResource):
                     resource_id=resource_id,
                 ),
                 options=make_request_options(
-                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-                ),
+                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
                 cast_to=cast(
-                    Any, ResourceRetrieveResponse
-                ),  # Union types cannot be passed in as arguments in the type system
-            ),
+                    Any, ResourceRetrieveResponse ),  # Union types cannot be passed in as arguments in the type system ),
         )
 
     async def update(
@@ -490,15 +476,11 @@ class AsyncResources(AsyncAPIResource):
                     resource_id=resource_id,
                 ),
                 body=await async_maybe_transform(
-                    {"authorization_token": authorization_token}, resource_update_params.ResourceUpdateParams
-                ),
+                    {"authorization_token": authorization_token}, resource_update_params.ResourceUpdateParams ),
                 options=make_request_options(
-                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-                ),
+                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
                 cast_to=cast(
-                    Any, ResourceUpdateResponse
-                ),  # Union types cannot be passed in as arguments in the type system
-            ),
+                    Any, ResourceUpdateResponse ),  # Union types cannot be passed in as arguments in the type system ),
         )
 
     def list(
@@ -564,9 +546,7 @@ class AsyncResources(AsyncAPIResource):
                 ),
             ),
             model=cast(
-                Any, BetaManagedAgentsSessionResource
-            ),  # Union types cannot be passed in as arguments in the type system
-        )
+                Any, BetaManagedAgentsSessionResource ),  # Union types cannot be passed in as arguments in the type system )
 
     async def delete(
         self,
@@ -617,8 +597,7 @@ class AsyncResources(AsyncAPIResource):
                 resource_id=resource_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsDeleteSessionResource,
         )
 
@@ -679,8 +658,7 @@ class AsyncResources(AsyncAPIResource):
                 resource_add_params.ResourceAddParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaManagedAgentsFileResource,
         )
 

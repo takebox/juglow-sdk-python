@@ -196,8 +196,7 @@ def block_starts(events: list[BetaRawMessageStreamEvent]) -> list[tuple[int, str
 
 
 def create_stream(
-    client: JuGloW, *, betas: List[JuglowBetaParam] | Omit = omit
-) -> Stream[BetaRawMessageStreamEvent]:
+    client: JuGloW, *, betas: List[JuglowBetaParam] | Omit = omit ) -> Stream[BetaRawMessageStreamEvent]:
     return client.beta.messages.create(
         model="haijun-opus",
         max_tokens=1024,
@@ -301,8 +300,7 @@ class TestShapeBContinuation:
 
     @pytest.mark.respx(base_url=base_url)
     def test_appends_the_fallback_credit_beta_to_both_the_original_and_hop_requests(
-        self, respx_mock: MockRouter
-    ) -> None:
+        self, respx_mock: MockRouter ) -> None:
         respx_mock.post("/v1/messages").mock(side_effect=[sse_response(STREAM_A), sse_response(STREAM_B)])
         client = make_sync_client(middleware=[BetaRefusalFallbackMiddleware(FALLBACKS)])
 
@@ -379,8 +377,7 @@ class TestEdgeCases:
 
     @pytest.mark.respx(base_url=base_url)
     def test_refusal_with_no_credit_token_passes_a_through_and_logs_an_error(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         no_token = re.sub(r'"fallback_credit_token":"[^"]*"', '"fallback_credit_token":null', STREAM_A)
         respx_mock.post("/v1/messages").mock(side_effect=[sse_response(no_token)])
         client = make_lenient_client(middleware=[BetaRefusalFallbackMiddleware(FALLBACKS)])
@@ -399,8 +396,7 @@ class TestEdgeCases:
 
     @pytest.mark.respx(base_url=base_url)
     def test_a_400_on_the_prefill_form_retries_the_same_hop_without_the_partial(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         respx_mock.post("/v1/messages").mock(
             side_effect=[
                 sse_response(STREAM_A),
@@ -429,8 +425,7 @@ class TestEdgeCases:
 
     @pytest.mark.respx(base_url=base_url)
     def test_a_failed_fallback_request_replays_the_refusal_and_logs_an_error(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         respx_mock.post("/v1/messages").mock(
             side_effect=[
                 sse_response(STREAM_A),
@@ -467,8 +462,7 @@ class TestEdgeCases:
 
     @pytest.mark.respx(base_url=base_url)
     def test_a_capacity_failed_fallback_request_stamps_the_recommended_model(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         respx_mock.post("/v1/messages").mock(
             side_effect=[
                 sse_response(STREAM_A),
@@ -489,8 +483,7 @@ class TestEdgeCases:
 
     @pytest.mark.respx(base_url=base_url)
     def test_a_fallback_request_that_raises_replays_the_refusal(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         respx_mock.post("/v1/messages").mock(
             side_effect=[sse_response(STREAM_A), httpx.ConnectError("connection reset")]
         )
@@ -552,8 +545,7 @@ class TestEdgeCases:
 
     @pytest.mark.respx(base_url=base_url)
     def test_a_non_refusal_stream_is_passed_through_untouched(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         normal = "".join(
             [
                 message_start(),
@@ -646,8 +638,7 @@ class TestFallbackState:
 
     @pytest.mark.respx(base_url=base_url)
     def test_warns_once_when_falling_back_without_a_state(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         respx_mock.post("/v1/messages").mock(
             side_effect=[
                 sse_response(STREAM_A),
@@ -744,8 +735,7 @@ class TestFallbackChain:
 
     @pytest.mark.respx(base_url=base_url)
     def test_a_refused_hop_without_a_prefill_claim_drops_its_partial_from_the_next_request(
-        self, respx_mock: MockRouter
-    ) -> None:
+        self, respx_mock: MockRouter ) -> None:
         respx_mock.post("/v1/messages").mock(
             side_effect=[
                 sse_response(STREAM_A),
@@ -767,8 +757,7 @@ class TestFallbackChain:
 
     @pytest.mark.respx(base_url=base_url)
     def test_an_http_failed_hop_is_skipped_and_the_unredeemed_token_carries_to_the_next_entry(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         respx_mock.post("/v1/messages").mock(
             side_effect=[
                 sse_response(STREAM_A),
@@ -813,8 +802,7 @@ class TestFallbackChain:
 
     @pytest.mark.respx(base_url=base_url)
     def test_a_terminal_refusal_with_no_entries_left_is_emitted_with_the_full_iteration_chain(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         respx_mock.post("/v1/messages").mock(side_effect=[sse_response(STREAM_A), sse_response(hop_refusal())])
         client = make_sync_client(middleware=[BetaRefusalFallbackMiddleware(FALLBACKS)])
 
@@ -836,8 +824,7 @@ class TestFallbackChain:
 
     @pytest.mark.respx(base_url=base_url)
     def test_a_token_less_refusal_on_the_final_hop_is_still_logged(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         respx_mock.post("/v1/messages").mock(side_effect=[sse_response(STREAM_A), sse_response(hop_refusal(None))])
         client = make_sync_client(middleware=[BetaRefusalFallbackMiddleware(FALLBACKS)])
 
@@ -887,8 +874,7 @@ class TestFallbackChain:
 
     @pytest.mark.respx(base_url=base_url)
     def test_a_hop_whose_request_raises_is_skipped_and_the_unredeemed_token_carries(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         respx_mock.post("/v1/messages").mock(
             side_effect=[
                 sse_response(STREAM_A),
@@ -992,8 +978,7 @@ class TestPreStreamRefusals:
 
     @pytest.mark.respx(base_url=base_url)
     def test_a_token_less_pre_stream_refusal_still_retries(
-        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture
-    ) -> None:
+        self, respx_mock: MockRouter, caplog: pytest.LogCaptureFixture ) -> None:
         token_less = "".join([message_start(), refusal_delta(None), ev({"type": "message_stop"})])
         respx_mock.post("/v1/messages").mock(side_effect=[sse_response(token_less), sse_response(serving_stream())])
         client = make_sync_client(middleware=[BetaRefusalFallbackMiddleware(FALLBACKS)])
@@ -1151,8 +1136,7 @@ class TestPerHopOverrides:
 class TestCancellation:
     @pytest.mark.respx(base_url=base_url)
     def test_closing_the_stream_mid_passthrough_tears_down_without_a_fallback_request(
-        self, respx_mock: MockRouter
-    ) -> None:
+        self, respx_mock: MockRouter ) -> None:
         respx_mock.post("/v1/messages").mock(side_effect=[sse_response(STREAM_A)])
         client = make_sync_client(middleware=[BetaRefusalFallbackMiddleware(FALLBACKS)])
 
@@ -1332,8 +1316,7 @@ class TestToolUseRefusals:
 
     @pytest.mark.respx(base_url=base_url)
     def test_mid_loop_refusal_ending_in_thinking_strips_the_trailing_thinking_block(
-        self, respx_mock: MockRouter
-    ) -> None:
+        self, respx_mock: MockRouter ) -> None:
         # [server_tool_use, result, thinking] â€” the server granted a prefill
         # claim, but an assistant turn cannot end in a thinking block (the
         # server 400s it), so the trailing thinking is stripped from the
@@ -1519,8 +1502,7 @@ class TestAsyncSplicing:
 
     @pytest.mark.respx(base_url=base_url)
     async def test_closing_the_stream_mid_passthrough_tears_down_without_a_fallback_request(
-        self, respx_mock: MockRouter
-    ) -> None:
+        self, respx_mock: MockRouter ) -> None:
         respx_mock.post("/v1/messages").mock(side_effect=[sse_response(STREAM_A)])
         client = make_async_client(middleware=[BetaRefusalFallbackMiddleware(FALLBACKS)])
 

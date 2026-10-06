@@ -31,8 +31,7 @@ def test_extract_type_var() -> None:
             index=0,
             generic_bases=cast("tuple[type, ...]", (BaseGeneric,)),
         )
-        == int
-    )
+        == int )
 
 
 def test_extract_type_var_generic_subclass() -> None:
@@ -42,8 +41,7 @@ def test_extract_type_var_generic_subclass() -> None:
             index=0,
             generic_bases=cast("tuple[type, ...]", (BaseGeneric,)),
         )
-        == int
-    )
+        == int )
 
 
 def test_extract_type_var_multiple() -> None:

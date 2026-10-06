@@ -125,8 +125,7 @@ class BaseGoogleCloudClient(BaseClient[_HttpxClientT, _DefaultStreamT]):
         # Deferred derivation implies auth, and constructing with auth requires a workspace ID.
         assert self.workspace_id is not None
         self.base_url = DEFAULT_URL_TEMPLATE.format(
-            project=self._project, location=self._location, workspace_id=self.workspace_id
-        )
+            project=self._project, location=self._location, workspace_id=self.workspace_id )
         self._base_url_deferred = False
 
 

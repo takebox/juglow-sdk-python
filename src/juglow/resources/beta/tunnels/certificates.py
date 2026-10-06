@@ -29,7 +29,7 @@ class Certificates(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return CertificatesWithRawResponse(self)
 
@@ -38,7 +38,7 @@ class Certificates(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return CertificatesWithStreamingResponse(self)
 
@@ -96,11 +96,9 @@ class Certificates(SyncAPIResource):
         return self._post(
             path_template("/v1/tunnels/{tunnel_id}/certificates?beta=true", tunnel_id=tunnel_id),
             body=maybe_transform(
-                {"ca_certificate_pem": ca_certificate_pem}, certificate_create_params.CertificateCreateParams
-            ),
+                {"ca_certificate_pem": ca_certificate_pem}, certificate_create_params.CertificateCreateParams ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaTunnelCertificate,
         )
 
@@ -159,8 +157,7 @@ class Certificates(SyncAPIResource):
                 certificate_id=certificate_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaTunnelCertificate,
         )
 
@@ -297,8 +294,7 @@ class Certificates(SyncAPIResource):
                 certificate_id=certificate_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaTunnelCertificate,
         )
 
@@ -310,7 +306,7 @@ class AsyncCertificates(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#accessing-raw-response-data-eg-headers
         """
         return AsyncCertificatesWithRawResponse(self)
 
@@ -319,7 +315,7 @@ class AsyncCertificates(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Juglows/Juglow-sdk-python#with_streaming_response
+        For more information, see https://www.github.com/takebox/juglow-sdk-python#with_streaming_response
         """
         return AsyncCertificatesWithStreamingResponse(self)
 
@@ -377,11 +373,9 @@ class AsyncCertificates(AsyncAPIResource):
         return await self._post(
             path_template("/v1/tunnels/{tunnel_id}/certificates?beta=true", tunnel_id=tunnel_id),
             body=await async_maybe_transform(
-                {"ca_certificate_pem": ca_certificate_pem}, certificate_create_params.CertificateCreateParams
-            ),
+                {"ca_certificate_pem": ca_certificate_pem}, certificate_create_params.CertificateCreateParams ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaTunnelCertificate,
         )
 
@@ -440,8 +434,7 @@ class AsyncCertificates(AsyncAPIResource):
                 certificate_id=certificate_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaTunnelCertificate,
         )
 
@@ -578,8 +571,7 @@ class AsyncCertificates(AsyncAPIResource):
                 certificate_id=certificate_id,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
             cast_to=BetaTunnelCertificate,
         )
 
