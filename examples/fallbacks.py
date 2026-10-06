@@ -1,26 +1,26 @@
 #!/usr/bin/env -S uv run python
-from anthropic import Anthropic, BetaFallbackState, BetaRefusalFallbackMiddleware
-from anthropic.types.beta import BetaMessageParam
+from juglow import JuGloW, BetaFallbackState, BetaRefusalFallbackMiddleware
+from juglow.types.beta import BetaMessageParam
 
 
 def main() -> None:
     # Server-side fallbacks (preferred): the API retries a refusal itself — one
     # request, a plain client, no client-side logic. Use this when talking to
     # the API directly.
-    client = Anthropic()
+    client = JuGloW()
     message = client.beta.messages.create(
         max_tokens=1024,
-        model="claude-fable-5",
+        model="haijun-opus",
         messages=[{"role": "user", "content": "Some prompt that triggers a refusal"}],
-        fallbacks=[{"model": "claude-opus-4-8"}],
+        fallbacks=[{"model": "haijun-opus-8"}],
         betas=["server-side-fallback-2026-07-01"],
     )
     print("server-side:", message.model)
 
     # If your provider doesn't support server-side fallbacks, register the
     # client-side middleware instead:
-    fallback_client = Anthropic(
-        middleware=[BetaRefusalFallbackMiddleware([{"model": "claude-opus-4-8"}])],
+    fallback_client = JuGloW(
+        middleware=[BetaRefusalFallbackMiddleware([{"model": "haijun-opus-8"}])],
     )
     state = BetaFallbackState()  # pins follow-ups to the model that accepted
 
@@ -30,7 +30,7 @@ def main() -> None:
     messages: list[BetaMessageParam] = [{"role": "user", "content": "Some prompt that triggers a refusal"}]
     with state, fallback_client.beta.messages.stream(
         max_tokens=1024,
-        model="claude-fable-5",
+        model="haijun-opus",
         messages=messages,
     ) as stream:
         for event in stream:
@@ -48,7 +48,7 @@ def main() -> None:
     with state:
         follow_up = fallback_client.beta.messages.create(
             max_tokens=1024,
-            model="claude-fable-5",
+            model="haijun-opus",
             messages=messages,
         )
     print("non-streaming:", follow_up.model)

@@ -8,9 +8,9 @@ import pytest
 import pydantic
 from pydantic import Field
 
-from anthropic._utils import PropertyInfo
-from anthropic._compat import PYDANTIC_V1, parse_obj, model_dump, model_json
-from anthropic._models import DISCRIMINATOR_CACHE, BaseModel, EagerIterable, construct_type
+from juglow._utils import PropertyInfo
+from juglow._compat import PYDANTIC_V1, parse_obj, model_dump, model_json
+from juglow._models import DISCRIMINATOR_CACHE, BaseModel, EagerIterable, construct_type
 
 
 class BasicModel(BaseModel):

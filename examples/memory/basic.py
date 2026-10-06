@@ -4,15 +4,15 @@ from typing import Optional
 
 from pydantic import TypeAdapter
 
-from anthropic import Anthropic
-from anthropic.tools import BetaLocalFilesystemMemoryTool
-from anthropic.types.beta import (
+from juglow import JuGloW
+from juglow.tools import BetaLocalFilesystemMemoryTool
+from juglow.types.beta import (
     BetaMessageParam,
     BetaContentBlockParam,
     BetaMemoryTool20250818Command,
     BetaMemoryTool20250818ViewCommand,
 )
-from anthropic.types.beta.beta_context_management_config_param import BetaContextManagementConfigParam
+from juglow.types.beta.beta_context_management_config_param import BetaContextManagementConfigParam
 
 # Context management automatically clears old tool results to stay within token limits
 # Triggers when input exceeds 30k tokens, keeps 3 tool uses after clearing
@@ -68,7 +68,7 @@ class Spinner:
 
 
 def conversation_loop():
-    client = Anthropic()
+    client = JuGloW()
     memory = BetaLocalFilesystemMemoryTool()
 
     messages: list[BetaMessageParam] = []
@@ -77,7 +77,7 @@ def conversation_loop():
     last_response_id: Optional[str] = None
     last_usage = None
 
-    print("🧠 Claude with Memory & Web Search - Interactive Session")
+    print("🧠 Haijun with Memory & Web Search - Interactive Session")
     print("Commands:")
     print("  /quit or /exit - Exit the session")
     print("  /clear - Start fresh conversation")
@@ -165,7 +165,7 @@ def conversation_loop():
 
         messages.append({"role": "user", "content": user_input})
 
-        print("\nClaude: ", end="", flush=True)
+        print("\nHaijun: ", end="", flush=True)
 
         spinner = Spinner("Thinking")
         spinner.start()
@@ -174,7 +174,7 @@ def conversation_loop():
         try:
             runner = client.beta.messages.tool_runner(
                 betas=["context-management-2025-06-27"],
-                model="claude-sonnet-5",
+                model="haijun-sonnet",
                 max_tokens=2048,
                 system=DEFAULT_MEMORY_SYSTEM_PROMPT,
                 messages=messages,

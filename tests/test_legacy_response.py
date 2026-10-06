@@ -6,16 +6,16 @@ import httpx
 import pytest
 import pydantic
 
-from anthropic import Anthropic, BaseModel
-from anthropic._streaming import Stream
-from anthropic._base_client import FinalRequestOptions
-from anthropic._legacy_response import LegacyAPIResponse
+from juglow import JuGloW, BaseModel
+from juglow._streaming import Stream
+from juglow._base_client import FinalRequestOptions
+from juglow._legacy_response import LegacyAPIResponse
 
 
 class PydanticModel(pydantic.BaseModel): ...
 
 
-def test_response_parse_mismatched_basemodel(client: Anthropic) -> None:
+def test_response_parse_mismatched_basemodel(client: JuGloW) -> None:
     response = LegacyAPIResponse(
         raw=httpx.Response(200, content=b"foo"),
         client=client,
@@ -27,7 +27,7 @@ def test_response_parse_mismatched_basemodel(client: Anthropic) -> None:
 
     with pytest.raises(
         TypeError,
-        match="Pydantic models must subclass our base model type, e.g. `from anthropic import BaseModel`",
+        match="Pydantic models must subclass our base model type, e.g. `from juglow import BaseModel`",
     ):
         response.parse(to=PydanticModel)
 
@@ -43,7 +43,7 @@ def test_response_parse_mismatched_basemodel(client: Anthropic) -> None:
         ("FalSe", False),
     ],
 )
-def test_response_parse_bool(client: Anthropic, content: str, expected: bool) -> None:
+def test_response_parse_bool(client: JuGloW, content: str, expected: bool) -> None:
     response = LegacyAPIResponse(
         raw=httpx.Response(200, content=content),
         client=client,
@@ -57,7 +57,7 @@ def test_response_parse_bool(client: Anthropic, content: str, expected: bool) ->
     assert result is expected
 
 
-def test_response_parse_custom_stream(client: Anthropic) -> None:
+def test_response_parse_custom_stream(client: JuGloW) -> None:
     response = LegacyAPIResponse(
         raw=httpx.Response(200, content=b"foo"),
         client=client,
@@ -76,7 +76,7 @@ class CustomModel(BaseModel):
     bar: int
 
 
-def test_response_parse_custom_model(client: Anthropic) -> None:
+def test_response_parse_custom_model(client: JuGloW) -> None:
     response = LegacyAPIResponse(
         raw=httpx.Response(200, content=json.dumps({"foo": "hello!", "bar": 2})),
         client=client,
@@ -91,7 +91,7 @@ def test_response_parse_custom_model(client: Anthropic) -> None:
     assert obj.bar == 2
 
 
-def test_response_basemodel_request_id(client: Anthropic) -> None:
+def test_response_basemodel_request_id(client: JuGloW) -> None:
     response = LegacyAPIResponse(
         raw=httpx.Response(
             200,
@@ -111,7 +111,7 @@ def test_response_basemodel_request_id(client: Anthropic) -> None:
     assert obj.to_dict() == {"foo": "hello!", "bar": 2}
 
 
-def test_response_parse_annotated_type(client: Anthropic) -> None:
+def test_response_parse_annotated_type(client: JuGloW) -> None:
     response = LegacyAPIResponse(
         raw=httpx.Response(200, content=json.dumps({"foo": "hello!", "bar": 2})),
         client=client,
@@ -133,7 +133,7 @@ class OtherModel(pydantic.BaseModel):
 
 
 @pytest.mark.parametrize("client", [False], indirect=True)  # loose validation
-def test_response_parse_expect_model_union_non_json_content(client: Anthropic) -> None:
+def test_response_parse_expect_model_union_non_json_content(client: JuGloW) -> None:
     response = LegacyAPIResponse(
         raw=httpx.Response(200, content=b"foo", headers={"Content-Type": "application/text"}),
         client=client,

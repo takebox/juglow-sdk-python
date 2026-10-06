@@ -7,10 +7,10 @@ from typing import Any, cast
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic.pagination import SyncPageCursor, AsyncPageCursor
-from anthropic.types.beta import (
+from juglow.pagination import SyncPageCursor, AsyncPageCursor
+from juglow.types.beta import (
     BetaEnvironment,
     BetaEnvironmentDeleteResponse,
 )
@@ -22,14 +22,14 @@ class TestEnvironments:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    def test_method_create(self, client: Anthropic) -> None:
+    def test_method_create(self, client: JuGloW) -> None:
         environment = client.beta.environments.create(
             name="python-data-analysis",
         )
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    def test_method_create_with_all_params(self, client: Anthropic) -> None:
+    def test_method_create_with_all_params(self, client: JuGloW) -> None:
         environment = client.beta.environments.create(
             name="python-data-analysis",
             config={
@@ -58,7 +58,7 @@ class TestEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    def test_raw_response_create(self, client: Anthropic) -> None:
+    def test_raw_response_create(self, client: JuGloW) -> None:
         response = client.beta.environments.with_raw_response.create(
             name="python-data-analysis",
         )
@@ -69,7 +69,7 @@ class TestEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    def test_streaming_response_create(self, client: Anthropic) -> None:
+    def test_streaming_response_create(self, client: JuGloW) -> None:
         with client.beta.environments.with_streaming_response.create(
             name="python-data-analysis",
         ) as response:
@@ -82,14 +82,14 @@ class TestEnvironments:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_retrieve(self, client: Anthropic) -> None:
+    def test_method_retrieve(self, client: JuGloW) -> None:
         environment = client.beta.environments.retrieve(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    def test_method_retrieve_with_all_params(self, client: Anthropic) -> None:
+    def test_method_retrieve_with_all_params(self, client: JuGloW) -> None:
         environment = client.beta.environments.retrieve(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             betas=["string"],
@@ -97,7 +97,7 @@ class TestEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    def test_raw_response_retrieve(self, client: Anthropic) -> None:
+    def test_raw_response_retrieve(self, client: JuGloW) -> None:
         response = client.beta.environments.with_raw_response.retrieve(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -108,7 +108,7 @@ class TestEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    def test_streaming_response_retrieve(self, client: Anthropic) -> None:
+    def test_streaming_response_retrieve(self, client: JuGloW) -> None:
         with client.beta.environments.with_streaming_response.retrieve(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -121,21 +121,21 @@ class TestEnvironments:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_retrieve(self, client: Anthropic) -> None:
+    def test_path_params_retrieve(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             client.beta.environments.with_raw_response.retrieve(
                 environment_id="",
             )
 
     @parametrize
-    def test_method_update(self, client: Anthropic) -> None:
+    def test_method_update(self, client: JuGloW) -> None:
         environment = client.beta.environments.update(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    def test_method_update_with_all_params(self, client: Anthropic) -> None:
+    def test_method_update_with_all_params(self, client: JuGloW) -> None:
         environment = client.beta.environments.update(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             config={
@@ -165,7 +165,7 @@ class TestEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    def test_raw_response_update(self, client: Anthropic) -> None:
+    def test_raw_response_update(self, client: JuGloW) -> None:
         response = client.beta.environments.with_raw_response.update(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -176,7 +176,7 @@ class TestEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    def test_streaming_response_update(self, client: Anthropic) -> None:
+    def test_streaming_response_update(self, client: JuGloW) -> None:
         with client.beta.environments.with_streaming_response.update(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -189,19 +189,19 @@ class TestEnvironments:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_update(self, client: Anthropic) -> None:
+    def test_path_params_update(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             client.beta.environments.with_raw_response.update(
                 environment_id="",
             )
 
     @parametrize
-    def test_method_list(self, client: Anthropic) -> None:
+    def test_method_list(self, client: JuGloW) -> None:
         environment = client.beta.environments.list()
         assert_matches_type(SyncPageCursor[BetaEnvironment], environment, path=["response"])
 
     @parametrize
-    def test_method_list_with_all_params(self, client: Anthropic) -> None:
+    def test_method_list_with_all_params(self, client: JuGloW) -> None:
         environment = client.beta.environments.list(
             include_archived=True,
             limit=1,
@@ -211,7 +211,7 @@ class TestEnvironments:
         assert_matches_type(SyncPageCursor[BetaEnvironment], environment, path=["response"])
 
     @parametrize
-    def test_raw_response_list(self, client: Anthropic) -> None:
+    def test_raw_response_list(self, client: JuGloW) -> None:
         response = client.beta.environments.with_raw_response.list()
 
         assert response.is_closed is True
@@ -220,7 +220,7 @@ class TestEnvironments:
         assert_matches_type(SyncPageCursor[BetaEnvironment], environment, path=["response"])
 
     @parametrize
-    def test_streaming_response_list(self, client: Anthropic) -> None:
+    def test_streaming_response_list(self, client: JuGloW) -> None:
         with client.beta.environments.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -231,14 +231,14 @@ class TestEnvironments:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_delete(self, client: Anthropic) -> None:
+    def test_method_delete(self, client: JuGloW) -> None:
         environment = client.beta.environments.delete(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
         assert_matches_type(BetaEnvironmentDeleteResponse, environment, path=["response"])
 
     @parametrize
-    def test_method_delete_with_all_params(self, client: Anthropic) -> None:
+    def test_method_delete_with_all_params(self, client: JuGloW) -> None:
         environment = client.beta.environments.delete(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             betas=["string"],
@@ -246,7 +246,7 @@ class TestEnvironments:
         assert_matches_type(BetaEnvironmentDeleteResponse, environment, path=["response"])
 
     @parametrize
-    def test_raw_response_delete(self, client: Anthropic) -> None:
+    def test_raw_response_delete(self, client: JuGloW) -> None:
         response = client.beta.environments.with_raw_response.delete(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -257,7 +257,7 @@ class TestEnvironments:
         assert_matches_type(BetaEnvironmentDeleteResponse, environment, path=["response"])
 
     @parametrize
-    def test_streaming_response_delete(self, client: Anthropic) -> None:
+    def test_streaming_response_delete(self, client: JuGloW) -> None:
         with client.beta.environments.with_streaming_response.delete(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -270,21 +270,21 @@ class TestEnvironments:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_delete(self, client: Anthropic) -> None:
+    def test_path_params_delete(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             client.beta.environments.with_raw_response.delete(
                 environment_id="",
             )
 
     @parametrize
-    def test_method_archive(self, client: Anthropic) -> None:
+    def test_method_archive(self, client: JuGloW) -> None:
         environment = client.beta.environments.archive(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    def test_method_archive_with_all_params(self, client: Anthropic) -> None:
+    def test_method_archive_with_all_params(self, client: JuGloW) -> None:
         environment = client.beta.environments.archive(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             betas=["string"],
@@ -292,7 +292,7 @@ class TestEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    def test_raw_response_archive(self, client: Anthropic) -> None:
+    def test_raw_response_archive(self, client: JuGloW) -> None:
         response = client.beta.environments.with_raw_response.archive(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -303,7 +303,7 @@ class TestEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    def test_streaming_response_archive(self, client: Anthropic) -> None:
+    def test_streaming_response_archive(self, client: JuGloW) -> None:
         with client.beta.environments.with_streaming_response.archive(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -316,7 +316,7 @@ class TestEnvironments:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_archive(self, client: Anthropic) -> None:
+    def test_path_params_archive(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             client.beta.environments.with_raw_response.archive(
                 environment_id="",
@@ -329,14 +329,14 @@ class TestAsyncEnvironments:
     )
 
     @parametrize
-    async def test_method_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create(self, async_client: AsyncJuGloW) -> None:
         environment = await async_client.beta.environments.create(
             name="python-data-analysis",
         )
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    async def test_method_create_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_with_all_params(self, async_client: AsyncJuGloW) -> None:
         environment = await async_client.beta.environments.create(
             name="python-data-analysis",
             config={
@@ -365,7 +365,7 @@ class TestAsyncEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    async def test_raw_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_create(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.with_raw_response.create(
             name="python-data-analysis",
         )
@@ -376,7 +376,7 @@ class TestAsyncEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    async def test_streaming_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_create(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.with_streaming_response.create(
             name="python-data-analysis",
         ) as response:
@@ -389,14 +389,14 @@ class TestAsyncEnvironments:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve(self, async_client: AsyncJuGloW) -> None:
         environment = await async_client.beta.environments.retrieve(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    async def test_method_retrieve_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve_with_all_params(self, async_client: AsyncJuGloW) -> None:
         environment = await async_client.beta.environments.retrieve(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             betas=["string"],
@@ -404,7 +404,7 @@ class TestAsyncEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    async def test_raw_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.with_raw_response.retrieve(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -415,7 +415,7 @@ class TestAsyncEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    async def test_streaming_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.with_streaming_response.retrieve(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -428,21 +428,21 @@ class TestAsyncEnvironments:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_retrieve(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             await async_client.beta.environments.with_raw_response.retrieve(
                 environment_id="",
             )
 
     @parametrize
-    async def test_method_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update(self, async_client: AsyncJuGloW) -> None:
         environment = await async_client.beta.environments.update(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    async def test_method_update_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update_with_all_params(self, async_client: AsyncJuGloW) -> None:
         environment = await async_client.beta.environments.update(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             config={
@@ -472,7 +472,7 @@ class TestAsyncEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    async def test_raw_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_update(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.with_raw_response.update(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -483,7 +483,7 @@ class TestAsyncEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    async def test_streaming_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_update(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.with_streaming_response.update(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -496,19 +496,19 @@ class TestAsyncEnvironments:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_update(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             await async_client.beta.environments.with_raw_response.update(
                 environment_id="",
             )
 
     @parametrize
-    async def test_method_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list(self, async_client: AsyncJuGloW) -> None:
         environment = await async_client.beta.environments.list()
         assert_matches_type(AsyncPageCursor[BetaEnvironment], environment, path=["response"])
 
     @parametrize
-    async def test_method_list_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list_with_all_params(self, async_client: AsyncJuGloW) -> None:
         environment = await async_client.beta.environments.list(
             include_archived=True,
             limit=1,
@@ -518,7 +518,7 @@ class TestAsyncEnvironments:
         assert_matches_type(AsyncPageCursor[BetaEnvironment], environment, path=["response"])
 
     @parametrize
-    async def test_raw_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_list(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.with_raw_response.list()
 
         assert response.is_closed is True
@@ -527,7 +527,7 @@ class TestAsyncEnvironments:
         assert_matches_type(AsyncPageCursor[BetaEnvironment], environment, path=["response"])
 
     @parametrize
-    async def test_streaming_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_list(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -538,14 +538,14 @@ class TestAsyncEnvironments:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_delete(self, async_client: AsyncJuGloW) -> None:
         environment = await async_client.beta.environments.delete(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
         assert_matches_type(BetaEnvironmentDeleteResponse, environment, path=["response"])
 
     @parametrize
-    async def test_method_delete_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_delete_with_all_params(self, async_client: AsyncJuGloW) -> None:
         environment = await async_client.beta.environments.delete(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             betas=["string"],
@@ -553,7 +553,7 @@ class TestAsyncEnvironments:
         assert_matches_type(BetaEnvironmentDeleteResponse, environment, path=["response"])
 
     @parametrize
-    async def test_raw_response_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_delete(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.with_raw_response.delete(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -564,7 +564,7 @@ class TestAsyncEnvironments:
         assert_matches_type(BetaEnvironmentDeleteResponse, environment, path=["response"])
 
     @parametrize
-    async def test_streaming_response_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_delete(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.with_streaming_response.delete(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -577,21 +577,21 @@ class TestAsyncEnvironments:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_delete(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             await async_client.beta.environments.with_raw_response.delete(
                 environment_id="",
             )
 
     @parametrize
-    async def test_method_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_archive(self, async_client: AsyncJuGloW) -> None:
         environment = await async_client.beta.environments.archive(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    async def test_method_archive_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_archive_with_all_params(self, async_client: AsyncJuGloW) -> None:
         environment = await async_client.beta.environments.archive(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             betas=["string"],
@@ -599,7 +599,7 @@ class TestAsyncEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    async def test_raw_response_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_archive(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.with_raw_response.archive(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -610,7 +610,7 @@ class TestAsyncEnvironments:
         assert_matches_type(BetaEnvironment, environment, path=["response"])
 
     @parametrize
-    async def test_streaming_response_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_archive(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.with_streaming_response.archive(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -623,7 +623,7 @@ class TestAsyncEnvironments:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_archive(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             await async_client.beta.environments.with_raw_response.archive(
                 environment_id="",

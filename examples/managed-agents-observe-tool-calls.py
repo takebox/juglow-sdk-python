@@ -35,11 +35,11 @@ import logging
 
 import anyio
 
-from anthropic import AsyncAnthropic
-from anthropic.lib.environments import MANAGED_AGENTS_BETA
-from anthropic.lib.tools.agent_toolset import AgentToolContext, beta_agent_toolset_20260401
+from juglow import AsyncJuGloW
+from juglow.lib.environments import MANAGED_AGENTS_BETA
+from juglow.lib.tools.agent_toolset import AgentToolContext, beta_agent_toolset_20260401
 
-MODEL_ID = "claude-haiku-4-5"
+MODEL_ID = "haijun-haiku"
 
 
 def _require_env(name: str) -> str:
@@ -58,10 +58,10 @@ async def main() -> None:
     that makes this scenario work against a non-self-hosted environment too.
     """
     logging.basicConfig(level=logging.INFO)
-    client = AsyncAnthropic()
+    client = AsyncJuGloW()
 
-    environment_id = _require_env("ANTHROPIC_ENVIRONMENT_ID")
-    workdir = os.environ.get("ANTHROPIC_WORKDIR", ".")
+    environment_id = _require_env("HAIJUN_ENVIRONMENT_ID")
+    workdir = os.environ.get("HAIJUN_WORKDIR", ".")
 
     # 1. Create an agent with the built-in agent toolset.
     agent = await client.beta.agents.create(
@@ -101,7 +101,7 @@ async def main() -> None:
         #    tool-call event, posts the result back, and yields one
         #    DispatchedToolCall per completed call. AgentToolContext gives the
         #    tools their workdir; passing client + session_id also downloads the
-        #    session agent's skills into the workdir before the first tool runs.
+        #    session agent's tracks into the workdir before the first tool runs.
         print("\n--- dispatched tool calls ---")
         async with AgentToolContext(workdir=workdir, client=client, session_id=session.id) as env:
             async for call in client.beta.sessions.events.tool_runner(
@@ -137,10 +137,10 @@ async def observe_as_self_hosted_worker() -> None:
     a TTL of failed beats so two workers never end up serving the same item.
     """
     logging.basicConfig(level=logging.INFO)
-    client = AsyncAnthropic()
+    client = AsyncJuGloW()
 
-    environment_id = _require_env("ANTHROPIC_ENVIRONMENT_ID")
-    environment_key = _require_env("ANTHROPIC_ENVIRONMENT_KEY")
+    environment_id = _require_env("HAIJUN_ENVIRONMENT_ID")
+    environment_key = _require_env("HAIJUN_ENVIRONMENT_KEY")
 
     async def heartbeat(work_id: str, env_id: str, stop: anyio.Event) -> None:
         # Scope the environment key onto a sub-client so each request carries
@@ -177,7 +177,7 @@ async def observe_as_self_hosted_worker() -> None:
         session_id = work.data.id
 
         # Passing client + session_id makes AgentToolContext fetch the session's
-        # resolved agent on enter and download each skill into the workdir.
+        # resolved agent on enter and download each track into the workdir.
         async with AgentToolContext(workdir="/workspace", client=client, session_id=session_id) as env:
             async with anyio.create_task_group() as tg:
                 stop = anyio.Event()

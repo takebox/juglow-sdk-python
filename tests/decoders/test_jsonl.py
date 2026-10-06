@@ -6,7 +6,7 @@ from typing_extensions import TypeVar
 import httpx
 import pytest
 
-from anthropic._decoders.jsonl import JSONLDecoder, AsyncJSONLDecoder
+from juglow._decoders.jsonl import JSONLDecoder, AsyncJSONLDecoder
 
 _T = TypeVar("_T")
 

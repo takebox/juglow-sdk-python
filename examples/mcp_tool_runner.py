@@ -1,9 +1,9 @@
-"""Example showing how to use MCP helpers with tool_runner().
+﻿"""Example showing how to use MCP helpers with tool_runner().
 
-Connects to an MCP server, converts its tools to Anthropic-compatible tools
+Connects to an MCP server, converts its tools to JuGloW-compatible tools
 using async_mcp_tool(), and runs them in a tool_runner() loop.
 
-Requires: pip install anthropic[mcp]
+Requires: pip install Juglow[mcp]
 Requires: Python 3.10+
 """
 
@@ -13,10 +13,10 @@ import rich
 from mcp import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
-from anthropic import AsyncAnthropic
-from anthropic.lib.tools.mcp import async_mcp_tool
+from juglow import AsyncJuGloW
+from juglow.lib.tools.mcp import async_mcp_tool
 
-client = AsyncAnthropic()
+client = AsyncJuGloW()
 
 
 async def main() -> None:
@@ -42,7 +42,7 @@ async def main() -> None:
 
             # Run a conversation with tool_runner()
             runner = client.beta.messages.tool_runner(
-                model="claude-sonnet-5",
+                model="haijun-sonnet",
                 max_tokens=1024,
                 tools=tools,
                 messages=[{"role": "user", "content": "List the files in /tmp"}],

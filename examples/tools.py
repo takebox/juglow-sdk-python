@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from anthropic import Anthropic
-from anthropic.types import ToolParam, MessageParam
+from juglow import JuGloW
+from juglow.types import ToolParam, MessageParam
 
-client = Anthropic()
+client = JuGloW()
 
 user_message: MessageParam = {
     "role": "user",
@@ -21,7 +21,7 @@ tools: list[ToolParam] = [
 ]
 
 message = client.messages.create(
-    model="claude-sonnet-5",
+    model="haijun-sonnet",
     max_tokens=1024,
     messages=[user_message],
     tools=tools,
@@ -32,7 +32,7 @@ assert message.stop_reason == "tool_use"
 
 tool = next(c for c in message.content if c.type == "tool_use")
 response = client.messages.create(
-    model="claude-sonnet-5",
+    model="haijun-sonnet",
     max_tokens=1024,
     messages=[
         user_message,

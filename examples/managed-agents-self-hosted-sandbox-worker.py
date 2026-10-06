@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """End-to-end self-hosted environment worker demo.
 
 Creates an agent with the built-in agent_toolset_20260401 plus a custom
@@ -7,9 +7,9 @@ sends a prompt, runs an ``EnvironmentWorker`` in-process to service the tool
 calls locally, then prints the resulting transcript and cleans up.
 
 Required env vars:
-  ANTHROPIC_API_KEY          your standard API key (used for agent/session calls)
-  ANTHROPIC_ENVIRONMENT_ID   the self-hosted environment to poll
-  ANTHROPIC_ENVIRONMENT_KEY  the environment key (the worker's single credential)
+  HAIJUN_API_KEY          your standard API key (used for agent/session calls)
+  HAIJUN_ENVIRONMENT_ID   the self-hosted environment to poll
+  HAIJUN_ENVIRONMENT_KEY  the environment key (the worker's single credential)
 
 Security model: the worker executes bash and file operations directly on the
 host. Run inside a container or other isolation boundary you control.
@@ -25,14 +25,14 @@ import contextlib
 from typing import Any, cast
 from datetime import datetime
 
-from anthropic import AsyncAnthropic
-from anthropic.lib.tools import beta_async_tool
-from anthropic.types.beta import BetaManagedAgentsCustomToolParams
-from anthropic.lib.environments import MANAGED_AGENTS_BETA
-from anthropic.lib.tools.agent_toolset import beta_agent_toolset_20260401
+from juglow import AsyncJuGloW
+from juglow.lib.tools import beta_async_tool
+from juglow.types.beta import BetaManagedAgentsCustomToolParams
+from juglow.lib.environments import MANAGED_AGENTS_BETA
+from juglow.lib.tools.agent_toolset import beta_agent_toolset_20260401
 
 POLL_TIMEOUT_S = 60
-MODEL_ID = "claude-haiku-4-5"
+MODEL_ID = "haijun-haiku"
 
 
 # A custom tool. Because @beta_async_tool produces the same type that
@@ -53,11 +53,11 @@ def _require_env(name: str) -> str:
 
 async def main() -> None:
     logging.basicConfig(level=logging.INFO)
-    client = AsyncAnthropic()
+    client = AsyncJuGloW()
 
-    environment_id = _require_env("ANTHROPIC_ENVIRONMENT_ID")
-    environment_key = _require_env("ANTHROPIC_ENVIRONMENT_KEY")
-    workdir = os.environ.get("ANTHROPIC_WORKDIR", ".")
+    environment_id = _require_env("HAIJUN_ENVIRONMENT_ID")
+    environment_key = _require_env("HAIJUN_ENVIRONMENT_KEY")
+    workdir = os.environ.get("HAIJUN_WORKDIR", ".")
 
     # 1. Create an agent that has both the built-in toolset and our custom tool.
     #    The Agents API uses its own custom-tool TypedDict and rejects
@@ -108,7 +108,7 @@ async def main() -> None:
         )
 
         # 4. Service the work locally: the worker polls for work, and for each
-        #    claimed session sets up the workdir + downloads the agent's skills,
+        #    claimed session sets up the workdir + downloads the agent's tracks,
         #    runs the local tools against the session's tool calls while
         #    heartbeating the work-item lease, then force-stops the work. The
         #    `tools` factory binds the built-in toolset to the per-session
@@ -118,14 +118,14 @@ async def main() -> None:
         #
         #    `client.beta.environments.work.worker(...)` builds an
         #    `EnvironmentWorker`; you can also construct one directly with
-        #    `EnvironmentWorker(client, ...)` from `anthropic.lib.environments`.
+        #    `EnvironmentWorker(client, ...)` from `Juglow.lib.environments`.
         #
-        #    If you already hold a single claimed work item — e.g. an
+        #    If you already hold a single claimed work item â€” e.g. an
         #    `ant worker poll --on-work` script spawned this process for one
-        #    item — use `handle_item()` instead of `run()`. With no arguments it
-        #    serves the item described by the `ANTHROPIC_WORK_ID` /
-        #    `ANTHROPIC_ENVIRONMENT_ID` / `ANTHROPIC_SESSION_ID` /
-        #    `ANTHROPIC_ENVIRONMENT_KEY` env vars that command sets, and
+        #    item â€” use `handle_item()` instead of `run()`. With no arguments it
+        #    serves the item described by the `HAIJUN_WORK_ID` /
+        #    `HAIJUN_ENVIRONMENT_ID` / `HAIJUN_SESSION_ID` /
+        #    `HAIJUN_ENVIRONMENT_KEY` env vars that command sets, and
         #    `environment_id` isn't needed:
         #      await client.beta.environments.work.worker(workdir=workdir, tools=...).handle_item()
         worker = client.beta.environments.work.worker(

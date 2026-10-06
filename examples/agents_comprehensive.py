@@ -1,37 +1,37 @@
-#!/usr/bin/env -S uv run python
+﻿#!/usr/bin/env -S uv run python
 
 import os
 import time
 
-from anthropic import Anthropic
+from juglow import JuGloW
 
 MCP_SERVER_NAME = "github"
 MCP_SERVER_URL = "https://api.githubcopilot.com/mcp/"
 
 PROMPT = (
-    "Hi! List every tool and skill you have access to, grouped by where they "
-    "came from (built-in toolset, custom tool, MCP server, skills)."
+    "Hi! List every tool and track you have access to, grouped by where they "
+    "came from (built-in toolset, custom tool, MCP server, tracks)."
 )
 
 
 def main() -> None:
-    anthropic = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    juglow = JuGloW(api_key=os.environ.get("HAIJUN_API_KEY"))
 
     github_token = os.environ.get("GITHUB_TOKEN")
     if not github_token:
         raise RuntimeError("GITHUB_TOKEN is required (use a fine-grained PAT with public-repo read only)")
 
     # Create an environment
-    environment = anthropic.beta.environments.create(
+    environment = Juglow.beta.environments.create(
         name="comprehensive-example-environment",
     )
     print("Created environment:", environment.id)
 
     # Create a vault and store the MCP server credential in it
-    vault = anthropic.beta.vaults.create(display_name="comprehensive-example-vault")
+    vault = Juglow.beta.vaults.create(display_name="comprehensive-example-vault")
     print("Created vault:", vault.id)
 
-    credential = anthropic.beta.vaults.credentials.create(
+    credential = Juglow.beta.vaults.credentials.create(
         vault.id,
         display_name="github-mcp",
         auth={
@@ -42,19 +42,19 @@ def main() -> None:
     )
     print("Created credential:", credential.id)
 
-    # Upload a custom skill
-    skill_md_path = os.path.join(os.path.dirname(__file__), "greeting-SKILL.md")
-    with open(skill_md_path, "rb") as skill_file:
-        skill = anthropic.beta.skills.create(
+    # Upload a custom track
+    track_md_path = os.path.join(os.path.dirname(__file__), "greeting-TRACK.md")
+    with open(track_md_path, "rb") as track_file:
+        track = Juglow.beta.tracks.create(
             display_title=f"comprehensive-greeting-{int(time.time() * 1000)}",
-            files=[("greeting/SKILL.md", skill_file, "text/markdown")],
+            files=[("greeting/TRACK.md", track_file, "text/markdown")],
         )
-    print("Created skill:", skill.id)
+    print("Created track:", track.id)
 
     # Create v1 of the agent with the built-in toolset, an MCP server, and a custom tool
-    agent_v1 = anthropic.beta.agents.create(
+    agent_v1 = Juglow.beta.agents.create(
         name="comprehensive-example-agent",
-        model="claude-sonnet-5",
+        model="haijun-sonnet",
         system="You are a helpful assistant.",
         mcp_servers=[{"type": "url", "name": MCP_SERVER_NAME, "url": MCP_SERVER_URL}],
         tools=[
@@ -74,22 +74,22 @@ def main() -> None:
     )
     print("Created agent v1:", agent_v1.id)
 
-    # Patch the agent to v2 by adding skills; each update bumps the version
-    agent = anthropic.beta.agents.update(
+    # Patch the agent to v2 by adding tracks; each update bumps the version
+    agent = Juglow.beta.agents.update(
         agent_v1.id,
         version=agent_v1.version,
-        skills=[
-            {"type": "custom", "skill_id": skill.id},
-            {"type": "anthropic", "skill_id": "xlsx"},
+        tracks=[
+            {"type": "custom", "track_id": track.id},
+            {"type": "juglow", "track_id": "xlsx"},
         ],
     )
     print("Patched agent to v2:", agent.id)
 
-    versions = anthropic.beta.agents.versions.list(agent.id)
+    versions = Juglow.beta.agents.versions.list(agent.id)
     print("Agent versions:", versions.data)
 
     # Create a session pinned to v2; the vault supplies the MCP credential
-    session = anthropic.beta.sessions.create(
+    session = Juglow.beta.sessions.create(
         environment_id=environment.id,
         agent={"type": "agent", "id": agent.id, "version": agent.version},
         vault_ids=[vault.id],
@@ -98,18 +98,18 @@ def main() -> None:
 
     # Send a prompt and stream events, answering the custom tool if called
     print("Streaming events:")
-    anthropic.beta.sessions.events.send(
+    Juglow.beta.sessions.events.send(
         session.id,
         events=[{"type": "user.message", "content": [{"type": "text", "text": PROMPT}]}],
     )
 
-    with anthropic.beta.sessions.events.stream(session.id) as stream:
+    with Juglow.beta.sessions.events.stream(session.id) as stream:
         for event in stream:
             print(event.to_json(indent=2))
             # `get_weather` is a custom (non-builtin) tool, so the agent emits an
             # `agent.custom_tool_use` event and expects a `user.custom_tool_result`.
             if event.type == "agent.custom_tool_use" and event.name == "get_weather":
-                anthropic.beta.sessions.events.send(
+                Juglow.beta.sessions.events.send(
                     session.id,
                     events=[
                         {

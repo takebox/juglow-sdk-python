@@ -7,10 +7,10 @@ from typing import Any, cast
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic.pagination import SyncPageCursor, AsyncPageCursor
-from anthropic.types.beta.tunnels import BetaTunnelCertificate
+from juglow.pagination import SyncPageCursor, AsyncPageCursor
+from juglow.types.beta.tunnels import BetaTunnelCertificate
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -19,7 +19,7 @@ class TestCertificates:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    def test_method_create(self, client: Anthropic) -> None:
+    def test_method_create(self, client: JuGloW) -> None:
         certificate = client.beta.tunnels.certificates.create(
             tunnel_id="tunnel_id",
             ca_certificate_pem="ca_certificate_pem",
@@ -27,7 +27,7 @@ class TestCertificates:
         assert_matches_type(BetaTunnelCertificate, certificate, path=["response"])
 
     @parametrize
-    def test_method_create_with_all_params(self, client: Anthropic) -> None:
+    def test_method_create_with_all_params(self, client: JuGloW) -> None:
         certificate = client.beta.tunnels.certificates.create(
             tunnel_id="tunnel_id",
             ca_certificate_pem="ca_certificate_pem",
@@ -36,7 +36,7 @@ class TestCertificates:
         assert_matches_type(BetaTunnelCertificate, certificate, path=["response"])
 
     @parametrize
-    def test_raw_response_create(self, client: Anthropic) -> None:
+    def test_raw_response_create(self, client: JuGloW) -> None:
         response = client.beta.tunnels.certificates.with_raw_response.create(
             tunnel_id="tunnel_id",
             ca_certificate_pem="ca_certificate_pem",
@@ -48,7 +48,7 @@ class TestCertificates:
         assert_matches_type(BetaTunnelCertificate, certificate, path=["response"])
 
     @parametrize
-    def test_streaming_response_create(self, client: Anthropic) -> None:
+    def test_streaming_response_create(self, client: JuGloW) -> None:
         with client.beta.tunnels.certificates.with_streaming_response.create(
             tunnel_id="tunnel_id",
             ca_certificate_pem="ca_certificate_pem",
@@ -62,7 +62,7 @@ class TestCertificates:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_create(self, client: Anthropic) -> None:
+    def test_path_params_create(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `tunnel_id` but received ''"):
             client.beta.tunnels.certificates.with_raw_response.create(
                 tunnel_id="",
@@ -71,7 +71,7 @@ class TestCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_retrieve(self, client: Anthropic) -> None:
+    def test_method_retrieve(self, client: JuGloW) -> None:
         certificate = client.beta.tunnels.certificates.retrieve(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -80,7 +80,7 @@ class TestCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_retrieve_with_all_params(self, client: Anthropic) -> None:
+    def test_method_retrieve_with_all_params(self, client: JuGloW) -> None:
         certificate = client.beta.tunnels.certificates.retrieve(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -90,7 +90,7 @@ class TestCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_raw_response_retrieve(self, client: Anthropic) -> None:
+    def test_raw_response_retrieve(self, client: JuGloW) -> None:
         response = client.beta.tunnels.certificates.with_raw_response.retrieve(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -103,7 +103,7 @@ class TestCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_streaming_response_retrieve(self, client: Anthropic) -> None:
+    def test_streaming_response_retrieve(self, client: JuGloW) -> None:
         with client.beta.tunnels.certificates.with_streaming_response.retrieve(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -118,7 +118,7 @@ class TestCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_path_params_retrieve(self, client: Anthropic) -> None:
+    def test_path_params_retrieve(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `tunnel_id` but received ''"):
             client.beta.tunnels.certificates.with_raw_response.retrieve(
                 certificate_id="certificate_id",
@@ -133,7 +133,7 @@ class TestCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list(self, client: Anthropic) -> None:
+    def test_method_list(self, client: JuGloW) -> None:
         certificate = client.beta.tunnels.certificates.list(
             tunnel_id="tunnel_id",
         )
@@ -141,7 +141,7 @@ class TestCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list_with_all_params(self, client: Anthropic) -> None:
+    def test_method_list_with_all_params(self, client: JuGloW) -> None:
         certificate = client.beta.tunnels.certificates.list(
             tunnel_id="tunnel_id",
             include_archived=True,
@@ -153,7 +153,7 @@ class TestCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_raw_response_list(self, client: Anthropic) -> None:
+    def test_raw_response_list(self, client: JuGloW) -> None:
         response = client.beta.tunnels.certificates.with_raw_response.list(
             tunnel_id="tunnel_id",
         )
@@ -165,7 +165,7 @@ class TestCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_streaming_response_list(self, client: Anthropic) -> None:
+    def test_streaming_response_list(self, client: JuGloW) -> None:
         with client.beta.tunnels.certificates.with_streaming_response.list(
             tunnel_id="tunnel_id",
         ) as response:
@@ -179,14 +179,14 @@ class TestCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_path_params_list(self, client: Anthropic) -> None:
+    def test_path_params_list(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `tunnel_id` but received ''"):
             client.beta.tunnels.certificates.with_raw_response.list(
                 tunnel_id="",
             )
 
     @parametrize
-    def test_method_archive(self, client: Anthropic) -> None:
+    def test_method_archive(self, client: JuGloW) -> None:
         certificate = client.beta.tunnels.certificates.archive(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -194,7 +194,7 @@ class TestCertificates:
         assert_matches_type(BetaTunnelCertificate, certificate, path=["response"])
 
     @parametrize
-    def test_method_archive_with_all_params(self, client: Anthropic) -> None:
+    def test_method_archive_with_all_params(self, client: JuGloW) -> None:
         certificate = client.beta.tunnels.certificates.archive(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -203,7 +203,7 @@ class TestCertificates:
         assert_matches_type(BetaTunnelCertificate, certificate, path=["response"])
 
     @parametrize
-    def test_raw_response_archive(self, client: Anthropic) -> None:
+    def test_raw_response_archive(self, client: JuGloW) -> None:
         response = client.beta.tunnels.certificates.with_raw_response.archive(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -215,7 +215,7 @@ class TestCertificates:
         assert_matches_type(BetaTunnelCertificate, certificate, path=["response"])
 
     @parametrize
-    def test_streaming_response_archive(self, client: Anthropic) -> None:
+    def test_streaming_response_archive(self, client: JuGloW) -> None:
         with client.beta.tunnels.certificates.with_streaming_response.archive(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -229,7 +229,7 @@ class TestCertificates:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_archive(self, client: Anthropic) -> None:
+    def test_path_params_archive(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `tunnel_id` but received ''"):
             client.beta.tunnels.certificates.with_raw_response.archive(
                 certificate_id="certificate_id",
@@ -249,7 +249,7 @@ class TestAsyncCertificates:
     )
 
     @parametrize
-    async def test_method_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create(self, async_client: AsyncJuGloW) -> None:
         certificate = await async_client.beta.tunnels.certificates.create(
             tunnel_id="tunnel_id",
             ca_certificate_pem="ca_certificate_pem",
@@ -257,7 +257,7 @@ class TestAsyncCertificates:
         assert_matches_type(BetaTunnelCertificate, certificate, path=["response"])
 
     @parametrize
-    async def test_method_create_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_with_all_params(self, async_client: AsyncJuGloW) -> None:
         certificate = await async_client.beta.tunnels.certificates.create(
             tunnel_id="tunnel_id",
             ca_certificate_pem="ca_certificate_pem",
@@ -266,7 +266,7 @@ class TestAsyncCertificates:
         assert_matches_type(BetaTunnelCertificate, certificate, path=["response"])
 
     @parametrize
-    async def test_raw_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_create(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.tunnels.certificates.with_raw_response.create(
             tunnel_id="tunnel_id",
             ca_certificate_pem="ca_certificate_pem",
@@ -278,7 +278,7 @@ class TestAsyncCertificates:
         assert_matches_type(BetaTunnelCertificate, certificate, path=["response"])
 
     @parametrize
-    async def test_streaming_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_create(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.tunnels.certificates.with_streaming_response.create(
             tunnel_id="tunnel_id",
             ca_certificate_pem="ca_certificate_pem",
@@ -292,7 +292,7 @@ class TestAsyncCertificates:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_create(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `tunnel_id` but received ''"):
             await async_client.beta.tunnels.certificates.with_raw_response.create(
                 tunnel_id="",
@@ -301,7 +301,7 @@ class TestAsyncCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve(self, async_client: AsyncJuGloW) -> None:
         certificate = await async_client.beta.tunnels.certificates.retrieve(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -310,7 +310,7 @@ class TestAsyncCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_retrieve_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve_with_all_params(self, async_client: AsyncJuGloW) -> None:
         certificate = await async_client.beta.tunnels.certificates.retrieve(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -320,7 +320,7 @@ class TestAsyncCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_raw_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.tunnels.certificates.with_raw_response.retrieve(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -333,7 +333,7 @@ class TestAsyncCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_streaming_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.tunnels.certificates.with_streaming_response.retrieve(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -348,7 +348,7 @@ class TestAsyncCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_path_params_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_retrieve(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `tunnel_id` but received ''"):
             await async_client.beta.tunnels.certificates.with_raw_response.retrieve(
                 certificate_id="certificate_id",
@@ -363,7 +363,7 @@ class TestAsyncCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list(self, async_client: AsyncJuGloW) -> None:
         certificate = await async_client.beta.tunnels.certificates.list(
             tunnel_id="tunnel_id",
         )
@@ -371,7 +371,7 @@ class TestAsyncCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list_with_all_params(self, async_client: AsyncJuGloW) -> None:
         certificate = await async_client.beta.tunnels.certificates.list(
             tunnel_id="tunnel_id",
             include_archived=True,
@@ -383,7 +383,7 @@ class TestAsyncCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_raw_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_list(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.tunnels.certificates.with_raw_response.list(
             tunnel_id="tunnel_id",
         )
@@ -395,7 +395,7 @@ class TestAsyncCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_streaming_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_list(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.tunnels.certificates.with_streaming_response.list(
             tunnel_id="tunnel_id",
         ) as response:
@@ -409,14 +409,14 @@ class TestAsyncCertificates:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_path_params_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_list(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `tunnel_id` but received ''"):
             await async_client.beta.tunnels.certificates.with_raw_response.list(
                 tunnel_id="",
             )
 
     @parametrize
-    async def test_method_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_archive(self, async_client: AsyncJuGloW) -> None:
         certificate = await async_client.beta.tunnels.certificates.archive(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -424,7 +424,7 @@ class TestAsyncCertificates:
         assert_matches_type(BetaTunnelCertificate, certificate, path=["response"])
 
     @parametrize
-    async def test_method_archive_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_archive_with_all_params(self, async_client: AsyncJuGloW) -> None:
         certificate = await async_client.beta.tunnels.certificates.archive(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -433,7 +433,7 @@ class TestAsyncCertificates:
         assert_matches_type(BetaTunnelCertificate, certificate, path=["response"])
 
     @parametrize
-    async def test_raw_response_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_archive(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.tunnels.certificates.with_raw_response.archive(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -445,7 +445,7 @@ class TestAsyncCertificates:
         assert_matches_type(BetaTunnelCertificate, certificate, path=["response"])
 
     @parametrize
-    async def test_streaming_response_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_archive(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.tunnels.certificates.with_streaming_response.archive(
             certificate_id="certificate_id",
             tunnel_id="tunnel_id",
@@ -459,7 +459,7 @@ class TestAsyncCertificates:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_archive(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `tunnel_id` but received ''"):
             await async_client.beta.tunnels.certificates.with_raw_response.archive(
                 certificate_id="certificate_id",

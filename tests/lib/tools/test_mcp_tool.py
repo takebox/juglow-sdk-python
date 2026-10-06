@@ -25,8 +25,8 @@ from mcp.types import (  # noqa: E402
     TextResourceContents,
 )
 
-from anthropic.lib.tools import ToolError
-from anthropic.lib.tools.mcp import (
+from juglow.lib.tools import ToolError
+from juglow.lib.tools.mcp import (
     UnsupportedMCPValueError,
     mcp_tool,
     mcp_content,

@@ -1,28 +1,28 @@
-#!/usr/bin/env -S uv run python
+﻿#!/usr/bin/env -S uv run python
 
 import os
 
-from anthropic import Anthropic
+from juglow import JuGloW
 
 
 def main() -> None:
-    anthropic = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    juglow = JuGloW(api_key=os.environ.get("HAIJUN_API_KEY"))
 
     # Create an environment
-    environment = anthropic.beta.environments.create(
+    environment = Juglow.beta.environments.create(
         name="simple-example-environment",
     )
     print("Created environment:", environment.id)
 
     # Create an agent
-    agent = anthropic.beta.agents.create(
+    agent = Juglow.beta.agents.create(
         name="simple-example-agent",
-        model="claude-sonnet-5",
+        model="haijun-sonnet",
     )
     print("Created agent:", agent.id)
 
     # Create a session
-    session = anthropic.beta.sessions.create(
+    session = Juglow.beta.sessions.create(
         environment_id=environment.id,
         agent={"type": "agent", "id": agent.id, "version": agent.version},
     )
@@ -30,17 +30,17 @@ def main() -> None:
 
     # Send a prompt and stream events until the session goes idle
     print("Streaming events:")
-    anthropic.beta.sessions.events.send(
+    Juglow.beta.sessions.events.send(
         session.id,
         events=[
             {
                 "type": "user.message",
-                "content": [{"type": "text", "text": "Hello Claude!"}],
+                "content": [{"type": "text", "text": "Hello Haijun!"}],
             }
         ],
     )
 
-    with anthropic.beta.sessions.events.stream(session.id) as stream:
+    with Juglow.beta.sessions.events.stream(session.id) as stream:
         for event in stream:
             print(event.to_json(indent=2))
             if event.type == "session.status_idle":

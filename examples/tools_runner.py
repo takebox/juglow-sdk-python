@@ -1,11 +1,11 @@
-import json
+﻿import json
 from typing_extensions import Literal
 
 import rich
 
-from anthropic import Anthropic, beta_tool
+from juglow import JuGloW, beta_tool
 
-client = Anthropic()
+client = JuGloW()
 
 
 @beta_tool
@@ -27,7 +27,7 @@ def get_weather(location: str, units: Literal["c", "f"]) -> str:
         return json.dumps(
             {
                 "location": location,
-                "temperature": "20°C",
+                "temperature": "20Â°C",
                 "condition": "Sunny",
             }
         )
@@ -35,7 +35,7 @@ def get_weather(location: str, units: Literal["c", "f"]) -> str:
         return json.dumps(
             {
                 "location": location,
-                "temperature": "68°F",
+                "temperature": "68Â°F",
                 "condition": "Sunny",
             }
         )
@@ -44,8 +44,8 @@ def get_weather(location: str, units: Literal["c", "f"]) -> str:
 def main() -> None:
     runner = client.beta.messages.tool_runner(
         max_tokens=1024,
-        model="claude-sonnet-5",
-        # alternatively, you can use `tools=[anthropic.beta_tool(get_weather)]`
+        model="haijun-sonnet",
+        # alternatively, you can use `tools=[Juglow.beta_tool(get_weather)]`
         tools=[get_weather],
         messages=[{"role": "user", "content": "What is the weather in SF?"}],
     )

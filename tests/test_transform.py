@@ -9,15 +9,15 @@ from typing_extensions import Required, Annotated, TypedDict
 import pytest
 import pydantic
 
-from anthropic._types import Base64FileInput, omit, not_given
-from anthropic._utils import (
+from juglow._types import Base64FileInput, omit, not_given
+from juglow._utils import (
     PropertyInfo,
     transform as _transform,
     parse_datetime,
     async_transform as _async_transform,
 )
-from anthropic._compat import PYDANTIC_V1, model_parse
-from anthropic._models import BaseModel
+from juglow._compat import PYDANTIC_V1, model_parse
+from juglow._models import BaseModel
 
 _T = TypeVar("_T")
 
@@ -377,7 +377,7 @@ async def test_pydantic_aliased_field(use_async: bool) -> None:
 @parametrize
 @pytest.mark.asyncio
 async def test_pydantic_aliased_field_round_trip(use_async: bool) -> None:
-    from anthropic.types.beta import BetaMessageParam, BetaFallbackBlock
+    from juglow.types.beta import BetaMessageParam, BetaFallbackBlock
 
     block = model_parse(
         BetaFallbackBlock,

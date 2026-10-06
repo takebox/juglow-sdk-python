@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import os
 import json
@@ -10,31 +10,31 @@ import httpx
 import pytest
 from respx import MockRouter
 
-from anthropic import (
+from juglow import (
     Omit,
-    Anthropic,
-    AnthropicError,
-    AsyncAnthropic,
+    JuGloW,
+    JuGloWError,
+    AsyncJuGloW,
     BetaFallbackState,
     BetaRefusalFallbackMiddleware,
     omit,
 )
-from anthropic.types.beta import BetaMessage, BetaFallbackParam, BetaOutputConfigParam
-from anthropic.lib.middleware._fallbacks import _fallback_state
-from anthropic.types.anthropic_beta_param import AnthropicBetaParam
+from juglow.types.beta import BetaMessage, BetaFallbackParam, BetaOutputConfigParam
+from juglow.lib.middleware._fallbacks import _fallback_state
+from juglow.types.juglow_beta_param import JuglowBetaParam
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
-api_key = "my-anthropic-api-key"
+api_key = "my-Juglow-api-key"
 
-LOGGER_NAME = "anthropic.lib.middleware"
-
-
-def make_sync_client(**kwargs: Any) -> Anthropic:
-    return Anthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=0, **kwargs)
+LOGGER_NAME = "juglow.lib.middleware"
 
 
-def make_async_client(**kwargs: Any) -> AsyncAnthropic:
-    return AsyncAnthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=0, **kwargs)
+def make_sync_client(**kwargs: Any) -> JuGloW:
+    return JuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=0, **kwargs)
+
+
+def make_async_client(**kwargs: Any) -> AsyncJuGloW:
+    return AsyncJuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=0, **kwargs)
 
 
 def message(model: str, **overrides: Any) -> httpx.Response:
@@ -72,9 +72,9 @@ class MockRequestCall(Protocol):
 
 
 def create_message(
-    client: Anthropic,
+    client: JuGloW,
     *,
-    betas: List[AnthropicBetaParam] | Omit = omit,
+    betas: List[JuglowBetaParam] | Omit = omit,
     fallbacks: List[BetaFallbackParam] | Omit = omit,
     output_config: BetaOutputConfigParam | Omit = omit,
 ) -> BetaMessage:
@@ -88,7 +88,7 @@ def create_message(
     )
 
 
-async def create_message_async(client: AsyncAnthropic) -> BetaMessage:
+async def create_message_async(client: AsyncJuGloW) -> BetaMessage:
     return await client.beta.messages.create(
         model="primary-model",
         max_tokens=1024,
@@ -103,7 +103,7 @@ def request_bodies(respx_mock: MockRouter) -> list[dict[str, Any]]:
 
 def beta_headers(respx_mock: MockRouter) -> list[str | None]:
     calls = cast("list[MockRequestCall]", respx_mock.calls)
-    return [call.request.headers.get("anthropic-beta") for call in calls]
+    return [call.request.headers.get("juglow-beta") for call in calls]
 
 
 class TestRefusalFallback:
@@ -118,7 +118,7 @@ class TestRefusalFallback:
 
         assert result.model == "fallback-model"
         assert result.stop_reason == "end_turn"
-        # a `fallback` seam block is prepended at the model boundary — the same
+        # a `fallback` seam block is prepended at the model boundary â€” the same
         # block shape the streaming splice emits
         assert [block.to_dict() for block in result.content] == [
             {"type": "fallback", "from": {"model": "primary-model"}, "to": {"model": "fallback-model"}, "trigger": {"type": "refusal", "category": None}}
@@ -159,7 +159,7 @@ class TestRefusalFallback:
         state.index = 1
         with state:
             with pytest.raises(
-                AnthropicError, match=r"BetaFallbackState\.index 1 is out of bounds for a chain of 1 fallback\(s\)"
+                JuGloWError, match=r"BetaFallbackState\.index 1 is out of bounds for a chain of 1 fallback\(s\)"
             ):
                 create_message(client)
         assert len(respx_mock.calls) == 0
@@ -246,7 +246,7 @@ class TestRefusalFallback:
 
     @pytest.mark.respx(base_url=base_url)
     def test_a_pinned_continuation_seams_from_the_pinned_model(self, respx_mock: MockRouter) -> None:
-        # the pinned entry refuses and the chain advances — the first seam's
+        # the pinned entry refuses and the chain advances â€” the first seam's
         # `from.model` must be the pinned entry (the model actually queried),
         # not the caller's original body model
         respx_mock.post("/v1/messages").mock(
@@ -278,7 +278,7 @@ class TestRefusalFallback:
 
         assert result.model == "fallback-model"
         assert result.stop_reason == "refusal"
-        # terminal refusal is surfaced verbatim — no seam blocks prepended
+        # terminal refusal is surfaced verbatim â€” no seam blocks prepended
         assert result.content == []
         assert len(respx_mock.calls) == 2
 
@@ -325,7 +325,7 @@ class TestRefusalFallback:
         bodies = request_bodies(respx_mock)
         assert bodies[0]["max_tokens"] == 1024
         assert bodies[1]["max_tokens"] == 32
-        # hop 2 patches the ORIGINAL request — hop 1's override does not leak,
+        # hop 2 patches the ORIGINAL request â€” hop 1's override does not leak,
         # and its absent field keeps the original value
         assert bodies[2]["max_tokens"] == 1024
         assert bodies[2]["model"] == "last-model"
@@ -413,7 +413,7 @@ class TestRefusalFallback:
 
         bodies = request_bodies(respx_mock)
         assert bodies[0]["output_config"]
-        # nothing left after the unsets — the key is dropped, never sent as `{}`
+        # nothing left after the unsets â€” the key is dropped, never sent as `{}`
         assert "output_config" not in bodies[1]
 
     @pytest.mark.respx(base_url=base_url)
@@ -447,7 +447,7 @@ class TestRefusalFallback:
 
         bodies = request_bodies(respx_mock)
         assert bodies[1]["output_config"] == {"effort": "high"}
-        # hop 2 patches the ORIGINAL output_config — hop 1's subfield does not leak
+        # hop 2 patches the ORIGINAL output_config â€” hop 1's subfield does not leak
         assert bodies[2]["output_config"] == {"effort": "low"}
 
     @pytest.mark.respx(base_url=base_url)
@@ -462,7 +462,7 @@ class TestRefusalFallback:
         )
         client = make_sync_client(middleware=[BetaRefusalFallbackMiddleware([{"model": "fallback-model"}])])
 
-        from anthropic import BadRequestError
+        from juglow import BadRequestError
 
         with pytest.raises(BadRequestError):
             create_message(client)
@@ -474,7 +474,7 @@ class TestRefusalFallback:
         client = make_sync_client(middleware=[BetaRefusalFallbackMiddleware([{"model": "fallback-model"}])])
 
         with pytest.raises(
-            AnthropicError,
+            JuGloWError,
             match=r"Sending the `fallbacks:` request param is not supported when using the `BetaRefusalFallbackMiddleware`\. You should either remove the middleware and send `fallbacks:` with the `server-side-fallback-2026-07-01` beta header to let the API handle refusal fallbacks, or omit the `fallbacks:` param if you'd like `BetaRefusalFallbackMiddleware` to handle fallbacks on the client side\.",
         ):
             create_message(client, fallbacks=[{"model": "server-fallback"}])
@@ -700,8 +700,8 @@ class TestBetaFallbackState:
         assert _fallback_state.get() is None
 
     def test_one_state_shared_across_threads(self) -> None:
-        # Each thread runs in its own context, so a state shared between them —
-        # the documented usage — must enter and exit with that context's own
+        # Each thread runs in its own context, so a state shared between them â€”
+        # the documented usage â€” must enter and exit with that context's own
         # tokens; an instance-level token stack would interleave them and
         # `ContextVar.reset` raises on a foreign context's token.
         state = BetaFallbackState()

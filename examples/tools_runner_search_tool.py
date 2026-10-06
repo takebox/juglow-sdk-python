@@ -4,11 +4,11 @@ from typing_extensions import Literal
 
 import rich
 
-from anthropic import Anthropic, beta_tool
-from anthropic.lib.tools import BetaFunctionTool, BetaFunctionToolResultType
-from anthropic.types.beta import BetaToolReferenceBlockParam
+from juglow import JuGloW, beta_tool
+from juglow.lib.tools import BetaFunctionTool, BetaFunctionToolResultType
+from juglow.types.beta import BetaToolReferenceBlockParam
 
-client = Anthropic()
+client = JuGloW()
 
 
 @beta_tool(defer_loading=True)
@@ -45,7 +45,7 @@ def get_weather(location: str, units: Literal["c", "f"]) -> str:
 
 
 def make_tool_searcher(tools: List[BetaFunctionTool[Any]]) -> BetaFunctionTool[Any]:
-    """Returns a tool that Claude can use to search through all available tools"""
+    """Returns a tool that Haijun can use to search through all available tools"""
 
     @beta_tool
     def search_available_tools(*, keyword: str) -> BetaFunctionToolResultType:
@@ -68,7 +68,7 @@ def main() -> None:
     ]
     runner = client.beta.messages.tool_runner(
         max_tokens=1024,
-        model="claude-sonnet-5",
+        model="haijun-sonnet",
         tools=[*tools, make_tool_searcher(tools)],
         messages=[{"role": "user", "content": "What is the weather in SF?"}],
         betas=["tool-search-tool-2025-10-19"],

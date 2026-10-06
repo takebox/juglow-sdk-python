@@ -7,11 +7,11 @@ from typing import Any, cast
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic._utils import parse_datetime
-from anthropic.pagination import SyncBidirectionalPageCursor, AsyncBidirectionalPageCursor
-from anthropic.types.beta import (
+from juglow._utils import parse_datetime
+from juglow.pagination import SyncBidirectionalPageCursor, AsyncBidirectionalPageCursor
+from juglow.types.beta import (
     BetaManagedAgentsSession,
     BetaManagedAgentsDeletedSession,
 )
@@ -23,7 +23,7 @@ class TestSessions:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    def test_method_create(self, client: Anthropic) -> None:
+    def test_method_create(self, client: JuGloW) -> None:
         session = client.beta.sessions.create(
             agent="agent_011CZkYpogX7uDKUyvBTophP",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -31,7 +31,7 @@ class TestSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    def test_method_create_with_all_params(self, client: Anthropic) -> None:
+    def test_method_create_with_all_params(self, client: JuGloW) -> None:
         session = client.beta.sessions.create(
             agent="agent_011CZkYpogX7uDKUyvBTophP",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -68,7 +68,7 @@ class TestSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    def test_raw_response_create(self, client: Anthropic) -> None:
+    def test_raw_response_create(self, client: JuGloW) -> None:
         response = client.beta.sessions.with_raw_response.create(
             agent="agent_011CZkYpogX7uDKUyvBTophP",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -80,7 +80,7 @@ class TestSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    def test_streaming_response_create(self, client: Anthropic) -> None:
+    def test_streaming_response_create(self, client: JuGloW) -> None:
         with client.beta.sessions.with_streaming_response.create(
             agent="agent_011CZkYpogX7uDKUyvBTophP",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -94,14 +94,14 @@ class TestSessions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_retrieve(self, client: Anthropic) -> None:
+    def test_method_retrieve(self, client: JuGloW) -> None:
         session = client.beta.sessions.retrieve(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    def test_method_retrieve_with_all_params(self, client: Anthropic) -> None:
+    def test_method_retrieve_with_all_params(self, client: JuGloW) -> None:
         session = client.beta.sessions.retrieve(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             betas=["string"],
@@ -109,7 +109,7 @@ class TestSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    def test_raw_response_retrieve(self, client: Anthropic) -> None:
+    def test_raw_response_retrieve(self, client: JuGloW) -> None:
         response = client.beta.sessions.with_raw_response.retrieve(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -120,7 +120,7 @@ class TestSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    def test_streaming_response_retrieve(self, client: Anthropic) -> None:
+    def test_streaming_response_retrieve(self, client: JuGloW) -> None:
         with client.beta.sessions.with_streaming_response.retrieve(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -133,21 +133,21 @@ class TestSessions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_retrieve(self, client: Anthropic) -> None:
+    def test_path_params_retrieve(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             client.beta.sessions.with_raw_response.retrieve(
                 session_id="",
             )
 
     @parametrize
-    def test_method_update(self, client: Anthropic) -> None:
+    def test_method_update(self, client: JuGloW) -> None:
         session = client.beta.sessions.update(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    def test_method_update_with_all_params(self, client: Anthropic) -> None:
+    def test_method_update_with_all_params(self, client: JuGloW) -> None:
         session = client.beta.sessions.update(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             agent={
@@ -190,7 +190,7 @@ class TestSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    def test_raw_response_update(self, client: Anthropic) -> None:
+    def test_raw_response_update(self, client: JuGloW) -> None:
         response = client.beta.sessions.with_raw_response.update(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -201,7 +201,7 @@ class TestSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    def test_streaming_response_update(self, client: Anthropic) -> None:
+    def test_streaming_response_update(self, client: JuGloW) -> None:
         with client.beta.sessions.with_streaming_response.update(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -214,7 +214,7 @@ class TestSessions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_update(self, client: Anthropic) -> None:
+    def test_path_params_update(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             client.beta.sessions.with_raw_response.update(
                 session_id="",
@@ -222,13 +222,13 @@ class TestSessions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list(self, client: Anthropic) -> None:
+    def test_method_list(self, client: JuGloW) -> None:
         session = client.beta.sessions.list()
         assert_matches_type(SyncBidirectionalPageCursor[BetaManagedAgentsSession], session, path=["response"])
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list_with_all_params(self, client: Anthropic) -> None:
+    def test_method_list_with_all_params(self, client: JuGloW) -> None:
         session = client.beta.sessions.list(
             agent_id="agent_id",
             agent_version=0,
@@ -249,7 +249,7 @@ class TestSessions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_raw_response_list(self, client: Anthropic) -> None:
+    def test_raw_response_list(self, client: JuGloW) -> None:
         response = client.beta.sessions.with_raw_response.list()
 
         assert response.is_closed is True
@@ -259,7 +259,7 @@ class TestSessions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_streaming_response_list(self, client: Anthropic) -> None:
+    def test_streaming_response_list(self, client: JuGloW) -> None:
         with client.beta.sessions.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -270,14 +270,14 @@ class TestSessions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_delete(self, client: Anthropic) -> None:
+    def test_method_delete(self, client: JuGloW) -> None:
         session = client.beta.sessions.delete(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
         assert_matches_type(BetaManagedAgentsDeletedSession, session, path=["response"])
 
     @parametrize
-    def test_method_delete_with_all_params(self, client: Anthropic) -> None:
+    def test_method_delete_with_all_params(self, client: JuGloW) -> None:
         session = client.beta.sessions.delete(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             betas=["string"],
@@ -285,7 +285,7 @@ class TestSessions:
         assert_matches_type(BetaManagedAgentsDeletedSession, session, path=["response"])
 
     @parametrize
-    def test_raw_response_delete(self, client: Anthropic) -> None:
+    def test_raw_response_delete(self, client: JuGloW) -> None:
         response = client.beta.sessions.with_raw_response.delete(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -296,7 +296,7 @@ class TestSessions:
         assert_matches_type(BetaManagedAgentsDeletedSession, session, path=["response"])
 
     @parametrize
-    def test_streaming_response_delete(self, client: Anthropic) -> None:
+    def test_streaming_response_delete(self, client: JuGloW) -> None:
         with client.beta.sessions.with_streaming_response.delete(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -309,21 +309,21 @@ class TestSessions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_delete(self, client: Anthropic) -> None:
+    def test_path_params_delete(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             client.beta.sessions.with_raw_response.delete(
                 session_id="",
             )
 
     @parametrize
-    def test_method_archive(self, client: Anthropic) -> None:
+    def test_method_archive(self, client: JuGloW) -> None:
         session = client.beta.sessions.archive(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    def test_method_archive_with_all_params(self, client: Anthropic) -> None:
+    def test_method_archive_with_all_params(self, client: JuGloW) -> None:
         session = client.beta.sessions.archive(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             betas=["string"],
@@ -331,7 +331,7 @@ class TestSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    def test_raw_response_archive(self, client: Anthropic) -> None:
+    def test_raw_response_archive(self, client: JuGloW) -> None:
         response = client.beta.sessions.with_raw_response.archive(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -342,7 +342,7 @@ class TestSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    def test_streaming_response_archive(self, client: Anthropic) -> None:
+    def test_streaming_response_archive(self, client: JuGloW) -> None:
         with client.beta.sessions.with_streaming_response.archive(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -355,7 +355,7 @@ class TestSessions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_archive(self, client: Anthropic) -> None:
+    def test_path_params_archive(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             client.beta.sessions.with_raw_response.archive(
                 session_id="",
@@ -368,7 +368,7 @@ class TestAsyncSessions:
     )
 
     @parametrize
-    async def test_method_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create(self, async_client: AsyncJuGloW) -> None:
         session = await async_client.beta.sessions.create(
             agent="agent_011CZkYpogX7uDKUyvBTophP",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -376,7 +376,7 @@ class TestAsyncSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    async def test_method_create_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_with_all_params(self, async_client: AsyncJuGloW) -> None:
         session = await async_client.beta.sessions.create(
             agent="agent_011CZkYpogX7uDKUyvBTophP",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -413,7 +413,7 @@ class TestAsyncSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    async def test_raw_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_create(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.with_raw_response.create(
             agent="agent_011CZkYpogX7uDKUyvBTophP",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -425,7 +425,7 @@ class TestAsyncSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    async def test_streaming_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_create(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.with_streaming_response.create(
             agent="agent_011CZkYpogX7uDKUyvBTophP",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -439,14 +439,14 @@ class TestAsyncSessions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve(self, async_client: AsyncJuGloW) -> None:
         session = await async_client.beta.sessions.retrieve(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    async def test_method_retrieve_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve_with_all_params(self, async_client: AsyncJuGloW) -> None:
         session = await async_client.beta.sessions.retrieve(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             betas=["string"],
@@ -454,7 +454,7 @@ class TestAsyncSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    async def test_raw_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.with_raw_response.retrieve(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -465,7 +465,7 @@ class TestAsyncSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    async def test_streaming_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.with_streaming_response.retrieve(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -478,21 +478,21 @@ class TestAsyncSessions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_retrieve(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             await async_client.beta.sessions.with_raw_response.retrieve(
                 session_id="",
             )
 
     @parametrize
-    async def test_method_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update(self, async_client: AsyncJuGloW) -> None:
         session = await async_client.beta.sessions.update(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    async def test_method_update_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update_with_all_params(self, async_client: AsyncJuGloW) -> None:
         session = await async_client.beta.sessions.update(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             agent={
@@ -535,7 +535,7 @@ class TestAsyncSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    async def test_raw_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_update(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.with_raw_response.update(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -546,7 +546,7 @@ class TestAsyncSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    async def test_streaming_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_update(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.with_streaming_response.update(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -559,7 +559,7 @@ class TestAsyncSessions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_update(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             await async_client.beta.sessions.with_raw_response.update(
                 session_id="",
@@ -567,13 +567,13 @@ class TestAsyncSessions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list(self, async_client: AsyncJuGloW) -> None:
         session = await async_client.beta.sessions.list()
         assert_matches_type(AsyncBidirectionalPageCursor[BetaManagedAgentsSession], session, path=["response"])
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list_with_all_params(self, async_client: AsyncJuGloW) -> None:
         session = await async_client.beta.sessions.list(
             agent_id="agent_id",
             agent_version=0,
@@ -594,7 +594,7 @@ class TestAsyncSessions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_raw_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_list(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.with_raw_response.list()
 
         assert response.is_closed is True
@@ -604,7 +604,7 @@ class TestAsyncSessions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_streaming_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_list(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -615,14 +615,14 @@ class TestAsyncSessions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_delete(self, async_client: AsyncJuGloW) -> None:
         session = await async_client.beta.sessions.delete(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
         assert_matches_type(BetaManagedAgentsDeletedSession, session, path=["response"])
 
     @parametrize
-    async def test_method_delete_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_delete_with_all_params(self, async_client: AsyncJuGloW) -> None:
         session = await async_client.beta.sessions.delete(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             betas=["string"],
@@ -630,7 +630,7 @@ class TestAsyncSessions:
         assert_matches_type(BetaManagedAgentsDeletedSession, session, path=["response"])
 
     @parametrize
-    async def test_raw_response_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_delete(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.with_raw_response.delete(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -641,7 +641,7 @@ class TestAsyncSessions:
         assert_matches_type(BetaManagedAgentsDeletedSession, session, path=["response"])
 
     @parametrize
-    async def test_streaming_response_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_delete(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.with_streaming_response.delete(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -654,21 +654,21 @@ class TestAsyncSessions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_delete(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             await async_client.beta.sessions.with_raw_response.delete(
                 session_id="",
             )
 
     @parametrize
-    async def test_method_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_archive(self, async_client: AsyncJuGloW) -> None:
         session = await async_client.beta.sessions.archive(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    async def test_method_archive_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_archive_with_all_params(self, async_client: AsyncJuGloW) -> None:
         session = await async_client.beta.sessions.archive(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             betas=["string"],
@@ -676,7 +676,7 @@ class TestAsyncSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    async def test_raw_response_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_archive(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.with_raw_response.archive(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -687,7 +687,7 @@ class TestAsyncSessions:
         assert_matches_type(BetaManagedAgentsSession, session, path=["response"])
 
     @parametrize
-    async def test_streaming_response_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_archive(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.with_streaming_response.archive(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -700,7 +700,7 @@ class TestAsyncSessions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_archive(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             await async_client.beta.sessions.with_raw_response.archive(
                 session_id="",

@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from anthropic.types.beta import (
+from juglow.types.beta import (
     BetaMemoryTool20250818ViewCommand,
     BetaMemoryTool20250818CreateCommand,
     BetaMemoryTool20250818DeleteCommand,
@@ -16,8 +16,8 @@ from anthropic.types.beta import (
     BetaMemoryTool20250818RenameCommand,
     BetaMemoryTool20250818StrReplaceCommand,
 )
-from anthropic.lib.tools._beta_functions import ToolError
-from anthropic.lib.tools._beta_builtin_memory_tool import (
+from juglow.lib.tools._beta_functions import ToolError
+from juglow.lib.tools._beta_builtin_memory_tool import (
     BetaLocalFilesystemMemoryTool,
     BetaAsyncLocalFilesystemMemoryTool,
 )

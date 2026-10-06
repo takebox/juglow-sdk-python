@@ -17,8 +17,8 @@ from collections.abc import AsyncIterator
 import httpx
 import pytest
 
-from anthropic import APIStatusError
-from anthropic.lib.environments._poller import iter_work, aiter_work
+from juglow import APIStatusError
+from juglow.lib.environments._poller import iter_work, aiter_work
 
 
 class _StubWorkData:
@@ -284,7 +284,7 @@ def test_iter_work_forwards_reclaim_older_than_ms() -> None:
 def test_iter_work_block_ms_none_omits_param() -> None:
     """The server rejects block_ms=0; None must translate to the omit sentinel
     so the poll is non-blocking instead of 400ing."""
-    from anthropic._types import omit
+    from juglow._types import omit
 
     fake = FakeWork(poll_script=[None])
     it = iter_work(cast(Any, fake), environment_id="env_1", drain=True, block_ms=None)

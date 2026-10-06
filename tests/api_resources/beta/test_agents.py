@@ -7,11 +7,11 @@ from typing import Any, cast
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic._utils import parse_datetime
-from anthropic.pagination import SyncPageCursor, AsyncPageCursor
-from anthropic.types.beta import (
+from juglow._utils import parse_datetime
+from juglow.pagination import SyncPageCursor, AsyncPageCursor
+from juglow.types.beta import (
     BetaManagedAgentsAgent,
 )
 
@@ -22,17 +22,17 @@ class TestAgents:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    def test_method_create(self, client: Anthropic) -> None:
+    def test_method_create(self, client: JuGloW) -> None:
         agent = client.beta.agents.create(
-            model="claude-sonnet-4-6",
+            model="haijun-sonnet",
             name="My First Agent",
         )
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    def test_method_create_with_all_params(self, client: Anthropic) -> None:
+    def test_method_create_with_all_params(self, client: JuGloW) -> None:
         agent = client.beta.agents.create(
-            model="claude-sonnet-4-6",
+            model="haijun-sonnet",
             name="My First Agent",
             description="A general-purpose starter agent.",
             mcp_servers=[
@@ -47,10 +47,10 @@ class TestAgents:
                 "agents": ["agent_011CZkYqphY8vELVzwCUpqiQ", {"type": "self"}],
                 "type": "coordinator",
             },
-            skills=[
+            tracks=[
                 {
-                    "skill_id": "xlsx",
-                    "type": "anthropic",
+                    "track_id": "xlsx",
+                    "type": "juglow",
                     "version": "1",
                 }
             ],
@@ -76,9 +76,9 @@ class TestAgents:
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    def test_raw_response_create(self, client: Anthropic) -> None:
+    def test_raw_response_create(self, client: JuGloW) -> None:
         response = client.beta.agents.with_raw_response.create(
-            model="claude-sonnet-4-6",
+            model="haijun-sonnet",
             name="My First Agent",
         )
 
@@ -88,9 +88,9 @@ class TestAgents:
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    def test_streaming_response_create(self, client: Anthropic) -> None:
+    def test_streaming_response_create(self, client: JuGloW) -> None:
         with client.beta.agents.with_streaming_response.create(
-            model="claude-sonnet-4-6",
+            model="haijun-sonnet",
             name="My First Agent",
         ) as response:
             assert not response.is_closed
@@ -103,7 +103,7 @@ class TestAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_retrieve(self, client: Anthropic) -> None:
+    def test_method_retrieve(self, client: JuGloW) -> None:
         agent = client.beta.agents.retrieve(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
@@ -111,7 +111,7 @@ class TestAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_retrieve_with_all_params(self, client: Anthropic) -> None:
+    def test_method_retrieve_with_all_params(self, client: JuGloW) -> None:
         agent = client.beta.agents.retrieve(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
             version=0,
@@ -121,7 +121,7 @@ class TestAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_raw_response_retrieve(self, client: Anthropic) -> None:
+    def test_raw_response_retrieve(self, client: JuGloW) -> None:
         response = client.beta.agents.with_raw_response.retrieve(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
@@ -133,7 +133,7 @@ class TestAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_streaming_response_retrieve(self, client: Anthropic) -> None:
+    def test_streaming_response_retrieve(self, client: JuGloW) -> None:
         with client.beta.agents.with_streaming_response.retrieve(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         ) as response:
@@ -147,21 +147,21 @@ class TestAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_path_params_retrieve(self, client: Anthropic) -> None:
+    def test_path_params_retrieve(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `agent_id` but received ''"):
             client.beta.agents.with_raw_response.retrieve(
                 agent_id="",
             )
 
     @parametrize
-    def test_method_update(self, client: Anthropic) -> None:
+    def test_method_update(self, client: JuGloW) -> None:
         agent = client.beta.agents.update(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    def test_method_update_with_all_params(self, client: Anthropic) -> None:
+    def test_method_update_with_all_params(self, client: JuGloW) -> None:
         agent = client.beta.agents.update(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
             description="updated",
@@ -174,7 +174,7 @@ class TestAgents:
             ],
             metadata={"foo": "string"},
             model={
-                "id": "claude-opus-4-8",
+                "id": "haijun-opus-8",
                 "effort": "low",
                 "inference_geo": "inference_geo",
                 "speed": "standard",
@@ -184,10 +184,10 @@ class TestAgents:
                 "type": "coordinator",
             },
             name="name",
-            skills=[
+            tracks=[
                 {
-                    "skill_id": "xlsx",
-                    "type": "anthropic",
+                    "track_id": "xlsx",
+                    "type": "juglow",
                     "version": "1",
                 }
             ],
@@ -214,7 +214,7 @@ class TestAgents:
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    def test_raw_response_update(self, client: Anthropic) -> None:
+    def test_raw_response_update(self, client: JuGloW) -> None:
         response = client.beta.agents.with_raw_response.update(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
@@ -225,7 +225,7 @@ class TestAgents:
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    def test_streaming_response_update(self, client: Anthropic) -> None:
+    def test_streaming_response_update(self, client: JuGloW) -> None:
         with client.beta.agents.with_streaming_response.update(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         ) as response:
@@ -238,7 +238,7 @@ class TestAgents:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_update(self, client: Anthropic) -> None:
+    def test_path_params_update(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `agent_id` but received ''"):
             client.beta.agents.with_raw_response.update(
                 agent_id="",
@@ -246,13 +246,13 @@ class TestAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list(self, client: Anthropic) -> None:
+    def test_method_list(self, client: JuGloW) -> None:
         agent = client.beta.agents.list()
         assert_matches_type(SyncPageCursor[BetaManagedAgentsAgent], agent, path=["response"])
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list_with_all_params(self, client: Anthropic) -> None:
+    def test_method_list_with_all_params(self, client: JuGloW) -> None:
         agent = client.beta.agents.list(
             created_at_gte=parse_datetime("2019-12-27T18:11:19.117Z"),
             created_at_lte=parse_datetime("2019-12-27T18:11:19.117Z"),
@@ -265,7 +265,7 @@ class TestAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_raw_response_list(self, client: Anthropic) -> None:
+    def test_raw_response_list(self, client: JuGloW) -> None:
         response = client.beta.agents.with_raw_response.list()
 
         assert response.is_closed is True
@@ -275,7 +275,7 @@ class TestAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_streaming_response_list(self, client: Anthropic) -> None:
+    def test_streaming_response_list(self, client: JuGloW) -> None:
         with client.beta.agents.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -286,14 +286,14 @@ class TestAgents:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_archive(self, client: Anthropic) -> None:
+    def test_method_archive(self, client: JuGloW) -> None:
         agent = client.beta.agents.archive(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    def test_method_archive_with_all_params(self, client: Anthropic) -> None:
+    def test_method_archive_with_all_params(self, client: JuGloW) -> None:
         agent = client.beta.agents.archive(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
             betas=["message-batches-2024-09-24"],
@@ -301,7 +301,7 @@ class TestAgents:
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    def test_raw_response_archive(self, client: Anthropic) -> None:
+    def test_raw_response_archive(self, client: JuGloW) -> None:
         response = client.beta.agents.with_raw_response.archive(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
@@ -312,7 +312,7 @@ class TestAgents:
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    def test_streaming_response_archive(self, client: Anthropic) -> None:
+    def test_streaming_response_archive(self, client: JuGloW) -> None:
         with client.beta.agents.with_streaming_response.archive(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         ) as response:
@@ -325,7 +325,7 @@ class TestAgents:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_archive(self, client: Anthropic) -> None:
+    def test_path_params_archive(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `agent_id` but received ''"):
             client.beta.agents.with_raw_response.archive(
                 agent_id="",
@@ -338,17 +338,17 @@ class TestAsyncAgents:
     )
 
     @parametrize
-    async def test_method_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create(self, async_client: AsyncJuGloW) -> None:
         agent = await async_client.beta.agents.create(
-            model="claude-sonnet-4-6",
+            model="haijun-sonnet",
             name="My First Agent",
         )
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    async def test_method_create_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_with_all_params(self, async_client: AsyncJuGloW) -> None:
         agent = await async_client.beta.agents.create(
-            model="claude-sonnet-4-6",
+            model="haijun-sonnet",
             name="My First Agent",
             description="A general-purpose starter agent.",
             mcp_servers=[
@@ -363,10 +363,10 @@ class TestAsyncAgents:
                 "agents": ["agent_011CZkYqphY8vELVzwCUpqiQ", {"type": "self"}],
                 "type": "coordinator",
             },
-            skills=[
+            tracks=[
                 {
-                    "skill_id": "xlsx",
-                    "type": "anthropic",
+                    "track_id": "xlsx",
+                    "type": "juglow",
                     "version": "1",
                 }
             ],
@@ -392,9 +392,9 @@ class TestAsyncAgents:
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    async def test_raw_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_create(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.agents.with_raw_response.create(
-            model="claude-sonnet-4-6",
+            model="haijun-sonnet",
             name="My First Agent",
         )
 
@@ -404,9 +404,9 @@ class TestAsyncAgents:
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    async def test_streaming_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_create(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.agents.with_streaming_response.create(
-            model="claude-sonnet-4-6",
+            model="haijun-sonnet",
             name="My First Agent",
         ) as response:
             assert not response.is_closed
@@ -419,7 +419,7 @@ class TestAsyncAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve(self, async_client: AsyncJuGloW) -> None:
         agent = await async_client.beta.agents.retrieve(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
@@ -427,7 +427,7 @@ class TestAsyncAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_retrieve_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve_with_all_params(self, async_client: AsyncJuGloW) -> None:
         agent = await async_client.beta.agents.retrieve(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
             version=0,
@@ -437,7 +437,7 @@ class TestAsyncAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_raw_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.agents.with_raw_response.retrieve(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
@@ -449,7 +449,7 @@ class TestAsyncAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_streaming_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.agents.with_streaming_response.retrieve(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         ) as response:
@@ -463,21 +463,21 @@ class TestAsyncAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_path_params_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_retrieve(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `agent_id` but received ''"):
             await async_client.beta.agents.with_raw_response.retrieve(
                 agent_id="",
             )
 
     @parametrize
-    async def test_method_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update(self, async_client: AsyncJuGloW) -> None:
         agent = await async_client.beta.agents.update(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    async def test_method_update_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update_with_all_params(self, async_client: AsyncJuGloW) -> None:
         agent = await async_client.beta.agents.update(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
             description="updated",
@@ -490,7 +490,7 @@ class TestAsyncAgents:
             ],
             metadata={"foo": "string"},
             model={
-                "id": "claude-opus-4-8",
+                "id": "haijun-opus-8",
                 "effort": "low",
                 "inference_geo": "inference_geo",
                 "speed": "standard",
@@ -500,10 +500,10 @@ class TestAsyncAgents:
                 "type": "coordinator",
             },
             name="name",
-            skills=[
+            tracks=[
                 {
-                    "skill_id": "xlsx",
-                    "type": "anthropic",
+                    "track_id": "xlsx",
+                    "type": "juglow",
                     "version": "1",
                 }
             ],
@@ -530,7 +530,7 @@ class TestAsyncAgents:
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    async def test_raw_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_update(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.agents.with_raw_response.update(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
@@ -541,7 +541,7 @@ class TestAsyncAgents:
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    async def test_streaming_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_update(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.agents.with_streaming_response.update(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         ) as response:
@@ -554,7 +554,7 @@ class TestAsyncAgents:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_update(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `agent_id` but received ''"):
             await async_client.beta.agents.with_raw_response.update(
                 agent_id="",
@@ -562,13 +562,13 @@ class TestAsyncAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list(self, async_client: AsyncJuGloW) -> None:
         agent = await async_client.beta.agents.list()
         assert_matches_type(AsyncPageCursor[BetaManagedAgentsAgent], agent, path=["response"])
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list_with_all_params(self, async_client: AsyncJuGloW) -> None:
         agent = await async_client.beta.agents.list(
             created_at_gte=parse_datetime("2019-12-27T18:11:19.117Z"),
             created_at_lte=parse_datetime("2019-12-27T18:11:19.117Z"),
@@ -581,7 +581,7 @@ class TestAsyncAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_raw_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_list(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.agents.with_raw_response.list()
 
         assert response.is_closed is True
@@ -591,7 +591,7 @@ class TestAsyncAgents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_streaming_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_list(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.agents.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -602,14 +602,14 @@ class TestAsyncAgents:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_archive(self, async_client: AsyncJuGloW) -> None:
         agent = await async_client.beta.agents.archive(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    async def test_method_archive_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_archive_with_all_params(self, async_client: AsyncJuGloW) -> None:
         agent = await async_client.beta.agents.archive(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
             betas=["message-batches-2024-09-24"],
@@ -617,7 +617,7 @@ class TestAsyncAgents:
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    async def test_raw_response_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_archive(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.agents.with_raw_response.archive(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
@@ -628,7 +628,7 @@ class TestAsyncAgents:
         assert_matches_type(BetaManagedAgentsAgent, agent, path=["response"])
 
     @parametrize
-    async def test_streaming_response_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_archive(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.agents.with_streaming_response.archive(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         ) as response:
@@ -641,7 +641,7 @@ class TestAsyncAgents:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_archive(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `agent_id` but received ''"):
             await async_client.beta.agents.with_raw_response.archive(
                 agent_id="",

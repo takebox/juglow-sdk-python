@@ -7,11 +7,11 @@ from typing import Any, cast
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic._utils import parse_datetime
-from anthropic.pagination import SyncPageCursor, AsyncPageCursor
-from anthropic.types.beta.sessions import (
+from juglow._utils import parse_datetime
+from juglow.pagination import SyncPageCursor, AsyncPageCursor
+from juglow.types.beta.sessions import (
     BetaManagedAgentsSessionEvent,
     BetaManagedAgentsSendSessionEvents,
 )
@@ -24,7 +24,7 @@ class TestEvents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list(self, client: Anthropic) -> None:
+    def test_method_list(self, client: JuGloW) -> None:
         event = client.beta.sessions.events.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -32,7 +32,7 @@ class TestEvents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list_with_all_params(self, client: Anthropic) -> None:
+    def test_method_list_with_all_params(self, client: JuGloW) -> None:
         event = client.beta.sessions.events.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             created_at_gt=parse_datetime("2019-12-27T18:11:19.117Z"),
@@ -49,7 +49,7 @@ class TestEvents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_raw_response_list(self, client: Anthropic) -> None:
+    def test_raw_response_list(self, client: JuGloW) -> None:
         response = client.beta.sessions.events.with_raw_response.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -61,7 +61,7 @@ class TestEvents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_streaming_response_list(self, client: Anthropic) -> None:
+    def test_streaming_response_list(self, client: JuGloW) -> None:
         with client.beta.sessions.events.with_streaming_response.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -75,14 +75,14 @@ class TestEvents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_path_params_list(self, client: Anthropic) -> None:
+    def test_path_params_list(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             client.beta.sessions.events.with_raw_response.list(
                 session_id="",
             )
 
     @parametrize
-    def test_method_send(self, client: Anthropic) -> None:
+    def test_method_send(self, client: JuGloW) -> None:
         event = client.beta.sessions.events.send(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             events=[
@@ -100,7 +100,7 @@ class TestEvents:
         assert_matches_type(BetaManagedAgentsSendSessionEvents, event, path=["response"])
 
     @parametrize
-    def test_method_send_with_all_params(self, client: Anthropic) -> None:
+    def test_method_send_with_all_params(self, client: JuGloW) -> None:
         event = client.beta.sessions.events.send(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             events=[
@@ -119,7 +119,7 @@ class TestEvents:
         assert_matches_type(BetaManagedAgentsSendSessionEvents, event, path=["response"])
 
     @parametrize
-    def test_raw_response_send(self, client: Anthropic) -> None:
+    def test_raw_response_send(self, client: JuGloW) -> None:
         response = client.beta.sessions.events.with_raw_response.send(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             events=[
@@ -141,7 +141,7 @@ class TestEvents:
         assert_matches_type(BetaManagedAgentsSendSessionEvents, event, path=["response"])
 
     @parametrize
-    def test_streaming_response_send(self, client: Anthropic) -> None:
+    def test_streaming_response_send(self, client: JuGloW) -> None:
         with client.beta.sessions.events.with_streaming_response.send(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             events=[
@@ -165,7 +165,7 @@ class TestEvents:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_send(self, client: Anthropic) -> None:
+    def test_path_params_send(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             client.beta.sessions.events.with_raw_response.send(
                 session_id="",
@@ -183,14 +183,14 @@ class TestEvents:
             )
 
     @parametrize
-    def test_method_stream(self, client: Anthropic) -> None:
+    def test_method_stream(self, client: JuGloW) -> None:
         event_stream = client.beta.sessions.events.stream(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
         event_stream.response.close()
 
     @parametrize
-    def test_method_stream_with_all_params(self, client: Anthropic) -> None:
+    def test_method_stream_with_all_params(self, client: JuGloW) -> None:
         event_stream = client.beta.sessions.events.stream(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             event_deltas=["agent.message"],
@@ -199,7 +199,7 @@ class TestEvents:
         event_stream.response.close()
 
     @parametrize
-    def test_raw_response_stream(self, client: Anthropic) -> None:
+    def test_raw_response_stream(self, client: JuGloW) -> None:
         response = client.beta.sessions.events.with_raw_response.stream(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -209,7 +209,7 @@ class TestEvents:
         stream.close()
 
     @parametrize
-    def test_streaming_response_stream(self, client: Anthropic) -> None:
+    def test_streaming_response_stream(self, client: JuGloW) -> None:
         with client.beta.sessions.events.with_streaming_response.stream(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -222,7 +222,7 @@ class TestEvents:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_stream(self, client: Anthropic) -> None:
+    def test_path_params_stream(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             client.beta.sessions.events.with_raw_response.stream(
                 session_id="",
@@ -236,7 +236,7 @@ class TestAsyncEvents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list(self, async_client: AsyncJuGloW) -> None:
         event = await async_client.beta.sessions.events.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -244,7 +244,7 @@ class TestAsyncEvents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list_with_all_params(self, async_client: AsyncJuGloW) -> None:
         event = await async_client.beta.sessions.events.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             created_at_gt=parse_datetime("2019-12-27T18:11:19.117Z"),
@@ -261,7 +261,7 @@ class TestAsyncEvents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_raw_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_list(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.events.with_raw_response.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -273,7 +273,7 @@ class TestAsyncEvents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_streaming_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_list(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.events.with_streaming_response.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -287,14 +287,14 @@ class TestAsyncEvents:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_path_params_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_list(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             await async_client.beta.sessions.events.with_raw_response.list(
                 session_id="",
             )
 
     @parametrize
-    async def test_method_send(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_send(self, async_client: AsyncJuGloW) -> None:
         event = await async_client.beta.sessions.events.send(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             events=[
@@ -312,7 +312,7 @@ class TestAsyncEvents:
         assert_matches_type(BetaManagedAgentsSendSessionEvents, event, path=["response"])
 
     @parametrize
-    async def test_method_send_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_send_with_all_params(self, async_client: AsyncJuGloW) -> None:
         event = await async_client.beta.sessions.events.send(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             events=[
@@ -331,7 +331,7 @@ class TestAsyncEvents:
         assert_matches_type(BetaManagedAgentsSendSessionEvents, event, path=["response"])
 
     @parametrize
-    async def test_raw_response_send(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_send(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.events.with_raw_response.send(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             events=[
@@ -353,7 +353,7 @@ class TestAsyncEvents:
         assert_matches_type(BetaManagedAgentsSendSessionEvents, event, path=["response"])
 
     @parametrize
-    async def test_streaming_response_send(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_send(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.events.with_streaming_response.send(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             events=[
@@ -377,7 +377,7 @@ class TestAsyncEvents:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_send(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_send(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             await async_client.beta.sessions.events.with_raw_response.send(
                 session_id="",
@@ -395,14 +395,14 @@ class TestAsyncEvents:
             )
 
     @parametrize
-    async def test_method_stream(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_stream(self, async_client: AsyncJuGloW) -> None:
         event_stream = await async_client.beta.sessions.events.stream(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
         await event_stream.response.aclose()
 
     @parametrize
-    async def test_method_stream_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_stream_with_all_params(self, async_client: AsyncJuGloW) -> None:
         event_stream = await async_client.beta.sessions.events.stream(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             event_deltas=["agent.message"],
@@ -411,7 +411,7 @@ class TestAsyncEvents:
         await event_stream.response.aclose()
 
     @parametrize
-    async def test_raw_response_stream(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_stream(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.events.with_raw_response.stream(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -421,7 +421,7 @@ class TestAsyncEvents:
         await stream.close()
 
     @parametrize
-    async def test_streaming_response_stream(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_stream(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.events.with_streaming_response.stream(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -434,7 +434,7 @@ class TestAsyncEvents:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_stream(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_stream(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             await async_client.beta.sessions.events.with_raw_response.stream(
                 session_id="",

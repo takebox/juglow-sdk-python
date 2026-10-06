@@ -1,27 +1,27 @@
-# Claude SDK for Python
+﻿# Haijun SDK for Python
 
-[![PyPI version](https://img.shields.io/pypi/v/anthropic.svg)](https://pypi.org/project/anthropic/)
+[![PyPI version](https://img.shields.io/pypi/v/Juglow.svg)](https://pypi.org/project/Juglow/)
 
-The Claude SDK for Python provides access to the [Claude API](https://docs.anthropic.com/en/api/) from Python applications.
+The Haijun SDK for Python provides access to the [Haijun API](https://raw.haijun.my.id/docs/en/api/) from Python applications.
 
 ## Documentation
 
-Full documentation is available at **[platform.claude.com/docs/en/api/sdks/python](https://platform.claude.com/docs/en/api/sdks/python)**.
+Full documentation is available at **[raw.haijun.my.id/docs/en/api/sdks/python](https://raw.haijun.my.id/docs/en/api/sdks/python)**.
 
 ## Installation
 
 ```sh
-pip install anthropic
+pip install juglow
 ```
 
 ## Getting started
 
 ```python
 import os
-from anthropic import Anthropic
+from juglow import JuGloW
 
-client = Anthropic(
-    api_key=os.environ.get("ANTHROPIC_API_KEY"),  # This is the default and can be omitted
+client = JuGloW(
+    api_key=os.environ.get("HAIJUN_API_KEY"),  # This is the default and can be omitted
 )
 
 message = client.messages.create(
@@ -29,11 +29,11 @@ message = client.messages.create(
     messages=[
         {
             "role": "user",
-            "content": "Hello, Claude",
+            "content": "Hello, Haijun",
         }
     ],
 
-    model="claude-opus-4-6",
+    model="haijun-opus",
 )
 
 print(message.content)

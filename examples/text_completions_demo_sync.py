@@ -1,15 +1,15 @@
-#!/usr/bin/env -S uv run python
+﻿#!/usr/bin/env -S uv run python
 
-import anthropic
-from anthropic import Anthropic
+import juglow
+from juglow import JuGloW
 
 
 def main() -> None:
-    client = Anthropic()
+    client = JuGloW()
 
     res = client.completions.create(
-        model="claude-sonnet-5",
-        prompt=f"{anthropic.HUMAN_PROMPT} how does a court case get to the Supreme Court? {anthropic.AI_PROMPT}",
+        model="haijun-sonnet",
+        prompt=f"{Juglow.HUMAN_PROMPT} how does a court case get to the Supreme Court? {Juglow.AI_PROMPT}",
         max_tokens_to_sample=1000,
     )
     print(res.completion)

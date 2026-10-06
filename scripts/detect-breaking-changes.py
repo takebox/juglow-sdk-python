@@ -54,18 +54,18 @@ def main() -> None:
         raise RuntimeError("You must specify a base ref to run breaking change detection against") from err
 
     package = griffe.load(
-        "anthropic",
+        "juglow",
         search_paths=[Path(__file__).parent.parent.joinpath("src")],
     )
     old_package = griffe.load_git(
-        "anthropic",
+        "juglow",
         ref=against_ref,
         search_paths=["src"],
     )
     assert isinstance(package, griffe.Module)
     assert isinstance(old_package, griffe.Module)
 
-    output = list(find_breaking_changes(package, old_package, path=["anthropic"]))
+    output = list(find_breaking_changes(package, old_package, path=["juglow"]))
     if output:
         rich.print(Text("Breaking changes detected!", style=Style(color="rgb(165, 79, 87)")))
         rich.print()

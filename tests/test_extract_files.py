@@ -4,8 +4,8 @@ from typing import Sequence
 
 import pytest
 
-from anthropic._types import FileTypes, ArrayFormat
-from anthropic._utils import extract_files
+from juglow._types import FileTypes, ArrayFormat
+from juglow._utils import extract_files
 
 
 def test_removes_files_from_input() -> None:

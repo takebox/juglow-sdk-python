@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import os
 import sys
@@ -10,9 +10,9 @@ from typing_extensions import Required, get_args, get_origin, get_type_hints
 import anyio
 import pytest
 
-from anthropic._compat import PYDANTIC_V1
-from anthropic.lib.tools import ToolError
-from anthropic.lib.tools.agent_toolset import (
+from juglow._compat import PYDANTIC_V1
+from juglow.lib.tools import ToolError
+from juglow.lib.tools.agent_toolset import (
     _BINARY_MEDIA_TYPES,
     DEFAULT_MAX_IMAGE_BASE64_BYTES,
     BashSession,
@@ -25,8 +25,8 @@ from anthropic.lib.tools.agent_toolset import (
     beta_write_tool,
     beta_agent_toolset_20260401,
 )
-from anthropic.types.beta.beta_base64_pdf_source_param import BetaBase64PDFSourceParam
-from anthropic.types.beta.beta_base64_image_source_param import BetaBase64ImageSourceParam
+from juglow.types.beta.beta_base64_pdf_source_param import BetaBase64PDFSourceParam
+from juglow.types.beta.beta_base64_image_source_param import BetaBase64ImageSourceParam
 
 needs_pydantic_v2 = pytest.mark.skipif(PYDANTIC_V1, reason="tool functions are only supported with pydantic v2")
 
@@ -52,8 +52,8 @@ def test_resolve_path(tmp_path: Path, description: str, p: str, unrestricted: bo
 
 def test_resolve_path_absolute_inside_workdir(tmp_path: Path) -> None:
     """An absolute path that canonicalises inside the workdir is permitted in
-    confined mode — the containment check is what guards the jail, not the
-    absolute/relative spelling. Regression for anthropics/anthropic-sdk-go#368.
+    confined mode â€” the containment check is what guards the jail, not the
+    absolute/relative spelling. Regression for Juglows/Juglow-sdk-go#368.
     """
     env = AgentToolContext(workdir=str(tmp_path))
     (tmp_path / "a.txt").write_text("x")
@@ -352,11 +352,11 @@ def test_text_io_is_utf8_under_ascii_locale(tmp_path: Path) -> None:
     default is fixed at interpreter startup."""
     import subprocess
 
-    (tmp_path / "notes.txt").write_bytes("café — naïve\n".encode("utf-8"))
+    (tmp_path / "notes.txt").write_bytes("cafÃ© â€” naÃ¯ve\n".encode("utf-8"))
     script = "\n".join(
         [
             "import sys, anyio",
-            "from anthropic.lib.tools.agent_toolset import (",
+            "from juglow.lib.tools.agent_toolset import (",
             "    AgentToolContext, beta_edit_tool, beta_read_tool)",
             f"ctx = AgentToolContext(workdir={str(tmp_path)!r})",
             "async def main():",
@@ -373,8 +373,8 @@ def test_text_io_is_utf8_under_ascii_locale(tmp_path: Path) -> None:
         capture_output=True,
     )
     assert proc.returncode == 0, proc.stderr.decode("utf-8", errors="replace")
-    assert proc.stdout.decode("utf-8") == "café — naïve\n"
-    assert (tmp_path / "notes.txt").read_text(encoding="utf-8") == "thé — naïve\n"
+    assert proc.stdout.decode("utf-8") == "cafÃ© â€” naÃ¯ve\n"
+    assert (tmp_path / "notes.txt").read_text(encoding="utf-8") == "thÃ© â€” naÃ¯ve\n"
 
 
 @pytest.mark.parametrize(
@@ -522,7 +522,7 @@ async def test_bash_outer_cancel_closes_subprocess_no_stale_state(tmp_path: Path
     so the next call can't read the cancelled command's stale output/sentinel.
 
     anyio raises an outer-scope cancel as a plain ``Cancelled`` (not
-    ``TimeoutError``), so the ``except TimeoutError`` cleanup never runs — only
+    ``TimeoutError``), so the ``except TimeoutError`` cleanup never runs â€” only
     the new ``except get_cancelled_exc_class()`` path saves us here.
     """
     s = await BashSession.start(str(tmp_path))
@@ -535,7 +535,7 @@ async def test_bash_outer_cancel_closes_subprocess_no_stale_state(tmp_path: Path
         # The outer cancel fired mid-exec. The subprocess must have been closed
         # (not left alive with `sleep 5; echo STALE_MARKER` still queued).
         assert s.closed is True
-        # And because it's closed, the next exec refuses outright — it can NOT
+        # And because it's closed, the next exec refuses outright â€” it can NOT
         # hand back the previous command's STALE_MARKER output + old sentinel.
         with pytest.raises(RuntimeError, match="terminated"):
             await s.exec("echo NEXT")
@@ -559,7 +559,7 @@ async def test_read_through_symlink_escape_is_rejected(tmp_path: Path) -> None:
 
 @needs_pydantic_v2
 async def test_glob_rejects_dotdot_pattern(tmp_path: Path) -> None:
-    """``Path.glob`` honours literal ``..`` segments — the tool must reject a
+    """``Path.glob`` honours literal ``..`` segments â€” the tool must reject a
     pattern that would walk out of the workdir before it ever runs."""
     outside = tmp_path / "outside"
     outside.mkdir()

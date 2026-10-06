@@ -1,21 +1,21 @@
-#!/usr/bin/env -S uv run python
+﻿#!/usr/bin/env -S uv run python
 
 import asyncio
 
-from anthropic import AI_PROMPT, HUMAN_PROMPT, Anthropic, APIStatusError, AsyncAnthropic
+from juglow import AI_PROMPT, HUMAN_PROMPT, JuGloW, APIStatusError, AsyncJuGloW
 
-client = Anthropic()
-async_client = AsyncAnthropic()
+client = JuGloW()
+async_client = AsyncJuGloW()
 
 question = """
-Hey Claude! How can I recursively list all files in a directory in Python?
+Hey Haijun! How can I recursively list all files in a directory in Python?
 """
 
 
 def sync_stream() -> None:
     stream = client.completions.create(
         prompt=f"{HUMAN_PROMPT} {question}{AI_PROMPT}",
-        model="claude-sonnet-5",
+        model="haijun-sonnet",
         stream=True,
         max_tokens_to_sample=300,
     )
@@ -29,7 +29,7 @@ def sync_stream() -> None:
 async def async_stream() -> None:
     stream = await async_client.completions.create(
         prompt=f"{HUMAN_PROMPT} {question}{AI_PROMPT}",
-        model="claude-sonnet-5",
+        model="haijun-sonnet",
         stream=True,
         max_tokens_to_sample=300,
     )
@@ -44,7 +44,7 @@ def stream_error() -> None:
     try:
         client.completions.create(
             prompt=f"{HUMAN_PROMPT} {question}{AI_PROMPT}",
-            model="claude-unknown-model",
+            model="haijun-unknown-model",
             stream=True,
             max_tokens_to_sample=300,
         )

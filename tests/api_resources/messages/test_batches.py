@@ -1,4 +1,4 @@
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+﻿# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 from __future__ import annotations
 
 import os
@@ -9,10 +9,10 @@ import httpx
 import pytest
 from respx import MockRouter
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic.pagination import SyncPage, AsyncPage
-from anthropic.types.messages import (
+from juglow.pagination import SyncPage, AsyncPage
+from juglow.types.messages import (
     MessageBatch,
     DeletedMessageBatch,
 )
@@ -24,7 +24,7 @@ class TestBatches:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    def test_method_create(self, client: Anthropic) -> None:
+    def test_method_create(self, client: JuGloW) -> None:
         batch = client.messages.batches.create(
             requests=[
                 {
@@ -37,7 +37,7 @@ class TestBatches:
                                 "role": "user",
                             }
                         ],
-                        "model": "claude-opus-4-6",
+                        "model": "haijun-opus",
                     },
                 }
             ],
@@ -45,7 +45,7 @@ class TestBatches:
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    def test_method_create_with_all_params(self, client: Anthropic) -> None:
+    def test_method_create_with_all_params(self, client: JuGloW) -> None:
         batch = client.messages.batches.create(
             requests=[
                 {
@@ -58,7 +58,7 @@ class TestBatches:
                                 "role": "user",
                             }
                         ],
-                        "model": "claude-opus-4-6",
+                        "model": "haijun-opus",
                         "cache_control": {
                             "type": "ephemeral",
                             "ttl": "5m",
@@ -134,12 +134,12 @@ class TestBatches:
                     },
                 }
             ],
-            user_profile_id="anthropic-user-profile-id",
+            user_profile_id="Juglow-user-profile-id",
         )
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    def test_raw_response_create(self, client: Anthropic) -> None:
+    def test_raw_response_create(self, client: JuGloW) -> None:
         response = client.messages.batches.with_raw_response.create(
             requests=[
                 {
@@ -152,7 +152,7 @@ class TestBatches:
                                 "role": "user",
                             }
                         ],
-                        "model": "claude-opus-4-6",
+                        "model": "haijun-opus",
                     },
                 }
             ],
@@ -164,7 +164,7 @@ class TestBatches:
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    def test_streaming_response_create(self, client: Anthropic) -> None:
+    def test_streaming_response_create(self, client: JuGloW) -> None:
         with client.messages.batches.with_streaming_response.create(
             requests=[
                 {
@@ -177,7 +177,7 @@ class TestBatches:
                                 "role": "user",
                             }
                         ],
-                        "model": "claude-opus-4-6",
+                        "model": "haijun-opus",
                     },
                 }
             ],
@@ -191,14 +191,14 @@ class TestBatches:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_retrieve(self, client: Anthropic) -> None:
+    def test_method_retrieve(self, client: JuGloW) -> None:
         batch = client.messages.batches.retrieve(
             "message_batch_id",
         )
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    def test_raw_response_retrieve(self, client: Anthropic) -> None:
+    def test_raw_response_retrieve(self, client: JuGloW) -> None:
         response = client.messages.batches.with_raw_response.retrieve(
             "message_batch_id",
         )
@@ -209,7 +209,7 @@ class TestBatches:
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    def test_streaming_response_retrieve(self, client: Anthropic) -> None:
+    def test_streaming_response_retrieve(self, client: JuGloW) -> None:
         with client.messages.batches.with_streaming_response.retrieve(
             "message_batch_id",
         ) as response:
@@ -222,19 +222,19 @@ class TestBatches:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_retrieve(self, client: Anthropic) -> None:
+    def test_path_params_retrieve(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `message_batch_id` but received ''"):
             client.messages.batches.with_raw_response.retrieve(
                 "",
             )
 
     @parametrize
-    def test_method_list(self, client: Anthropic) -> None:
+    def test_method_list(self, client: JuGloW) -> None:
         batch = client.messages.batches.list()
         assert_matches_type(SyncPage[MessageBatch], batch, path=["response"])
 
     @parametrize
-    def test_method_list_with_all_params(self, client: Anthropic) -> None:
+    def test_method_list_with_all_params(self, client: JuGloW) -> None:
         batch = client.messages.batches.list(
             after_id="after_id",
             before_id="before_id",
@@ -243,7 +243,7 @@ class TestBatches:
         assert_matches_type(SyncPage[MessageBatch], batch, path=["response"])
 
     @parametrize
-    def test_raw_response_list(self, client: Anthropic) -> None:
+    def test_raw_response_list(self, client: JuGloW) -> None:
         response = client.messages.batches.with_raw_response.list()
 
         assert response.is_closed is True
@@ -252,7 +252,7 @@ class TestBatches:
         assert_matches_type(SyncPage[MessageBatch], batch, path=["response"])
 
     @parametrize
-    def test_streaming_response_list(self, client: Anthropic) -> None:
+    def test_streaming_response_list(self, client: JuGloW) -> None:
         with client.messages.batches.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -263,14 +263,14 @@ class TestBatches:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_delete(self, client: Anthropic) -> None:
+    def test_method_delete(self, client: JuGloW) -> None:
         batch = client.messages.batches.delete(
             "message_batch_id",
         )
         assert_matches_type(DeletedMessageBatch, batch, path=["response"])
 
     @parametrize
-    def test_raw_response_delete(self, client: Anthropic) -> None:
+    def test_raw_response_delete(self, client: JuGloW) -> None:
         response = client.messages.batches.with_raw_response.delete(
             "message_batch_id",
         )
@@ -281,7 +281,7 @@ class TestBatches:
         assert_matches_type(DeletedMessageBatch, batch, path=["response"])
 
     @parametrize
-    def test_streaming_response_delete(self, client: Anthropic) -> None:
+    def test_streaming_response_delete(self, client: JuGloW) -> None:
         with client.messages.batches.with_streaming_response.delete(
             "message_batch_id",
         ) as response:
@@ -294,21 +294,21 @@ class TestBatches:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_delete(self, client: Anthropic) -> None:
+    def test_path_params_delete(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `message_batch_id` but received ''"):
             client.messages.batches.with_raw_response.delete(
                 "",
             )
 
     @parametrize
-    def test_method_cancel(self, client: Anthropic) -> None:
+    def test_method_cancel(self, client: JuGloW) -> None:
         batch = client.messages.batches.cancel(
             "message_batch_id",
         )
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    def test_raw_response_cancel(self, client: Anthropic) -> None:
+    def test_raw_response_cancel(self, client: JuGloW) -> None:
         response = client.messages.batches.with_raw_response.cancel(
             "message_batch_id",
         )
@@ -319,7 +319,7 @@ class TestBatches:
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    def test_streaming_response_cancel(self, client: Anthropic) -> None:
+    def test_streaming_response_cancel(self, client: JuGloW) -> None:
         with client.messages.batches.with_streaming_response.cancel(
             "message_batch_id",
         ) as response:
@@ -332,7 +332,7 @@ class TestBatches:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_cancel(self, client: Anthropic) -> None:
+    def test_path_params_cancel(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `message_batch_id` but received ''"):
             client.messages.batches.with_raw_response.cancel(
                 "",
@@ -340,7 +340,7 @@ class TestBatches:
 
     @pytest.mark.respx(base_url=base_url)
     @pytest.mark.parametrize("client", [False], indirect=True)
-    def test_method_results(self, client: Anthropic, respx_mock: MockRouter) -> None:
+    def test_method_results(self, client: JuGloW, respx_mock: MockRouter) -> None:
         respx_mock.get("/v1/messages/batches/message_batch_id").mock(
             return_value=httpx.Response(200, json={"results_url": "/v1/messages/batches/message_batch_id/results"})
         )
@@ -375,7 +375,7 @@ class TestAsyncBatches:
     )
 
     @parametrize
-    async def test_method_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create(self, async_client: AsyncJuGloW) -> None:
         batch = await async_client.messages.batches.create(
             requests=[
                 {
@@ -388,7 +388,7 @@ class TestAsyncBatches:
                                 "role": "user",
                             }
                         ],
-                        "model": "claude-opus-4-6",
+                        "model": "haijun-opus",
                     },
                 }
             ],
@@ -396,7 +396,7 @@ class TestAsyncBatches:
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    async def test_method_create_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_with_all_params(self, async_client: AsyncJuGloW) -> None:
         batch = await async_client.messages.batches.create(
             requests=[
                 {
@@ -409,7 +409,7 @@ class TestAsyncBatches:
                                 "role": "user",
                             }
                         ],
-                        "model": "claude-opus-4-6",
+                        "model": "haijun-opus",
                         "cache_control": {
                             "type": "ephemeral",
                             "ttl": "5m",
@@ -485,12 +485,12 @@ class TestAsyncBatches:
                     },
                 }
             ],
-            user_profile_id="anthropic-user-profile-id",
+            user_profile_id="Juglow-user-profile-id",
         )
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    async def test_raw_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_create(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.messages.batches.with_raw_response.create(
             requests=[
                 {
@@ -503,7 +503,7 @@ class TestAsyncBatches:
                                 "role": "user",
                             }
                         ],
-                        "model": "claude-opus-4-6",
+                        "model": "haijun-opus",
                     },
                 }
             ],
@@ -515,7 +515,7 @@ class TestAsyncBatches:
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    async def test_streaming_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_create(self, async_client: AsyncJuGloW) -> None:
         async with async_client.messages.batches.with_streaming_response.create(
             requests=[
                 {
@@ -528,7 +528,7 @@ class TestAsyncBatches:
                                 "role": "user",
                             }
                         ],
-                        "model": "claude-opus-4-6",
+                        "model": "haijun-opus",
                     },
                 }
             ],
@@ -542,14 +542,14 @@ class TestAsyncBatches:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve(self, async_client: AsyncJuGloW) -> None:
         batch = await async_client.messages.batches.retrieve(
             "message_batch_id",
         )
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    async def test_raw_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.messages.batches.with_raw_response.retrieve(
             "message_batch_id",
         )
@@ -560,7 +560,7 @@ class TestAsyncBatches:
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    async def test_streaming_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         async with async_client.messages.batches.with_streaming_response.retrieve(
             "message_batch_id",
         ) as response:
@@ -573,19 +573,19 @@ class TestAsyncBatches:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_retrieve(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `message_batch_id` but received ''"):
             await async_client.messages.batches.with_raw_response.retrieve(
                 "",
             )
 
     @parametrize
-    async def test_method_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list(self, async_client: AsyncJuGloW) -> None:
         batch = await async_client.messages.batches.list()
         assert_matches_type(AsyncPage[MessageBatch], batch, path=["response"])
 
     @parametrize
-    async def test_method_list_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list_with_all_params(self, async_client: AsyncJuGloW) -> None:
         batch = await async_client.messages.batches.list(
             after_id="after_id",
             before_id="before_id",
@@ -594,7 +594,7 @@ class TestAsyncBatches:
         assert_matches_type(AsyncPage[MessageBatch], batch, path=["response"])
 
     @parametrize
-    async def test_raw_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_list(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.messages.batches.with_raw_response.list()
 
         assert response.is_closed is True
@@ -603,7 +603,7 @@ class TestAsyncBatches:
         assert_matches_type(AsyncPage[MessageBatch], batch, path=["response"])
 
     @parametrize
-    async def test_streaming_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_list(self, async_client: AsyncJuGloW) -> None:
         async with async_client.messages.batches.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -614,14 +614,14 @@ class TestAsyncBatches:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_delete(self, async_client: AsyncJuGloW) -> None:
         batch = await async_client.messages.batches.delete(
             "message_batch_id",
         )
         assert_matches_type(DeletedMessageBatch, batch, path=["response"])
 
     @parametrize
-    async def test_raw_response_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_delete(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.messages.batches.with_raw_response.delete(
             "message_batch_id",
         )
@@ -632,7 +632,7 @@ class TestAsyncBatches:
         assert_matches_type(DeletedMessageBatch, batch, path=["response"])
 
     @parametrize
-    async def test_streaming_response_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_delete(self, async_client: AsyncJuGloW) -> None:
         async with async_client.messages.batches.with_streaming_response.delete(
             "message_batch_id",
         ) as response:
@@ -645,21 +645,21 @@ class TestAsyncBatches:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_delete(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `message_batch_id` but received ''"):
             await async_client.messages.batches.with_raw_response.delete(
                 "",
             )
 
     @parametrize
-    async def test_method_cancel(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_cancel(self, async_client: AsyncJuGloW) -> None:
         batch = await async_client.messages.batches.cancel(
             "message_batch_id",
         )
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    async def test_raw_response_cancel(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_cancel(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.messages.batches.with_raw_response.cancel(
             "message_batch_id",
         )
@@ -670,7 +670,7 @@ class TestAsyncBatches:
         assert_matches_type(MessageBatch, batch, path=["response"])
 
     @parametrize
-    async def test_streaming_response_cancel(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_cancel(self, async_client: AsyncJuGloW) -> None:
         async with async_client.messages.batches.with_streaming_response.cancel(
             "message_batch_id",
         ) as response:
@@ -683,7 +683,7 @@ class TestAsyncBatches:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_cancel(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_cancel(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `message_batch_id` but received ''"):
             await async_client.messages.batches.with_raw_response.cancel(
                 "",
@@ -691,7 +691,7 @@ class TestAsyncBatches:
 
     @pytest.mark.respx(base_url=base_url)
     @pytest.mark.parametrize("async_client", [False], indirect=True)
-    async def test_method_results(self, async_client: AsyncAnthropic, respx_mock: MockRouter) -> None:
+    async def test_method_results(self, async_client: AsyncJuGloW, respx_mock: MockRouter) -> None:
         respx_mock.get("/v1/messages/batches/message_batch_id").mock(
             return_value=httpx.Response(200, json={"results_url": "/v1/messages/batches/message_batch_id/results"})
         )

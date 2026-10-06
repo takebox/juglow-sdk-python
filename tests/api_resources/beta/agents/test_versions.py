@@ -7,10 +7,10 @@ from typing import Any, cast
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic.pagination import SyncPageCursor, AsyncPageCursor
-from anthropic.types.beta import BetaManagedAgentsAgent
+from juglow.pagination import SyncPageCursor, AsyncPageCursor
+from juglow.types.beta import BetaManagedAgentsAgent
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -20,7 +20,7 @@ class TestVersions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list(self, client: Anthropic) -> None:
+    def test_method_list(self, client: JuGloW) -> None:
         version = client.beta.agents.versions.list(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
@@ -28,7 +28,7 @@ class TestVersions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list_with_all_params(self, client: Anthropic) -> None:
+    def test_method_list_with_all_params(self, client: JuGloW) -> None:
         version = client.beta.agents.versions.list(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
             limit=0,
@@ -39,7 +39,7 @@ class TestVersions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_raw_response_list(self, client: Anthropic) -> None:
+    def test_raw_response_list(self, client: JuGloW) -> None:
         response = client.beta.agents.versions.with_raw_response.list(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
@@ -51,7 +51,7 @@ class TestVersions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_streaming_response_list(self, client: Anthropic) -> None:
+    def test_streaming_response_list(self, client: JuGloW) -> None:
         with client.beta.agents.versions.with_streaming_response.list(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         ) as response:
@@ -65,7 +65,7 @@ class TestVersions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_path_params_list(self, client: Anthropic) -> None:
+    def test_path_params_list(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `agent_id` but received ''"):
             client.beta.agents.versions.with_raw_response.list(
                 agent_id="",
@@ -79,7 +79,7 @@ class TestAsyncVersions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list(self, async_client: AsyncJuGloW) -> None:
         version = await async_client.beta.agents.versions.list(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
@@ -87,7 +87,7 @@ class TestAsyncVersions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list_with_all_params(self, async_client: AsyncJuGloW) -> None:
         version = await async_client.beta.agents.versions.list(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
             limit=0,
@@ -98,7 +98,7 @@ class TestAsyncVersions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_raw_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_list(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.agents.versions.with_raw_response.list(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         )
@@ -110,7 +110,7 @@ class TestAsyncVersions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_streaming_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_list(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.agents.versions.with_streaming_response.list(
             agent_id="agent_011CZkYpogX7uDKUyvBTophP",
         ) as response:
@@ -124,7 +124,7 @@ class TestAsyncVersions:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_path_params_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_list(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `agent_id` but received ''"):
             await async_client.beta.agents.versions.with_raw_response.list(
                 agent_id="",

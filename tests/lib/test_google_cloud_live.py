@@ -1,7 +1,7 @@
 """Live integration tests against the real gateway.
 
-Gated on ``ANTHROPIC_LIVE=1``; the regular suite never hits the network. Expects
-``ANTHROPIC_GOOGLE_CLOUD_{PROJECT,WORKSPACE_ID}`` (or ``..._BASE_URL``) and
+Gated on ``HAIJUN_LIVE=1``; the regular suite never hits the network. Expects
+``HAIJUN_GOOGLE_CLOUD_{PROJECT,WORKSPACE_ID}`` (or ``..._BASE_URL``) and
 Application Default Credentials in the environment.
 """
 
@@ -13,24 +13,24 @@ from typing import Iterator, AsyncIterator
 import httpx
 import pytest
 
-from anthropic import APIStatusError
-from anthropic.lib.google_cloud import AnthropicGoogleCloud, AsyncAnthropicGoogleCloud
+from juglow import APIStatusError
+from juglow.lib.google_cloud import JuGloWGoogleCloud, AsyncJuGloWGoogleCloud
 
 pytestmark = [
-    pytest.mark.skipif(os.environ.get("ANTHROPIC_LIVE") != "1", reason="Set ANTHROPIC_LIVE=1 to run live tests"),
+    pytest.mark.skipif(os.environ.get("HAIJUN_LIVE") != "1", reason="Set HAIJUN_LIVE=1 to run live tests"),
     # google-auth emits a Python-EOL FutureWarning on import; the repo runs with
     # filterwarnings=error, so silence it for this live-test module.
     pytest.mark.filterwarnings("ignore::FutureWarning"),
     pytest.mark.filterwarnings("ignore::DeprecationWarning"),
 ]
 
-MODEL = "claude-haiku-4-5"
-LOCATION = os.environ.get("ANTHROPIC_GOOGLE_CLOUD_LOCATION", "us-central1")
+MODEL = "haijun-haiku"
+LOCATION = os.environ.get("HAIJUN_GOOGLE_CLOUD_LOCATION", "us-central1")
 
 
 @pytest.fixture
-def sync_client() -> Iterator[AnthropicGoogleCloud]:
-    client = AnthropicGoogleCloud(
+def sync_client() -> Iterator[JuGloWGoogleCloud]:
+    client = JuGloWGoogleCloud(
         location=LOCATION,
         max_retries=1,
         http_client=httpx.Client(timeout=60.0),
@@ -42,8 +42,8 @@ def sync_client() -> Iterator[AnthropicGoogleCloud]:
 
 
 @pytest.fixture
-async def async_client() -> AsyncIterator[AsyncAnthropicGoogleCloud]:
-    client = AsyncAnthropicGoogleCloud(
+async def async_client() -> AsyncIterator[AsyncJuGloWGoogleCloud]:
+    client = AsyncJuGloWGoogleCloud(
         location=LOCATION,
         max_retries=1,
         http_client=httpx.AsyncClient(timeout=60.0),
@@ -55,7 +55,7 @@ async def async_client() -> AsyncIterator[AsyncAnthropicGoogleCloud]:
 
 
 class TestSyncLive:
-    def test_non_streaming(self, sync_client: AnthropicGoogleCloud) -> None:
+    def test_non_streaming(self, sync_client: JuGloWGoogleCloud) -> None:
         message = sync_client.messages.create(
             model=MODEL,
             max_tokens=32,
@@ -65,7 +65,7 @@ class TestSyncLive:
         assert message.content[0].type == "text"
         assert message.usage.output_tokens > 0
 
-    def test_streaming(self, sync_client: AnthropicGoogleCloud) -> None:
+    def test_streaming(self, sync_client: JuGloWGoogleCloud) -> None:
         events: list[str] = []
         with sync_client.messages.stream(
             model=MODEL,
@@ -82,7 +82,7 @@ class TestSyncLive:
         assert final.role == "assistant"
         assert final.content[0].type == "text"
 
-    def test_bad_model_surfaces_typed_error(self, sync_client: AnthropicGoogleCloud) -> None:
+    def test_bad_model_surfaces_typed_error(self, sync_client: JuGloWGoogleCloud) -> None:
         with pytest.raises(APIStatusError):
             sync_client.messages.create(
                 model="not-a-real-model",
@@ -92,7 +92,7 @@ class TestSyncLive:
 
 
 class TestAsyncLive:
-    async def test_non_streaming(self, async_client: AsyncAnthropicGoogleCloud) -> None:
+    async def test_non_streaming(self, async_client: AsyncJuGloWGoogleCloud) -> None:
         message = await async_client.messages.create(
             model=MODEL,
             max_tokens=32,
@@ -101,7 +101,7 @@ class TestAsyncLive:
         assert message.role == "assistant"
         assert message.content[0].type == "text"
 
-    async def test_streaming(self, async_client: AsyncAnthropicGoogleCloud) -> None:
+    async def test_streaming(self, async_client: AsyncJuGloWGoogleCloud) -> None:
         events: list[str] = []
         async with async_client.messages.stream(
             model=MODEL,
@@ -117,7 +117,7 @@ class TestAsyncLive:
         assert events[-1] == "message_stop"
         assert final.content[0].type == "text"
 
-    async def test_bad_model_surfaces_typed_error(self, async_client: AsyncAnthropicGoogleCloud) -> None:
+    async def test_bad_model_surfaces_typed_error(self, async_client: AsyncJuGloWGoogleCloud) -> None:
         with pytest.raises(APIStatusError):
             await async_client.messages.create(
                 model="not-a-real-model",

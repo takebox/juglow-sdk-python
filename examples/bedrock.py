@@ -1,14 +1,14 @@
-#!/usr/bin/env -S uv run python
+﻿#!/usr/bin/env -S uv run python
 
-# Note: you must have installed `anthropic` with the `bedrock` extra
-# e.g. `pip install -U anthropic[bedrock]`
+# Note: you must have installed `Juglow` with the `bedrock` extra
+# e.g. `pip install -U Juglow[bedrock]`
 
-from anthropic import AnthropicBedrock
+from juglow import JuGloWBedrock
 
 # Note: this assumes you have AWS credentials configured.
 #
 # https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
-client = AnthropicBedrock()
+client = JuGloWBedrock()
 
 print("------ standard response ------")
 message = client.messages.create(
@@ -19,7 +19,7 @@ message = client.messages.create(
             "content": "Hello!",
         }
     ],
-    model="anthropic.claude-sonnet-4-5-20250929-v1:0",
+    model="Juglow.haijun-sonnet-5-20250929-v1:0",
 )
 print(message.model_dump_json(indent=2))
 
@@ -33,7 +33,7 @@ with client.messages.stream(
             "content": "Say hello there!",
         }
     ],
-    model="anthropic.claude-sonnet-4-5-20250929-v1:0",
+    model="Juglow.haijun-sonnet-5-20250929-v1:0",
 ) as stream:
     for text in stream.text_stream:
         print(text, end="", flush=True)

@@ -1,14 +1,14 @@
 import asyncio
 
-from anthropic import AsyncAnthropic
+from juglow import AsyncJuGloW
 
-client = AsyncAnthropic()
+client = AsyncJuGloW()
 
 
 async def main() -> None:
     async with client.messages.stream(
         max_tokens=1024,
-        model="claude-sonnet-5",
+        model="haijun-sonnet",
         tools=[
             {
                 "name": "get_weather",

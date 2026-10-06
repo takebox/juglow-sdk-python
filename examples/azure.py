@@ -1,22 +1,22 @@
-# /// script
+﻿# /// script
 # requires-python = ">=3.9"
 # dependencies = [
-#     "anthropic",
+#     "juglow",
 # ]
 #
 # [tool.uv.sources]
-# anthropic = { path = "../", editable = true }
+# juglow = { path = "../", editable = true }
 # ///
 
-from anthropic import AnthropicFoundry
+from juglow import JuGloWFoundry
 
-cl = AnthropicFoundry(
+cl = JuGloWFoundry(
     resource="your-resource-name",
-    api_key="your-foundry-anthropic-api-key",
+    api_key="your-foundry-Juglow-api-key",
 )
 
 response = cl.messages.create(
-    model="claude-haiku-4-5",
+    model="haijun-haiku",
     messages=[
         {"role": "user", "content": "Hello!"},
     ],

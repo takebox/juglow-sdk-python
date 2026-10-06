@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import os
 import json
@@ -9,28 +9,28 @@ import httpx
 import pytest
 from respx import MockRouter
 
-from anthropic import Anthropic, AsyncAnthropic
-from anthropic._utils import assert_overloads_in_sync, assert_signatures_in_sync
-from anthropic._compat import PYDANTIC_V1
-from anthropic.types.beta.beta_message import BetaMessage
-from anthropic.lib.streaming._beta_types import BetaCompactionEvent, ParsedBetaMessageStreamEvent
-from anthropic.resources.messages.messages import DEPRECATED_MODELS
-from anthropic.lib.streaming._beta_messages import TRACKS_TOOL_INPUT, BetaMessageStream, BetaAsyncMessageStream
+from juglow import JuGloW, AsyncJuGloW
+from juglow._utils import assert_overloads_in_sync, assert_signatures_in_sync
+from juglow._compat import PYDANTIC_V1
+from juglow.types.beta.beta_message import BetaMessage
+from juglow.lib.streaming._beta_types import BetaCompactionEvent, ParsedBetaMessageStreamEvent
+from juglow.resources.messages.messages import DEPRECATED_MODELS
+from juglow.lib.streaming._beta_messages import TRACKS_TOOL_INPUT, BetaMessageStream, BetaAsyncMessageStream
 
 from .helpers import get_response, to_async_iter
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
-api_key = "my-anthropic-api-key"
+api_key = "my-Juglow-api-key"
 
-sync_client = Anthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
-async_client = AsyncAnthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+sync_client = JuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+async_client = AsyncJuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
 _T = TypeVar("_T")
 
 # Expected message fixtures
 EXPECTED_BASIC_MESSAGE = {
     "id": "msg_4QpJur2dWWDjF6C758FbBw5vm12BaVipnK",
-    "model": "claude-3-opus-latest",
+    "model": "haijun-3-opus-latest",
     "role": "assistant",
     "stop_reason": "end_turn",
     "type": "message",
@@ -53,7 +53,7 @@ EXPECTED_BASIC_EVENT_TYPES = [
 
 EXPECTED_TOOL_USE_MESSAGE = {
     "id": "msg_019Q1hrJbZG26Fb9BQhrkHEr",
-    "model": "claude-sonnet-4-20250514",
+    "model": "haijun-sonnet-20250514",
     "role": "assistant",
     "stop_reason": "tool_use",
     "type": "message",
@@ -101,7 +101,7 @@ EXPECTED_TOOL_USE_EVENT_TYPES = [
 
 EXPECTED_INCOMPLETE_MESSAGE = {
     "id": "msg_01UdjYBBipA9omjYhicnevgq",
-    "model": "claude-3-7-sonnet-20250219",
+    "model": "haijun-3-7-sonnet-20250219",
     "role": "assistant",
     "stop_reason": "max_tokens",
     "type": "message",
@@ -162,7 +162,7 @@ EXPECTED_INCOMPLETE_EVENT_TYPES = [
 
 EXPECTED_COMPACTION_MESSAGE = {
     "id": "msg_01CompactionEncryptedContent01",
-    "model": "claude-opus-4-7",
+    "model": "haijun-opus-7",
     "role": "assistant",
     "stop_reason": "end_turn",
     "type": "message",
@@ -251,7 +251,7 @@ def assert_fallback_response(events: list[ParsedBetaMessageStreamEvent], message
 
     # `message_start` carried the declined model; the accumulated message must
     # be relabeled to the serving model from the fallback block
-    assert message.model == "claude-sonnet-4-5"
+    assert message.model == "haijun-sonnet-5"
 
     assert message.content[0].type == "fallback"
 
@@ -283,7 +283,7 @@ class TestSyncMessages:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-3-opus-latest",
+            model="haijun-3-opus-latest",
         ) as stream:
             assert isinstance(cast(Any, stream), BetaMessageStream)
 
@@ -303,7 +303,7 @@ class TestSyncMessages:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
         ) as stream:
             assert isinstance(cast(Any, stream), BetaMessageStream)
 
@@ -323,7 +323,7 @@ class TestSyncMessages:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-3-opus-latest",
+            model="haijun-3-opus-latest",
         ) as stream:
             assert not stream.response.is_closed
 
@@ -355,7 +355,7 @@ class TestSyncMessages:
         with sync_client.beta.messages.stream(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Say hello there!"}],
-            model="claude-opus-4-7",
+            model="haijun-opus-7",
         ) as stream:
             assert_refusal_response(stream.get_final_message())
 
@@ -368,7 +368,7 @@ class TestSyncMessages:
         with sync_client.beta.messages.stream(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Say hello there!"}],
-            model="claude-opus-4-7",
+            model="haijun-opus-7",
         ) as stream:
             assert isinstance(cast(Any, stream), BetaMessageStream)
 
@@ -383,7 +383,7 @@ class TestSyncMessages:
         with sync_client.beta.messages.stream(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Say hello there!"}],
-            model="claude-opus-4-7",
+            model="haijun-opus-7",
         ) as stream:
             assert isinstance(cast(Any, stream), BetaMessageStream)
 
@@ -398,7 +398,7 @@ class TestSyncMessages:
         with sync_client.beta.messages.stream(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Say hello there!"}],
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
         ) as stream:
             assert_fallback_credit_response(stream.get_final_message())
 
@@ -419,7 +419,7 @@ class TestAsyncMessages:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-opus-4-5",
+            model="haijun-opus-5",
         ) as stream:
             assert isinstance(cast(Any, stream), BetaAsyncMessageStream)
 
@@ -440,7 +440,7 @@ class TestAsyncMessages:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-3-opus-latest",
+            model="haijun-3-opus-latest",
         ) as stream:
             assert not stream.response.is_closed
 
@@ -479,7 +479,7 @@ class TestAsyncMessages:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
         ) as stream:
             assert isinstance(cast(Any, stream), BetaAsyncMessageStream)
 
@@ -502,7 +502,7 @@ class TestAsyncMessages:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
         ) as stream:
             assert isinstance(cast(Any, stream), BetaAsyncMessageStream)
 
@@ -520,7 +520,7 @@ class TestAsyncMessages:
         async with async_client.beta.messages.stream(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Say hello there!"}],
-            model="claude-opus-4-7",
+            model="haijun-opus-7",
         ) as stream:
             assert_refusal_response(await stream.get_final_message())
 
@@ -534,7 +534,7 @@ class TestAsyncMessages:
         async with async_client.beta.messages.stream(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Say hello there!"}],
-            model="claude-opus-4-7",
+            model="haijun-opus-7",
         ) as stream:
             assert isinstance(cast(Any, stream), BetaAsyncMessageStream)
 
@@ -550,7 +550,7 @@ class TestAsyncMessages:
         async with async_client.beta.messages.stream(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Say hello there!"}],
-            model="claude-opus-4-7",
+            model="haijun-opus-7",
         ) as stream:
             assert isinstance(cast(Any, stream), BetaAsyncMessageStream)
 
@@ -566,14 +566,14 @@ class TestAsyncMessages:
         async with async_client.beta.messages.stream(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Say hello there!"}],
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
         ) as stream:
             assert_fallback_credit_response(await stream.get_final_message())
 
 
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
 def test_stream_method_definition_in_sync(sync: bool) -> None:
-    client: Anthropic | AsyncAnthropic = sync_client if sync else async_client
+    client: JuGloW | AsyncJuglow = sync_client if sync else async_client
     assert_signatures_in_sync(
         client.beta.messages.create,
         client.beta.messages.stream,
@@ -583,7 +583,7 @@ def test_stream_method_definition_in_sync(sync: bool) -> None:
 
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
 def test_parse_method_definition_in_sync(sync: bool) -> None:
-    client: Anthropic | AsyncAnthropic = sync_client if sync else async_client
+    client: JuGloW | AsyncJuglow = sync_client if sync else async_client
     assert_signatures_in_sync(
         client.beta.messages.create,
         client.beta.messages.parse,
@@ -593,7 +593,7 @@ def test_parse_method_definition_in_sync(sync: bool) -> None:
 
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
 def test_tool_runner_method_definition_in_sync(sync: bool) -> None:
-    client: Anthropic | AsyncAnthropic = sync_client if sync else async_client
+    client: JuGloW | AsyncJuglow = sync_client if sync else async_client
     assert_overloads_in_sync(
         client.beta.messages.create,
         client.beta.messages.tool_runner,
@@ -611,7 +611,7 @@ def test_tracks_tool_input_type_alias_is_up_to_date() -> None:
 
     from pydantic import BaseModel
 
-    from anthropic.types.beta.beta_content_block import BetaContentBlock
+    from juglow.types.beta.beta_content_block import BetaContentBlock
 
     # Get the content block union type
     content_block_union = get_args(BetaContentBlock)[0]

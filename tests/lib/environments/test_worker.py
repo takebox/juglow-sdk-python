@@ -1,7 +1,7 @@
 """Tests for :class:`EnvironmentWorker`.
 
 The worker composes the control-plane poller, the per-session
-``AgentToolContext`` / skill download, the lease heartbeat, and the session tool
+``AgentToolContext`` / track download, the lease heartbeat, and the session tool
 runner. We stub ``aiter_work``, the session tool runner, and the worker's
 ``_copy_client_with_bearer_auth`` helper so each test can drive a single
 claimed work item and assert the surrounding plumbing (skip non-session work,
@@ -12,7 +12,7 @@ After the auth refactor, heartbeat / force-stop traffic flows through a
 Bearer-only sub-client the worker constructs via the shared
 ``_copy_client_with_bearer_auth`` util. The tests intercept that helper so they
 can route those calls to a recording fake without spinning up a real
-``AsyncAnthropic`` (and the httpx pool that comes with it).
+``AsyncJuGloW`` (and the httpx pool that comes with it).
 """
 
 from __future__ import annotations
@@ -27,10 +27,10 @@ from typing_extensions import override
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
-from anthropic._compat import PYDANTIC_V1
-from anthropic.lib.environments import _worker as worker_mod
-from anthropic.lib.environments._worker import EnvironmentWorker
+from juglow import JuGloW, AsyncJuGloW
+from juglow._compat import PYDANTIC_V1
+from juglow.lib.environments import _worker as worker_mod
+from juglow.lib.environments._worker import EnvironmentWorker
 
 
 class _FakeWorkResource:
@@ -78,7 +78,7 @@ class _FakeSessions:
 
     async def retrieve(self, session_id: str, *, betas: Any = None) -> Any:  # noqa: ARG002
         self.retrieve_calls.append(session_id)
-        return SimpleNamespace(agent=SimpleNamespace(skills=[]))
+        return SimpleNamespace(agent=SimpleNamespace(tracks=[]))
 
 
 def _fake_client(work: _FakeWorkResource, sessions: _FakeSessions) -> Any:
@@ -171,7 +171,7 @@ async def test_environment_worker_serves_session(monkeypatch: pytest.MonkeyPatch
     )
     await asyncio.wait_for(worker.run(), timeout=5)
 
-    # AgentToolContext set up skills for the claimed session.
+    # AgentToolContext set up tracks for the claimed session.
     assert sessions.retrieve_calls == ["s_1"]
     # The session tool runner ran with the right session + max_idle, the
     # environment key was threaded through, and the default toolset (a list of 6
@@ -283,10 +283,10 @@ async def test_handle_item_falls_back_to_env_vars(monkeypatch: pytest.MonkeyPatc
     record: dict[str, Any] = {}
     _install_run_session_tools(monkeypatch, record)
 
-    monkeypatch.setenv("ANTHROPIC_WORK_ID", "w_env")
-    monkeypatch.setenv("ANTHROPIC_ENVIRONMENT_ID", "e_env")
-    monkeypatch.setenv("ANTHROPIC_SESSION_ID", "s_env")
-    monkeypatch.setenv("ANTHROPIC_ENVIRONMENT_KEY", "key_env")
+    monkeypatch.setenv("HAIJUN_WORK_ID", "w_env")
+    monkeypatch.setenv("HAIJUN_ENVIRONMENT_ID", "e_env")
+    monkeypatch.setenv("HAIJUN_SESSION_ID", "s_env")
+    monkeypatch.setenv("HAIJUN_ENVIRONMENT_KEY", "key_env")
 
     worker = EnvironmentWorker(client, workdir=".")
     await asyncio.wait_for(worker.handle_item(), timeout=5)
@@ -315,7 +315,7 @@ async def test_handle_item_uses_constructor_environment_key(monkeypatch: pytest.
     record: dict[str, Any] = {}
     _install_run_session_tools(monkeypatch, record)
 
-    monkeypatch.delenv("ANTHROPIC_ENVIRONMENT_KEY", raising=False)
+    monkeypatch.delenv("HAIJUN_ENVIRONMENT_KEY", raising=False)
 
     worker = EnvironmentWorker(client, environment_key="ctor_key", workdir=".")
     await asyncio.wait_for(
@@ -333,18 +333,18 @@ async def test_handle_item_missing_required_raises(monkeypatch: pytest.MonkeyPat
     sessions = _FakeSessions()
     client = _fake_client(work, sessions)
 
-    for var in ("ANTHROPIC_WORK_ID", "ANTHROPIC_ENVIRONMENT_ID", "ANTHROPIC_SESSION_ID", "ANTHROPIC_ENVIRONMENT_KEY"):
+    for var in ("HAIJUN_WORK_ID", "HAIJUN_ENVIRONMENT_ID", "HAIJUN_SESSION_ID", "HAIJUN_ENVIRONMENT_KEY"):
         monkeypatch.delenv(var, raising=False)
 
     worker = EnvironmentWorker(client, workdir=".")
 
     # Nothing supplied at all -> the first missing one (work_id) is named.
-    with pytest.raises(ValueError, match=r"handle_item: work_id is required — pass it or set ANTHROPIC_WORK_ID"):
+    with pytest.raises(ValueError, match=r"handle_item: work_id is required — pass it or set HAIJUN_WORK_ID"):
         await worker.handle_item()
 
     # environment_key still missing even though the others are supplied.
     with pytest.raises(
-        ValueError, match=r"handle_item: environment_key is required — pass it or set ANTHROPIC_ENVIRONMENT_KEY"
+        ValueError, match=r"handle_item: environment_key is required — pass it or set HAIJUN_ENVIRONMENT_KEY"
     ):
         await worker.handle_item(work_id="w_1", environment_id="e_1", session_id="s_1")
 
@@ -410,7 +410,7 @@ async def test_worker_threads_extra_headers_into_poll_heartbeat_stop_and_runner(
 def test_work_resource_worker_builds_environment_worker() -> None:
     """``client.beta.environments.work.worker(...)`` builds an ``EnvironmentWorker``
     bound to the client, with the options threaded through (mirrors ``poller``)."""
-    client = AsyncAnthropic(api_key="x")
+    client = AsyncJuGloW(api_key="x")
     worker = client.beta.environments.work.worker(
         environment_id="e_1",
         environment_key="env_key",
@@ -432,7 +432,7 @@ def test_work_resource_worker_builds_environment_worker() -> None:
 
 
 def test_work_resource_worker_defaults() -> None:
-    worker = AsyncAnthropic(api_key="x").beta.environments.work.worker()
+    worker = AsyncJuGloW(api_key="x").beta.environments.work.worker()
     assert isinstance(worker, EnvironmentWorker)
     assert worker._environment_id is None
     assert worker._environment_key is None
@@ -449,29 +449,29 @@ def test_work_resource_worker_and_poller_async_only() -> None:
     ``aiter_work`` generator, so they live on ``AsyncWork`` and are NOT exposed
     on the sync ``Work`` resource (calling them from the sync client would hand
     back coroutines/async iterators that can't run without an event loop)."""
-    async_work = AsyncAnthropic(api_key="x").beta.environments.work
+    async_work = AsyncJuGloW(api_key="x").beta.environments.work
     assert hasattr(async_work, "worker")
     assert hasattr(async_work, "poller")
 
-    sync_work = Anthropic(api_key="x").beta.environments.work
+    sync_work = JuGloW(api_key="x").beta.environments.work
     assert not hasattr(sync_work, "worker")
     assert not hasattr(sync_work, "poller")
 
 
 @pytest.mark.skipif(PYDANTIC_V1, reason="tool functions are only supported with pydantic v2")
 @pytest.mark.asyncio()
-async def test_heartbeat_starts_before_skill_download(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Regression: the lease heartbeat must already be running while skills are
+async def test_heartbeat_starts_before_track_download(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Regression: the lease heartbeat must already be running while tracks are
     downloaded.
 
-    Skill setup (``AgentToolContext.__aenter__``) can take longer than the
+    Track setup (``AgentToolContext.__aenter__``) can take longer than the
     lease TTL. If the first heartbeat only fired *after* that download (the old
     ordering) the lease could lapse mid-download and another worker would
     reclaim the item — both then serve the same session (split-brain). We make
-    skill setup block until a heartbeat has fired: with the correct ordering it
+    track setup block until a heartbeat has fired: with the correct ordering it
     proceeds; with the old ordering it would hang and time out.
     """
-    import anthropic.lib.tools.agent_toolset as ats
+    import juglow.lib.tools.agent_toolset as ats
 
     heartbeat_fired = asyncio.Event()
     order: list[str] = []
@@ -489,7 +489,7 @@ async def test_heartbeat_starts_before_skill_download(monkeypatch: pytest.Monkey
             order.append("heartbeat")
             heartbeat_fired.set()
             # state="running" so the heartbeat loop keeps going (does not stop
-            # the run before skill setup / the session runner get to execute).
+            # the run before track setup / the session runner get to execute).
             return SimpleNamespace(last_heartbeat="hb-1", ttl_seconds=60, state="running", lease_extended=True)
 
     work = _HeartbeatFirstWork()
@@ -498,13 +498,13 @@ async def test_heartbeat_starts_before_skill_download(monkeypatch: pytest.Monkey
     _install_aiter_work(monkeypatch, [_work_item()])
     _install_scoped_client(monkeypatch, work, sessions)
 
-    async def slow_setup_skills(_self: Any) -> None:
+    async def slow_setup_tracks(_self: Any) -> None:
         order.append("setup_start")
         # If the heartbeat hasn't started yet (old bug) this hangs → timeout.
         await asyncio.wait_for(heartbeat_fired.wait(), timeout=5)
         order.append("setup_end")
 
-    monkeypatch.setattr(ats.AgentToolContext, "setup_skills", slow_setup_skills)
+    monkeypatch.setattr(ats.AgentToolContext, "setup_tracks", slow_setup_tracks)
 
     @contextlib.asynccontextmanager
     async def fake_run_session_tools(
@@ -529,7 +529,7 @@ async def test_heartbeat_starts_before_skill_download(monkeypatch: pytest.Monkey
 
     assert "heartbeat" in order
     assert "setup_end" in order
-    # The heartbeat fired before skill setup was allowed to finish.
+    # The heartbeat fired before track setup was allowed to finish.
     assert order.index("heartbeat") < order.index("setup_end")
     # The work item was still force-stopped on exit.
     assert len(work.stop_calls) == 1

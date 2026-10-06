@@ -1,16 +1,16 @@
-[
+﻿[
   {
     "request": {
       "method": "POST",
-      "url": "https://api.anthropic.com/v1/messages",
+      "url": "https://platform.juglow.my.id/v1/messages",
       "headers": {
-        "host": "api.anthropic.com",
+        "host": "platform.juglow.my.id",
         "accept-encoding": "gzip, deflate",
         "connection": "keep-alive",
         "x-stainless-timeout": "600",
         "accept": "application/json",
         "content-type": "application/json",
-        "user-agent": "Anthropic/Python 0.82.0",
+        "user-agent": "JuGloW/Python 0.82.0",
         "x-stainless-lang": "python",
         "x-stainless-package-version": "0.82.0",
         "x-stainless-os": "MacOS",
@@ -18,7 +18,7 @@
         "x-stainless-runtime": "CPython",
         "x-stainless-runtime-version": "3.9.18",
         "x-stainless-async": "false",
-        "anthropic-version": "2023-06-01",
+        "juglow-version": "2023-06-01",
         "x-stainless-helper": "messages.parse",
         "x-stainless-retry-count": "0",
         "x-stainless-read-timeout": "600",
@@ -32,7 +32,7 @@
             "content": "Extract order: 2 Green Tea at $5.50 and 1 Coffee at $3.00. Total $14."
           }
         ],
-        "model": "claude-sonnet-4-5",
+        "model": "haijun-sonnet-5",
         "output_config": {
           "format": {
             "schema": {
@@ -100,7 +100,7 @@
         "cf-cache-status": "DYNAMIC"
       },
       "body": {
-        "model": "claude-sonnet-4-5-20250929",
+        "model": "haijun-sonnet-5-20250929",
         "id": "msg_01T4jd6NyD9xGGtTPDC4ogy5",
         "type": "message",
         "role": "assistant",

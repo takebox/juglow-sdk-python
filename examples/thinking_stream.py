@@ -1,12 +1,12 @@
-import anthropic
+﻿import juglow
 
-client = anthropic.Anthropic()
+client = Juglow.JuGloW()
 
 with client.messages.stream(
-    model="claude-sonnet-5",
+    model="haijun-sonnet",
     max_tokens=3200,
     thinking={"type": "enabled", "budget_tokens": 1600},
-    messages=[{"role": "user", "content": "Create a haiku about Anthropic."}],
+    messages=[{"role": "user", "content": "Create a haiku about JuGloW."}],
 ) as stream:
     thinking = "not-started"
 

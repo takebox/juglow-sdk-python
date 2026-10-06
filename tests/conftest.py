@@ -1,4 +1,4 @@
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+﻿# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from __future__ import annotations
 
@@ -13,20 +13,20 @@ from http_snapshot import SnapshotSerializerOptions
 from pytest_asyncio import is_async_test
 from http_snapshot.httpx import HttpxSyncSnapshotClient, HttpxAsyncSnapshotClient
 
-from anthropic import Anthropic, AsyncAnthropic, DefaultAioHttpClient
-from anthropic._utils import is_dict
+from juglow import JuGloW, AsyncJuGloW, DefaultAioHttpClient
+from juglow._utils import is_dict
 
 if TYPE_CHECKING:
     from _pytest.fixtures import FixtureRequest  # pyright: ignore[reportPrivateImportUsage]
 
 pytest.register_assert_rewrite("tests.utils")
 
-logging.getLogger("anthropic").setLevel(logging.DEBUG)
+logging.getLogger("juglow").setLevel(logging.DEBUG)
 
 SNAPSHOT_RESPONSE_HEADERS_EXCLUDE = [
     "date",
     "request-id",
-    "anthropic-organization-id",
+    "Juglow-organization-id",
     "x-envoy-upstream-service-time",
     "cf-ray",
 ]
@@ -60,16 +60,16 @@ def pytest_collection_modifyitems(items: list[pytest.Function]) -> None:
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
-api_key = "my-anthropic-api-key"
+api_key = "my-Juglow-api-key"
 
 
 @pytest.fixture(scope="session")
-def client(request: FixtureRequest) -> Iterator[Anthropic]:
+def client(request: FixtureRequest) -> Iterator[JuGloW]:
     strict = getattr(request, "param", True)
     if not isinstance(strict, bool):
         raise TypeError(f"Unexpected fixture parameter type {type(strict)}, expected {bool}")
 
-    with Anthropic(base_url=base_url, api_key=api_key, _strict_response_validation=strict) as client:
+    with JuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=strict) as client:
         yield client
 
 
@@ -87,11 +87,11 @@ def snapshot_client(
     is_recording: bool,
     http_snapshot_serializer_options: SnapshotSerializerOptions,
     http_snapshot: inline_snapshot.Snapshot[Any],
-) -> Iterator[Anthropic]:
+) -> Iterator[JuGloW]:
     with HttpxSyncSnapshotClient(
         http_snapshot, is_recording, serializer_options=http_snapshot_serializer_options
     ) as snapshot_client:
-        with Anthropic(http_client=snapshot_client, api_key=None if is_recording else api_key) as client:
+        with JuGloW(http_client=snapshot_client, api_key=None if is_recording else api_key) as client:
             yield client
 
 
@@ -100,16 +100,16 @@ async def async_snapshot_client(
     is_recording: bool,
     http_snapshot_serializer_options: SnapshotSerializerOptions,
     http_snapshot: inline_snapshot.Snapshot[Any],
-) -> AsyncIterator[AsyncAnthropic]:
+) -> AsyncIterator[AsyncJuGloW]:
     async with HttpxAsyncSnapshotClient(
         http_snapshot, is_recording, serializer_options=http_snapshot_serializer_options
     ) as snapshot_client:
-        client = AsyncAnthropic(http_client=snapshot_client, api_key=None if is_recording else api_key)
+        client = AsyncJuGloW(http_client=snapshot_client, api_key=None if is_recording else api_key)
         yield client
 
 
 @pytest.fixture(scope="session")
-async def async_client(request: FixtureRequest) -> AsyncIterator[AsyncAnthropic]:
+async def async_client(request: FixtureRequest) -> AsyncIterator[AsyncJuGloW]:
     param = getattr(request, "param", True)
 
     # defaults
@@ -128,7 +128,7 @@ async def async_client(request: FixtureRequest) -> AsyncIterator[AsyncAnthropic]
     else:
         raise TypeError(f"Unexpected fixture parameter type {type(param)}, expected bool or dict")
 
-    async with AsyncAnthropic(
+    async with AsyncJuGloW(
         base_url=base_url, api_key=api_key, _strict_response_validation=strict, http_client=http_client
     ) as client:
         yield client

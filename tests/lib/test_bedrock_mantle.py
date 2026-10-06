@@ -1,38 +1,38 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
 import httpx
 import pytest
 
-from anthropic import AnthropicBedrockMantle, AsyncAnthropicBedrockMantle
+from juglow import JuGloWBedrockMantle, AsyncJuGloWBedrockMantle
 
 
 class TestBaseURL:
     def test_derives_base_url_from_region(self) -> None:
-        client = AnthropicBedrockMantle(
+        client = JuGloWBedrockMantle(
             api_key="test-key",
             aws_region="us-east-1",
         )
-        assert str(client.base_url).startswith("https://bedrock-mantle.us-east-1.api.aws/anthropic")
+        assert str(client.base_url).startswith("https://bedrock-mantle.us-east-1.api.aws/juglow")
 
     def test_different_region(self) -> None:
-        client = AnthropicBedrockMantle(
+        client = JuGloWBedrockMantle(
             api_key="test-key",
             aws_region="us-west-2",
         )
-        assert str(client.base_url).startswith("https://bedrock-mantle.us-west-2.api.aws/anthropic")
+        assert str(client.base_url).startswith("https://bedrock-mantle.us-west-2.api.aws/juglow")
 
     def test_uses_base_url_env_var(self) -> None:
-        with patch.dict("os.environ", {"ANTHROPIC_BEDROCK_MANTLE_BASE_URL": "https://custom.example.com"}):
-            client = AnthropicBedrockMantle(
+        with patch.dict("os.environ", {"HAIJUN_BEDROCK_MANTLE_BASE_URL": "https://custom.example.com"}):
+            client = JuGloWBedrockMantle(
                 api_key="test-key",
             )
         assert str(client.base_url).startswith("https://custom.example.com")
 
     def test_base_url_arg_takes_precedence_over_env(self) -> None:
-        with patch.dict("os.environ", {"ANTHROPIC_BEDROCK_MANTLE_BASE_URL": "https://from-env.example.com"}):
-            client = AnthropicBedrockMantle(
+        with patch.dict("os.environ", {"HAIJUN_BEDROCK_MANTLE_BASE_URL": "https://from-env.example.com"}):
+            client = JuGloWBedrockMantle(
                 api_key="test-key",
                 base_url="https://from-arg.example.com",
             )
@@ -40,14 +40,14 @@ class TestBaseURL:
 
     def test_raises_without_region_or_base_url(self) -> None:
         with pytest.raises(Exception, match="No AWS region or base URL found"):
-            AnthropicBedrockMantle(
+            JuGloWBedrockMantle(
                 api_key="test-key",
             )
 
 
 class TestSigV4ServiceName:
     def test_uses_bedrock_mantle_service_name(self) -> None:
-        client = AnthropicBedrockMantle(
+        client = JuGloWBedrockMantle(
             aws_access_key="AKID",
             aws_secret_key="secret",
             aws_region="us-east-1",
@@ -55,11 +55,11 @@ class TestSigV4ServiceName:
 
         mock_request = MagicMock(spec=httpx.Request)
         mock_request.method = "POST"
-        mock_request.url = httpx.URL("https://bedrock-mantle.us-east-1.api.aws/anthropic/v1/messages")
+        mock_request.url = httpx.URL("https://bedrock-mantle.us-east-1.api.aws/Juglow/v1/messages")
         mock_request.headers = httpx.Headers({"content-type": "application/json"})
-        mock_request.read.return_value = b'{"model": "claude-sonnet-4-20250514"}'
+        mock_request.read.return_value = b'{"model": "haijun-sonnet-20250514"}'
 
-        with patch("anthropic.lib.bedrock._mantle.get_auth_headers") as mock_auth:
+        with patch("juglow.lib.bedrock._mantle.get_auth_headers") as mock_auth:
             mock_auth.return_value = {
                 "Authorization": "AWS4-HMAC-SHA256 ...",
                 "X-Amz-Date": "20260327T000000Z",
@@ -74,14 +74,14 @@ class TestSigV4ServiceName:
 class TestEnvironmentVariables:
     def test_uses_mantle_api_key_env_var(self) -> None:
         with patch.dict("os.environ", {"AWS_BEARER_TOKEN_BEDROCK": "mantle-key"}, clear=False):
-            client = AnthropicBedrockMantle(
+            client = JuGloWBedrockMantle(
                 base_url="https://example.com",
             )
         assert client.api_key == "mantle-key"
 
     def test_falls_back_to_aws_api_key_env_var(self) -> None:
-        with patch.dict("os.environ", {"ANTHROPIC_AWS_API_KEY": "aws-key"}, clear=False):
-            client = AnthropicBedrockMantle(
+        with patch.dict("os.environ", {"HAIJUN_AWS_API_KEY": "aws-key"}, clear=False):
+            client = JuGloWBedrockMantle(
                 base_url="https://example.com",
             )
         assert client.api_key == "aws-key"
@@ -91,34 +91,34 @@ class TestEnvironmentVariables:
             "os.environ",
             {
                 "AWS_BEARER_TOKEN_BEDROCK": "mantle-key",
-                "ANTHROPIC_AWS_API_KEY": "aws-key",
+                "HAIJUN_AWS_API_KEY": "aws-key",
             },
             clear=False,
         ):
-            client = AnthropicBedrockMantle(
+            client = JuGloWBedrockMantle(
                 base_url="https://example.com",
             )
         assert client.api_key == "mantle-key"
 
     def test_region_from_aws_region_env_var(self) -> None:
         with patch.dict("os.environ", {"AWS_REGION": "eu-west-1"}, clear=False):
-            client = AnthropicBedrockMantle(
+            client = JuGloWBedrockMantle(
                 api_key="test-key",
             )
         assert client.aws_region == "eu-west-1"
-        assert client.base_url == "https://bedrock-mantle.eu-west-1.api.aws/anthropic/"
+        assert client.base_url == "https://bedrock-mantle.eu-west-1.api.aws/Juglow/"
 
     def test_region_from_aws_default_region_env_var(self) -> None:
         with patch.dict("os.environ", {"AWS_DEFAULT_REGION": "ap-southeast-1"}, clear=False):
-            client = AnthropicBedrockMantle(
+            client = JuGloWBedrockMantle(
                 api_key="test-key",
             )
         assert client.aws_region == "ap-southeast-1"
 
 
 class TestEndpointRestrictions:
-    def _make_client(self) -> AnthropicBedrockMantle:
-        return AnthropicBedrockMantle(
+    def _make_client(self) -> JuGloWBedrockMantle:
+        return JuGloWBedrockMantle(
             api_key="test-key",
             base_url="https://example.com",
         )
@@ -147,14 +147,14 @@ class TestEndpointRestrictions:
         client = self._make_client()
         assert not hasattr(client.beta, "files")
 
-    def test_beta_skills_not_available(self) -> None:
+    def test_beta_tracks_not_available(self) -> None:
         client = self._make_client()
-        assert not hasattr(client.beta, "skills")
+        assert not hasattr(client.beta, "tracks")
 
 
 class TestAuthPrecedence:
     def test_api_key_arg_uses_api_key_mode(self) -> None:
-        client = AnthropicBedrockMantle(
+        client = JuGloWBedrockMantle(
             api_key="my-key",
             aws_region="us-east-1",
         )
@@ -162,7 +162,7 @@ class TestAuthPrecedence:
         assert client.api_key == "my-key"
 
     def test_aws_creds_use_sigv4_mode(self) -> None:
-        client = AnthropicBedrockMantle(
+        client = JuGloWBedrockMantle(
             aws_access_key="AKID",
             aws_secret_key="secret",
             aws_region="us-east-1",
@@ -171,14 +171,14 @@ class TestAuthPrecedence:
         assert client.api_key is None
 
     def test_api_key_mode_returns_bearer_auth_header(self) -> None:
-        client = AnthropicBedrockMantle(
+        client = JuGloWBedrockMantle(
             api_key="my-key",
             aws_region="us-east-1",
         )
         assert client.auth_headers == {"Authorization": "Bearer my-key"}
 
     def test_sigv4_mode_returns_empty_auth_headers(self) -> None:
-        client = AnthropicBedrockMantle(
+        client = JuGloWBedrockMantle(
             aws_access_key="AKID",
             aws_secret_key="secret",
             aws_region="us-east-1",
@@ -186,7 +186,7 @@ class TestAuthPrecedence:
         assert client.auth_headers == {}
 
     def test_skip_auth_returns_empty_auth_headers(self) -> None:
-        client = AnthropicBedrockMantle(
+        client = JuGloWBedrockMantle(
             skip_auth=True,
             base_url="https://example.com",
         )
@@ -195,14 +195,14 @@ class TestAuthPrecedence:
 
 class TestSkipAuth:
     def test_skip_auth_does_not_sign_request(self) -> None:
-        client = AnthropicBedrockMantle(
+        client = JuGloWBedrockMantle(
             skip_auth=True,
             base_url="https://example.com",
         )
 
         mock_request = MagicMock(spec=httpx.Request)
 
-        with patch("anthropic.lib.bedrock._mantle.get_auth_headers") as mock_auth:
+        with patch("juglow.lib.bedrock._mantle.get_auth_headers") as mock_auth:
             client._prepare_request(mock_request)
             mock_auth.assert_not_called()
 
@@ -210,14 +210,14 @@ class TestSkipAuth:
 class TestPartialCredentials:
     def test_access_key_only_raises(self) -> None:
         with pytest.raises(ValueError, match="aws_access_key.*without.*aws_secret_key"):
-            AnthropicBedrockMantle(
+            JuGloWBedrockMantle(
                 aws_access_key="AKID",
                 aws_region="us-east-1",
             )
 
     def test_secret_key_only_raises(self) -> None:
         with pytest.raises(ValueError, match="aws_secret_key.*without.*aws_access_key"):
-            AnthropicBedrockMantle(
+            JuGloWBedrockMantle(
                 aws_secret_key="secret",
                 aws_region="us-east-1",
             )
@@ -225,7 +225,7 @@ class TestPartialCredentials:
 
 class TestAsyncClient:
     def test_async_client_has_same_restrictions(self) -> None:
-        client = AsyncAnthropicBedrockMantle(
+        client = AsyncJuGloWBedrockMantle(
             api_key="test-key",
             base_url="https://example.com",
         )
@@ -235,19 +235,19 @@ class TestAsyncClient:
         assert client.beta.messages is not None
         assert not hasattr(client.beta, "models")
         assert not hasattr(client.beta, "files")
-        assert not hasattr(client.beta, "skills")
+        assert not hasattr(client.beta, "tracks")
 
     def test_async_base_url_from_region(self) -> None:
-        client = AsyncAnthropicBedrockMantle(
+        client = AsyncJuGloWBedrockMantle(
             api_key="test-key",
             aws_region="us-east-1",
         )
-        assert client.base_url == "https://bedrock-mantle.us-east-1.api.aws/anthropic/"
+        assert client.base_url == "https://bedrock-mantle.us-east-1.api.aws/Juglow/"
 
 
 class TestCopy:
     def test_copy_preserves_config(self) -> None:
-        client = AnthropicBedrockMantle(
+        client = JuGloWBedrockMantle(
             api_key="test-key",
             aws_region="us-east-1",
         )
@@ -256,7 +256,7 @@ class TestCopy:
         assert copied.aws_region == client.aws_region
 
     def test_copy_overrides_region(self) -> None:
-        client = AnthropicBedrockMantle(
+        client = JuGloWBedrockMantle(
             api_key="test-key",
             aws_region="us-east-1",
         )
@@ -265,7 +265,7 @@ class TestCopy:
 
     def test_copy_x_stainless_helper_header_appends(self) -> None:
         # `x-stainless-helper` accumulates across copies instead of being clobbered
-        client = AnthropicBedrockMantle(
+        client = JuGloWBedrockMantle(
             api_key="test-key",
             aws_region="us-east-1",
             default_headers={"x-stainless-helper": "parent"},
@@ -275,7 +275,7 @@ class TestCopy:
 
     def test_async_copy_x_stainless_helper_header_appends(self) -> None:
         # `x-stainless-helper` accumulates across copies instead of being clobbered
-        client = AsyncAnthropicBedrockMantle(
+        client = AsyncJuGloWBedrockMantle(
             api_key="test-key",
             aws_region="us-east-1",
             default_headers={"x-stainless-helper": "parent"},

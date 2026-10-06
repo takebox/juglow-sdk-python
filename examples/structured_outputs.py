@@ -1,6 +1,6 @@
-import pydantic
+﻿import pydantic
 
-import anthropic
+import juglow
 
 
 class Order(pydantic.BaseModel):
@@ -9,15 +9,15 @@ class Order(pydantic.BaseModel):
     quantity: int
 
 
-client = anthropic.Anthropic()
+client = Juglow.JuGloW()
 
 prompt = """
 Extract the product name, price, and quantity from this customer message:
-"Hi, I’d like to order 2 packs of Green Tea for 5.50 dollars each."
+"Hi, Iâ€™d like to order 2 packs of Green Tea for 5.50 dollars each."
 """
 
 parsed_message = client.messages.parse(
-    model="claude-sonnet-5",
+    model="haijun-sonnet",
     messages=[{"role": "user", "content": prompt}],
     max_tokens=1024,
     output_format=Order,

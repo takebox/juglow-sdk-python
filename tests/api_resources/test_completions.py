@@ -1,4 +1,4 @@
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+﻿# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from __future__ import annotations
 
@@ -7,9 +7,9 @@ from typing import Any, cast
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic.types import Completion
+from juglow.types import Completion
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -18,19 +18,19 @@ class TestCompletions:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    def test_method_create_overload_1(self, client: Anthropic) -> None:
+    def test_method_create_overload_1(self, client: JuGloW) -> None:
         completion = client.completions.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
         )
         assert_matches_type(Completion, completion, path=["response"])
 
     @parametrize
-    def test_method_create_with_all_params_overload_1(self, client: Anthropic) -> None:
+    def test_method_create_with_all_params_overload_1(self, client: JuGloW) -> None:
         completion = client.completions.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
             metadata={"user_id": "13803d75-b4b5-4c3e-b2a2-6f21399b021b"},
             stop_sequences=["string"],
@@ -43,10 +43,10 @@ class TestCompletions:
         assert_matches_type(Completion, completion, path=["response"])
 
     @parametrize
-    def test_raw_response_create_overload_1(self, client: Anthropic) -> None:
+    def test_raw_response_create_overload_1(self, client: JuGloW) -> None:
         response = client.completions.with_raw_response.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
         )
 
@@ -56,10 +56,10 @@ class TestCompletions:
         assert_matches_type(Completion, completion, path=["response"])
 
     @parametrize
-    def test_streaming_response_create_overload_1(self, client: Anthropic) -> None:
+    def test_streaming_response_create_overload_1(self, client: JuGloW) -> None:
         with client.completions.with_streaming_response.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
         ) as response:
             assert not response.is_closed
@@ -71,20 +71,20 @@ class TestCompletions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_create_overload_2(self, client: Anthropic) -> None:
+    def test_method_create_overload_2(self, client: JuGloW) -> None:
         completion_stream = client.completions.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
             stream=True,
         )
         completion_stream.response.close()
 
     @parametrize
-    def test_method_create_with_all_params_overload_2(self, client: Anthropic) -> None:
+    def test_method_create_with_all_params_overload_2(self, client: JuGloW) -> None:
         completion_stream = client.completions.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
             stream=True,
             metadata={"user_id": "13803d75-b4b5-4c3e-b2a2-6f21399b021b"},
@@ -97,10 +97,10 @@ class TestCompletions:
         completion_stream.response.close()
 
     @parametrize
-    def test_raw_response_create_overload_2(self, client: Anthropic) -> None:
+    def test_raw_response_create_overload_2(self, client: JuGloW) -> None:
         response = client.completions.with_raw_response.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
             stream=True,
         )
@@ -110,10 +110,10 @@ class TestCompletions:
         stream.close()
 
     @parametrize
-    def test_streaming_response_create_overload_2(self, client: Anthropic) -> None:
+    def test_streaming_response_create_overload_2(self, client: JuGloW) -> None:
         with client.completions.with_streaming_response.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
             stream=True,
         ) as response:
@@ -132,19 +132,19 @@ class TestAsyncCompletions:
     )
 
     @parametrize
-    async def test_method_create_overload_1(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_overload_1(self, async_client: AsyncJuGloW) -> None:
         completion = await async_client.completions.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
         )
         assert_matches_type(Completion, completion, path=["response"])
 
     @parametrize
-    async def test_method_create_with_all_params_overload_1(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_with_all_params_overload_1(self, async_client: AsyncJuGloW) -> None:
         completion = await async_client.completions.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
             metadata={"user_id": "13803d75-b4b5-4c3e-b2a2-6f21399b021b"},
             stop_sequences=["string"],
@@ -157,10 +157,10 @@ class TestAsyncCompletions:
         assert_matches_type(Completion, completion, path=["response"])
 
     @parametrize
-    async def test_raw_response_create_overload_1(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_create_overload_1(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.completions.with_raw_response.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
         )
 
@@ -170,10 +170,10 @@ class TestAsyncCompletions:
         assert_matches_type(Completion, completion, path=["response"])
 
     @parametrize
-    async def test_streaming_response_create_overload_1(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_create_overload_1(self, async_client: AsyncJuGloW) -> None:
         async with async_client.completions.with_streaming_response.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
         ) as response:
             assert not response.is_closed
@@ -185,20 +185,20 @@ class TestAsyncCompletions:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_create_overload_2(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_overload_2(self, async_client: AsyncJuGloW) -> None:
         completion_stream = await async_client.completions.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
             stream=True,
         )
         await completion_stream.response.aclose()
 
     @parametrize
-    async def test_method_create_with_all_params_overload_2(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_with_all_params_overload_2(self, async_client: AsyncJuGloW) -> None:
         completion_stream = await async_client.completions.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
             stream=True,
             metadata={"user_id": "13803d75-b4b5-4c3e-b2a2-6f21399b021b"},
@@ -211,10 +211,10 @@ class TestAsyncCompletions:
         await completion_stream.response.aclose()
 
     @parametrize
-    async def test_raw_response_create_overload_2(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_create_overload_2(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.completions.with_raw_response.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
             stream=True,
         )
@@ -224,10 +224,10 @@ class TestAsyncCompletions:
         await stream.close()
 
     @parametrize
-    async def test_streaming_response_create_overload_2(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_create_overload_2(self, async_client: AsyncJuGloW) -> None:
         async with async_client.completions.with_streaming_response.create(
             max_tokens_to_sample=256,
-            model="claude-2.1",
+            model="haijun-2.1",
             prompt="\n\nHuman: Hello, world!\n\nAssistant:",
             stream=True,
         ) as response:

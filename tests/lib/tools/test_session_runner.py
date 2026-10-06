@@ -16,10 +16,10 @@ from collections.abc import Callable, Awaitable, AsyncIterator
 import httpx
 import pytest
 
-from anthropic import APIStatusError
-from anthropic._compat import PYDANTIC_V1
-from anthropic.lib.tools import ToolError, _beta_session_runner as session_runner_mod
-from anthropic.lib.tools._beta_session_runner import (
+from juglow import APIStatusError
+from juglow._compat import PYDANTIC_V1
+from juglow.lib.tools import ToolError, _beta_session_runner as session_runner_mod
+from juglow.lib.tools._beta_session_runner import (
     SessionToolRunner,
     DispatchedToolCall,
 )
@@ -30,7 +30,7 @@ def _intercept_scoped_client(monkeypatch: pytest.MonkeyPatch) -> None:  # pyrigh
     """Make ``_scoped_client`` return the parent client unchanged so the runner's
     requests land on the test fakes.
 
-    The real ``_scoped_client`` builds an ``AsyncAnthropic`` sub-client for
+    The real ``_scoped_client`` builds an ``AsyncJuGloW`` sub-client for
     request scoping; the tests use a ``_FakeClient`` whose only API surface is
     ``.beta.sessions.events``, so the sub-client construction would fail. The
     auth-specific tests further down install their own ``_scoped_client``
@@ -245,7 +245,7 @@ class _FakeTool:
 
 
 class _FakeClient:
-    """Minimal stand-in for ``AsyncAnthropic`` — only exposes the resource path
+    """Minimal stand-in for ``AsyncJuGloW`` — only exposes the resource path
     the runner reads."""
 
     def __init__(self, events: FakeAsyncEvents) -> None:
@@ -1303,7 +1303,7 @@ def test_tool_timeout_exceeds_bash_default() -> None:
     bash call would read the previous (timed-out) command's stale output. This
     test pins the invariant so the two constants can't silently converge.
     """
-    from anthropic.lib.tools.agent_toolset import BASH_DEFAULT_TIMEOUT
+    from juglow.lib.tools.agent_toolset import BASH_DEFAULT_TIMEOUT
 
     assert session_runner_mod.TOOL_TIMEOUT > BASH_DEFAULT_TIMEOUT
 
@@ -1455,8 +1455,8 @@ async def test_runs_context_manager_tool_cleanup_on_exit() -> None:
     legacy ``close`` hook."""
     from contextlib import asynccontextmanager
 
-    from anthropic.types.beta import BetaManagedAgentsAgentToolset20260401BashInput
-    from anthropic.lib.tools._beta_functions import beta_async_tool
+    from juglow.types.beta import BetaManagedAgentsAgentToolset20260401BashInput
+    from juglow.lib.tools._beta_functions import beta_async_tool
 
     events_seen: list[str] = []
 
@@ -1492,9 +1492,9 @@ async def test_runs_context_manager_tool_cleanup_on_exit() -> None:
 
 @pytest.mark.asyncio()
 async def test_tool_runner_method_returns_session_tool_runner() -> None:
-    from anthropic import AsyncAnthropic
+    from juglow import AsyncJuGloW
 
-    client = AsyncAnthropic(api_key="dummy")
+    client = AsyncJuGloW(api_key="dummy")
     runner = client.beta.sessions.events.tool_runner("s_1", tools=[])
     assert isinstance(runner, SessionToolRunner)
     assert runner.session_id == "s_1"
@@ -1526,14 +1526,14 @@ async def test_until_done_drives_runner_to_completion() -> None:
 def test_environments_public_reexports() -> None:
     """A user can type their own code against the public runner API without
     reaching into a ``_``-private module."""
-    from anthropic.lib import environments as env_pkg
+    from juglow.lib import environments as env_pkg
 
     for name in (
         "BetaAnyRunnableTool",
         "DispatchedToolCall",
         "DispatchedToolUseEvent",
         "DispatchedToolResultParams",
-        "download_session_skills",
+        "download_session_tracks",
         "SessionToolRunner",
     ):
         assert name in env_pkg.__all__, name

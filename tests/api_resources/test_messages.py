@@ -1,4 +1,4 @@
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+﻿# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from __future__ import annotations
 
@@ -7,13 +7,13 @@ from typing import Any, cast
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic.types import (
+from juglow.types import (
     Message,
     MessageTokensCount,
 )
-from anthropic.resources.messages import DEPRECATED_MODELS
+from juglow.resources.messages import DEPRECATED_MODELS
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -22,7 +22,7 @@ class TestMessages:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    def test_method_create_overload_1(self, client: Anthropic) -> None:
+    def test_method_create_overload_1(self, client: JuGloW) -> None:
         message = client.messages.create(
             max_tokens=1024,
             messages=[
@@ -31,12 +31,12 @@ class TestMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert_matches_type(Message, message, path=["response"])
 
     @parametrize
-    def test_method_create_with_all_params_overload_1(self, client: Anthropic) -> None:
+    def test_method_create_with_all_params_overload_1(self, client: JuGloW) -> None:
         message = client.messages.create(
             max_tokens=1024,
             messages=[
@@ -45,7 +45,7 @@ class TestMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             cache_control={
                 "type": "ephemeral",
                 "ttl": "5m",
@@ -118,12 +118,12 @@ class TestMessages:
             ],
             top_k=5,
             top_p=0.7,
-            user_profile_id="anthropic-user-profile-id",
+            user_profile_id="Juglow-user-profile-id",
         )
         assert_matches_type(Message, message, path=["response"])
 
     @parametrize
-    def test_raw_response_create_overload_1(self, client: Anthropic) -> None:
+    def test_raw_response_create_overload_1(self, client: JuGloW) -> None:
         response = client.messages.with_raw_response.create(
             max_tokens=1024,
             messages=[
@@ -132,7 +132,7 @@ class TestMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert response.is_closed is True
@@ -141,7 +141,7 @@ class TestMessages:
         assert_matches_type(Message, message, path=["response"])
 
     @parametrize
-    def test_streaming_response_create_overload_1(self, client: Anthropic) -> None:
+    def test_streaming_response_create_overload_1(self, client: JuGloW) -> None:
         with client.messages.with_streaming_response.create(
             max_tokens=1024,
             messages=[
@@ -150,7 +150,7 @@ class TestMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -161,7 +161,7 @@ class TestMessages:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_create_overload_2(self, client: Anthropic) -> None:
+    def test_method_create_overload_2(self, client: JuGloW) -> None:
         message_stream = client.messages.create(
             max_tokens=1024,
             messages=[
@@ -170,13 +170,13 @@ class TestMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             stream=True,
         )
         message_stream.response.close()
 
     @parametrize
-    def test_method_create_with_all_params_overload_2(self, client: Anthropic) -> None:
+    def test_method_create_with_all_params_overload_2(self, client: JuGloW) -> None:
         message_stream = client.messages.create(
             max_tokens=1024,
             messages=[
@@ -185,7 +185,7 @@ class TestMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             stream=True,
             cache_control={
                 "type": "ephemeral",
@@ -258,12 +258,12 @@ class TestMessages:
             ],
             top_k=5,
             top_p=0.7,
-            user_profile_id="anthropic-user-profile-id",
+            user_profile_id="Juglow-user-profile-id",
         )
         message_stream.response.close()
 
     @parametrize
-    def test_raw_response_create_overload_2(self, client: Anthropic) -> None:
+    def test_raw_response_create_overload_2(self, client: JuGloW) -> None:
         response = client.messages.with_raw_response.create(
             max_tokens=1024,
             messages=[
@@ -272,7 +272,7 @@ class TestMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             stream=True,
         )
 
@@ -281,7 +281,7 @@ class TestMessages:
         stream.close()
 
     @parametrize
-    def test_streaming_response_create_overload_2(self, client: Anthropic) -> None:
+    def test_streaming_response_create_overload_2(self, client: JuGloW) -> None:
         with client.messages.with_streaming_response.create(
             max_tokens=1024,
             messages=[
@@ -290,7 +290,7 @@ class TestMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             stream=True,
         ) as response:
             assert not response.is_closed
@@ -302,7 +302,7 @@ class TestMessages:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_deprecated_model_warning(self, client: Anthropic) -> None:
+    def test_deprecated_model_warning(self, client: JuGloW) -> None:
         for deprecated_model in DEPRECATED_MODELS:
             with pytest.warns(DeprecationWarning, match=f"The model '{deprecated_model}' is deprecated"):
                 client.messages.create(
@@ -312,7 +312,7 @@ class TestMessages:
                 )
 
     @parametrize
-    def test_method_count_tokens(self, client: Anthropic) -> None:
+    def test_method_count_tokens(self, client: JuGloW) -> None:
         message = client.messages.count_tokens(
             messages=[
                 {
@@ -320,12 +320,12 @@ class TestMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert_matches_type(MessageTokensCount, message, path=["response"])
 
     @parametrize
-    def test_method_count_tokens_with_all_params(self, client: Anthropic) -> None:
+    def test_method_count_tokens_with_all_params(self, client: JuGloW) -> None:
         message = client.messages.count_tokens(
             messages=[
                 {
@@ -333,7 +333,7 @@ class TestMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             cache_control={
                 "type": "ephemeral",
                 "ttl": "5m",
@@ -397,12 +397,12 @@ class TestMessages:
                     "type": "custom",
                 }
             ],
-            user_profile_id="anthropic-user-profile-id",
+            user_profile_id="Juglow-user-profile-id",
         )
         assert_matches_type(MessageTokensCount, message, path=["response"])
 
     @parametrize
-    def test_raw_response_count_tokens(self, client: Anthropic) -> None:
+    def test_raw_response_count_tokens(self, client: JuGloW) -> None:
         response = client.messages.with_raw_response.count_tokens(
             messages=[
                 {
@@ -410,7 +410,7 @@ class TestMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert response.is_closed is True
@@ -419,7 +419,7 @@ class TestMessages:
         assert_matches_type(MessageTokensCount, message, path=["response"])
 
     @parametrize
-    def test_streaming_response_count_tokens(self, client: Anthropic) -> None:
+    def test_streaming_response_count_tokens(self, client: JuGloW) -> None:
         with client.messages.with_streaming_response.count_tokens(
             messages=[
                 {
@@ -427,7 +427,7 @@ class TestMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -444,7 +444,7 @@ class TestAsyncMessages:
     )
 
     @parametrize
-    async def test_method_create_overload_1(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_overload_1(self, async_client: AsyncJuGloW) -> None:
         message = await async_client.messages.create(
             max_tokens=1024,
             messages=[
@@ -453,12 +453,12 @@ class TestAsyncMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert_matches_type(Message, message, path=["response"])
 
     @parametrize
-    async def test_method_create_with_all_params_overload_1(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_with_all_params_overload_1(self, async_client: AsyncJuGloW) -> None:
         message = await async_client.messages.create(
             max_tokens=1024,
             messages=[
@@ -467,7 +467,7 @@ class TestAsyncMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             cache_control={
                 "type": "ephemeral",
                 "ttl": "5m",
@@ -540,12 +540,12 @@ class TestAsyncMessages:
             ],
             top_k=5,
             top_p=0.7,
-            user_profile_id="anthropic-user-profile-id",
+            user_profile_id="Juglow-user-profile-id",
         )
         assert_matches_type(Message, message, path=["response"])
 
     @parametrize
-    async def test_raw_response_create_overload_1(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_create_overload_1(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.messages.with_raw_response.create(
             max_tokens=1024,
             messages=[
@@ -554,7 +554,7 @@ class TestAsyncMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert response.is_closed is True
@@ -563,7 +563,7 @@ class TestAsyncMessages:
         assert_matches_type(Message, message, path=["response"])
 
     @parametrize
-    async def test_streaming_response_create_overload_1(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_create_overload_1(self, async_client: AsyncJuGloW) -> None:
         async with async_client.messages.with_streaming_response.create(
             max_tokens=1024,
             messages=[
@@ -572,7 +572,7 @@ class TestAsyncMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -583,7 +583,7 @@ class TestAsyncMessages:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_create_overload_2(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_overload_2(self, async_client: AsyncJuGloW) -> None:
         message_stream = await async_client.messages.create(
             max_tokens=1024,
             messages=[
@@ -592,13 +592,13 @@ class TestAsyncMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             stream=True,
         )
         await message_stream.response.aclose()
 
     @parametrize
-    async def test_method_create_with_all_params_overload_2(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_with_all_params_overload_2(self, async_client: AsyncJuGloW) -> None:
         message_stream = await async_client.messages.create(
             max_tokens=1024,
             messages=[
@@ -607,7 +607,7 @@ class TestAsyncMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             stream=True,
             cache_control={
                 "type": "ephemeral",
@@ -680,12 +680,12 @@ class TestAsyncMessages:
             ],
             top_k=5,
             top_p=0.7,
-            user_profile_id="anthropic-user-profile-id",
+            user_profile_id="Juglow-user-profile-id",
         )
         await message_stream.response.aclose()
 
     @parametrize
-    async def test_raw_response_create_overload_2(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_create_overload_2(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.messages.with_raw_response.create(
             max_tokens=1024,
             messages=[
@@ -694,7 +694,7 @@ class TestAsyncMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             stream=True,
         )
 
@@ -703,7 +703,7 @@ class TestAsyncMessages:
         await stream.close()
 
     @parametrize
-    async def test_streaming_response_create_overload_2(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_create_overload_2(self, async_client: AsyncJuGloW) -> None:
         async with async_client.messages.with_streaming_response.create(
             max_tokens=1024,
             messages=[
@@ -712,7 +712,7 @@ class TestAsyncMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             stream=True,
         ) as response:
             assert not response.is_closed
@@ -724,7 +724,7 @@ class TestAsyncMessages:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_deprecated_model_warning(self, async_client: AsyncAnthropic) -> None:
+    async def test_deprecated_model_warning(self, async_client: AsyncJuGloW) -> None:
         for deprecated_model in DEPRECATED_MODELS:
             with pytest.warns(DeprecationWarning, match=f"The model '{deprecated_model}' is deprecated"):
                 await async_client.messages.create(
@@ -734,7 +734,7 @@ class TestAsyncMessages:
                 )
 
     @parametrize
-    async def test_method_count_tokens(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_count_tokens(self, async_client: AsyncJuGloW) -> None:
         message = await async_client.messages.count_tokens(
             messages=[
                 {
@@ -742,12 +742,12 @@ class TestAsyncMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert_matches_type(MessageTokensCount, message, path=["response"])
 
     @parametrize
-    async def test_method_count_tokens_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_count_tokens_with_all_params(self, async_client: AsyncJuGloW) -> None:
         message = await async_client.messages.count_tokens(
             messages=[
                 {
@@ -755,7 +755,7 @@ class TestAsyncMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             cache_control={
                 "type": "ephemeral",
                 "ttl": "5m",
@@ -819,12 +819,12 @@ class TestAsyncMessages:
                     "type": "custom",
                 }
             ],
-            user_profile_id="anthropic-user-profile-id",
+            user_profile_id="Juglow-user-profile-id",
         )
         assert_matches_type(MessageTokensCount, message, path=["response"])
 
     @parametrize
-    async def test_raw_response_count_tokens(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_count_tokens(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.messages.with_raw_response.count_tokens(
             messages=[
                 {
@@ -832,7 +832,7 @@ class TestAsyncMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert response.is_closed is True
@@ -841,7 +841,7 @@ class TestAsyncMessages:
         assert_matches_type(MessageTokensCount, message, path=["response"])
 
     @parametrize
-    async def test_streaming_response_count_tokens(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_count_tokens(self, async_client: AsyncJuGloW) -> None:
         async with async_client.messages.with_streaming_response.count_tokens(
             messages=[
                 {
@@ -849,7 +849,7 @@ class TestAsyncMessages:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

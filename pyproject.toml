@@ -1,11 +1,11 @@
 [project]
-name = "anthropic"
-version = "0.121.0"
-description = "The official Python library for the anthropic API"
+name = "juglow"
+version = "0.1.0"
+description = "JuGloW Python SDK — API client for the Haijun platform gateway"
 dynamic = ["readme"]
 license = "MIT"
 authors = [
-{ name = "Anthropic", email = "support@anthropic.com" },
+{ name = "JuGloW", email = "support@juglow.my.id" },
 ]
 
 dependencies = [
@@ -108,7 +108,7 @@ include = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/anthropic"]
+packages = ["src/juglow"]
 
 [tool.hatch.build.targets.sdist]
 # Basically everything except hidden files/directories (such as .github, .devcontainers, .python-version, etc)
@@ -279,7 +279,7 @@ length-sort = true
 length-sort-straight = true
 combine-as-imports = true
 extra-standard-library = ["typing_extensions"]
-known-first-party = ["anthropic", "tests"]
+known-first-party = ["juglow", "tests"]
 
 [tool.ruff.lint.per-file-ignores]
 "bin/**.py" = ["T201", "T203"]

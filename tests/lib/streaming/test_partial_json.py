@@ -3,11 +3,11 @@ from typing import List, cast
 
 import httpx
 
-from anthropic.types.beta import BetaDirectCaller, BetaToolUseBlock, BetaInputJSONDelta, BetaRawContentBlockDeltaEvent
-from anthropic.types.tool_use_block import ToolUseBlock
-from anthropic.types.beta.beta_usage import BetaUsage
-from anthropic.lib.streaming._beta_messages import accumulate_event
-from anthropic.types.beta.parsed_beta_message import ParsedBetaMessage
+from juglow.types.beta import BetaDirectCaller, BetaToolUseBlock, BetaInputJSONDelta, BetaRawContentBlockDeltaEvent
+from juglow.types.tool_use_block import ToolUseBlock
+from juglow.types.beta.beta_usage import BetaUsage
+from juglow.lib.streaming._beta_messages import accumulate_event
+from juglow.types.beta.parsed_beta_message import ParsedBetaMessage
 
 
 class TestPartialJson:
@@ -26,7 +26,7 @@ class TestPartialJson:
                     caller=BetaDirectCaller(type="direct"),
                 )
             ],
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
             stop_reason=None,
             stop_sequence=None,
             usage=BetaUsage(input_tokens=10, output_tokens=10),
@@ -49,7 +49,7 @@ class TestPartialJson:
         message2 = accumulate_event(
             event=event_complete,
             current_snapshot=copy.deepcopy(message),
-            request_headers=httpx.Headers({"anthropic-beta": "fine-grained-tool-streaming-2025-05-14"}),
+            request_headers=httpx.Headers({"juglow-beta": "fine-grained-tool-streaming-2025-05-14"}),
         )
 
         # Both should parse complete JSON correctly
@@ -76,7 +76,7 @@ class TestPartialJson:
         message_trailing = accumulate_event(
             event=event_incomplete,
             current_snapshot=copy.deepcopy(message),
-            request_headers=httpx.Headers({"anthropic-beta": "fine-grained-tool-streaming-2025-05-14"}),
+            request_headers=httpx.Headers({"juglow-beta": "fine-grained-tool-streaming-2025-05-14"}),
         )
 
         # Get the tool use blocks
@@ -120,7 +120,7 @@ class TestPartialJson:
                     caller=BetaDirectCaller(type="direct"),
                 )
             ],
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
             stop_reason=None,
             stop_sequence=None,
             usage=BetaUsage(input_tokens=10, output_tokens=10),
@@ -138,7 +138,7 @@ class TestPartialJson:
             accumulate_event(
                 event=event_invalid,
                 current_snapshot=copy.deepcopy(message),
-                request_headers=httpx.Headers({"anthropic-beta": "fine-grained-tool-streaming-2025-05-14"}),
+                request_headers=httpx.Headers({"juglow-beta": "fine-grained-tool-streaming-2025-05-14"}),
             )
             raise AssertionError("Expected ValueError for invalid JSON, but no error was raised.")
         except ValueError as e:

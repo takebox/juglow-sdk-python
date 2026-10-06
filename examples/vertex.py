@@ -1,15 +1,15 @@
 import asyncio
 
-from anthropic import AnthropicVertex, AsyncAnthropicVertex
+from juglow import JuGloWVertex, AsyncJuGloWVertex
 
 
 def sync_client() -> None:
     print("------ Sync Vertex ------")
 
-    client = AnthropicVertex()
+    client = JuGloWVertex()
 
     message = client.messages.create(
-        model="claude-sonnet-4@20250514",
+        model="haijun-sonnet@20250514",
         max_tokens=100,
         messages=[
             {
@@ -24,10 +24,10 @@ def sync_client() -> None:
 async def async_client() -> None:
     print("------ Async Vertex ------")
 
-    client = AsyncAnthropicVertex()
+    client = AsyncJuGloWVertex()
 
     message = await client.messages.create(
-        model="claude-sonnet-4@20250514",
+        model="haijun-sonnet@20250514",
         max_tokens=1024,
         messages=[
             {

@@ -5,8 +5,8 @@ import pytest
 from pydantic import BaseModel
 from inline_snapshot import external, snapshot
 
-from anthropic import AnthropicError, AsyncAnthropic, _compat
-from anthropic.types.beta.parsed_beta_message import ParsedBetaMessage
+from juglow import JuGloWError, AsyncJuGloW, _compat
+from juglow.types.beta.parsed_beta_message import ParsedBetaMessage
 
 
 @pytest.mark.skipif(_compat.PYDANTIC_V1, reason="tool runner not supported with pydantic v1")
@@ -18,10 +18,10 @@ class TestAsyncMessages:
             cast(Any, external("uuid:9381e2b7-7fa1-46f7-9f78-46dc8431ea9d.json")),
         ],
     )
-    async def test_stream_with_raw_schema(self, async_snapshot_client: AsyncAnthropic) -> None:
-        async def async_stream_parse(client: AsyncAnthropic) -> ParsedBetaMessage[None]:
+    async def test_stream_with_raw_schema(self, async_snapshot_client: AsyncJuGloW) -> None:
+        async def async_stream_parse(client: AsyncJuGloW) -> ParsedBetaMessage[None]:
             async with client.beta.messages.stream(
-                model="claude-sonnet-4-5",
+                model="haijun-sonnet-5",
                 messages=[
                     {
                         "role": "user",
@@ -51,13 +51,13 @@ class TestAsyncMessages:
             cast(Any, external("uuid:d7092a7d-b723-4470-8fb0-da138cd103a1.json")),
         ],
     )
-    async def test_parse_uses_output_config(self, async_snapshot_client: AsyncAnthropic) -> None:
+    async def test_parse_uses_output_config(self, async_snapshot_client: AsyncJuGloW) -> None:
         class User(BaseModel):
             name: str
             age: int
 
         response = await async_snapshot_client.beta.with_raw_response.messages.parse(
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
             messages=[
                 {
                     "role": "user",
@@ -82,7 +82,7 @@ My name is John Doe and I am 30 years old.\
 """,
                     }
                 ],
-                "model": "claude-sonnet-4-5",
+                "model": "haijun-sonnet-5",
                 "output_config": {
                     "format": {
                         "schema": {
@@ -101,14 +101,14 @@ My name is John Doe and I am 30 years old.\
             }
         )
 
-    async def test_rejects_both_output_format_and_config(self, async_client: AsyncAnthropic) -> None:
+    async def test_rejects_both_output_format_and_config(self, async_client: AsyncJuGloW) -> None:
         class User(BaseModel):
             name: str
             age: int
 
-        with pytest.raises(AnthropicError, match="Both output_format and output_config.format were provided"):
+        with pytest.raises(JuGloWError, match="Both output_format and output_config.format were provided"):
             await async_client.beta.messages.parse(
-                model="claude-sonnet-4-5",
+                model="haijun-sonnet-5",
                 messages=[
                     {
                         "role": "user",

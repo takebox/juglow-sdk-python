@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from anthropic import Anthropic
+from juglow import JuGloW
 
-client = Anthropic()
+client = JuGloW()
 
 response = client.messages.create(
     max_tokens=1024,
@@ -25,6 +25,6 @@ response = client.messages.create(
             ],
         },
     ],
-    model="claude-sonnet-5",
+    model="haijun-sonnet",
 )
 print(response.model_dump_json(indent=2))

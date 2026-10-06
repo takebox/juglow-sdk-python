@@ -3,7 +3,7 @@ from copy import deepcopy
 import pytest
 from inline_snapshot import snapshot
 
-from anthropic.lib._parse._transform import transform_schema
+from juglow.lib._parse._transform import transform_schema
 
 
 def test_ref_schema():

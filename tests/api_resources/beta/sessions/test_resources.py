@@ -7,10 +7,10 @@ from typing import Any, cast
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic.pagination import SyncPageCursor, AsyncPageCursor
-from anthropic.types.beta.sessions import (
+from juglow.pagination import SyncPageCursor, AsyncPageCursor
+from juglow.types.beta.sessions import (
     ResourceUpdateResponse,
     ResourceRetrieveResponse,
     BetaManagedAgentsFileResource,
@@ -26,7 +26,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_method_retrieve(self, client: Anthropic) -> None:
+    def test_method_retrieve(self, client: JuGloW) -> None:
         resource = client.beta.sessions.resources.retrieve(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -35,7 +35,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_method_retrieve_with_all_params(self, client: Anthropic) -> None:
+    def test_method_retrieve_with_all_params(self, client: JuGloW) -> None:
         resource = client.beta.sessions.resources.retrieve(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -45,7 +45,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_raw_response_retrieve(self, client: Anthropic) -> None:
+    def test_raw_response_retrieve(self, client: JuGloW) -> None:
         response = client.beta.sessions.resources.with_raw_response.retrieve(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -58,7 +58,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_streaming_response_retrieve(self, client: Anthropic) -> None:
+    def test_streaming_response_retrieve(self, client: JuGloW) -> None:
         with client.beta.sessions.resources.with_streaming_response.retrieve(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -73,7 +73,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_path_params_retrieve(self, client: Anthropic) -> None:
+    def test_path_params_retrieve(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             client.beta.sessions.resources.with_raw_response.retrieve(
                 resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
@@ -88,7 +88,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_method_update(self, client: Anthropic) -> None:
+    def test_method_update(self, client: JuGloW) -> None:
         resource = client.beta.sessions.resources.update(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -98,7 +98,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_method_update_with_all_params(self, client: Anthropic) -> None:
+    def test_method_update_with_all_params(self, client: JuGloW) -> None:
         resource = client.beta.sessions.resources.update(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -109,7 +109,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_raw_response_update(self, client: Anthropic) -> None:
+    def test_raw_response_update(self, client: JuGloW) -> None:
         response = client.beta.sessions.resources.with_raw_response.update(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -123,7 +123,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_streaming_response_update(self, client: Anthropic) -> None:
+    def test_streaming_response_update(self, client: JuGloW) -> None:
         with client.beta.sessions.resources.with_streaming_response.update(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -139,7 +139,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_path_params_update(self, client: Anthropic) -> None:
+    def test_path_params_update(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             client.beta.sessions.resources.with_raw_response.update(
                 resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
@@ -156,7 +156,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_method_list(self, client: Anthropic) -> None:
+    def test_method_list(self, client: JuGloW) -> None:
         resource = client.beta.sessions.resources.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -164,7 +164,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_method_list_with_all_params(self, client: Anthropic) -> None:
+    def test_method_list_with_all_params(self, client: JuGloW) -> None:
         resource = client.beta.sessions.resources.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             limit=0,
@@ -175,7 +175,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_raw_response_list(self, client: Anthropic) -> None:
+    def test_raw_response_list(self, client: JuGloW) -> None:
         response = client.beta.sessions.resources.with_raw_response.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -187,7 +187,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_streaming_response_list(self, client: Anthropic) -> None:
+    def test_streaming_response_list(self, client: JuGloW) -> None:
         with client.beta.sessions.resources.with_streaming_response.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -201,7 +201,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_path_params_list(self, client: Anthropic) -> None:
+    def test_path_params_list(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             client.beta.sessions.resources.with_raw_response.list(
                 session_id="",
@@ -209,7 +209,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_method_delete(self, client: Anthropic) -> None:
+    def test_method_delete(self, client: JuGloW) -> None:
         resource = client.beta.sessions.resources.delete(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -218,7 +218,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_method_delete_with_all_params(self, client: Anthropic) -> None:
+    def test_method_delete_with_all_params(self, client: JuGloW) -> None:
         resource = client.beta.sessions.resources.delete(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -228,7 +228,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_raw_response_delete(self, client: Anthropic) -> None:
+    def test_raw_response_delete(self, client: JuGloW) -> None:
         response = client.beta.sessions.resources.with_raw_response.delete(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -241,7 +241,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_streaming_response_delete(self, client: Anthropic) -> None:
+    def test_streaming_response_delete(self, client: JuGloW) -> None:
         with client.beta.sessions.resources.with_streaming_response.delete(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -256,7 +256,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_path_params_delete(self, client: Anthropic) -> None:
+    def test_path_params_delete(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             client.beta.sessions.resources.with_raw_response.delete(
                 resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
@@ -271,7 +271,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_method_add(self, client: Anthropic) -> None:
+    def test_method_add(self, client: JuGloW) -> None:
         resource = client.beta.sessions.resources.add(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             file_id="file_011CNha8iCJcU1wXNR6q4V8w",
@@ -281,7 +281,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_method_add_with_all_params(self, client: Anthropic) -> None:
+    def test_method_add_with_all_params(self, client: JuGloW) -> None:
         resource = client.beta.sessions.resources.add(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             file_id="file_011CNha8iCJcU1wXNR6q4V8w",
@@ -293,7 +293,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_raw_response_add(self, client: Anthropic) -> None:
+    def test_raw_response_add(self, client: JuGloW) -> None:
         response = client.beta.sessions.resources.with_raw_response.add(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             file_id="file_011CNha8iCJcU1wXNR6q4V8w",
@@ -307,7 +307,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_streaming_response_add(self, client: Anthropic) -> None:
+    def test_streaming_response_add(self, client: JuGloW) -> None:
         with client.beta.sessions.resources.with_streaming_response.add(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             file_id="file_011CNha8iCJcU1wXNR6q4V8w",
@@ -323,7 +323,7 @@ class TestResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    def test_path_params_add(self, client: Anthropic) -> None:
+    def test_path_params_add(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             client.beta.sessions.resources.with_raw_response.add(
                 session_id="",
@@ -339,7 +339,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_method_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve(self, async_client: AsyncJuGloW) -> None:
         resource = await async_client.beta.sessions.resources.retrieve(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -348,7 +348,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_method_retrieve_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve_with_all_params(self, async_client: AsyncJuGloW) -> None:
         resource = await async_client.beta.sessions.resources.retrieve(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -358,7 +358,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_raw_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.resources.with_raw_response.retrieve(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -371,7 +371,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_streaming_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.resources.with_streaming_response.retrieve(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -386,7 +386,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_path_params_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_retrieve(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             await async_client.beta.sessions.resources.with_raw_response.retrieve(
                 resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
@@ -401,7 +401,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_method_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update(self, async_client: AsyncJuGloW) -> None:
         resource = await async_client.beta.sessions.resources.update(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -411,7 +411,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_method_update_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update_with_all_params(self, async_client: AsyncJuGloW) -> None:
         resource = await async_client.beta.sessions.resources.update(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -422,7 +422,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_raw_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_update(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.resources.with_raw_response.update(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -436,7 +436,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_streaming_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_update(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.resources.with_streaming_response.update(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -452,7 +452,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_path_params_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_update(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             await async_client.beta.sessions.resources.with_raw_response.update(
                 resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
@@ -469,7 +469,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_method_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list(self, async_client: AsyncJuGloW) -> None:
         resource = await async_client.beta.sessions.resources.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -477,7 +477,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_method_list_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list_with_all_params(self, async_client: AsyncJuGloW) -> None:
         resource = await async_client.beta.sessions.resources.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             limit=0,
@@ -488,7 +488,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_raw_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_list(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.resources.with_raw_response.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         )
@@ -500,7 +500,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_streaming_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_list(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.resources.with_streaming_response.list(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
         ) as response:
@@ -514,7 +514,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_path_params_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_list(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             await async_client.beta.sessions.resources.with_raw_response.list(
                 session_id="",
@@ -522,7 +522,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_method_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_delete(self, async_client: AsyncJuGloW) -> None:
         resource = await async_client.beta.sessions.resources.delete(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -531,7 +531,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_method_delete_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_delete_with_all_params(self, async_client: AsyncJuGloW) -> None:
         resource = await async_client.beta.sessions.resources.delete(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -541,7 +541,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_raw_response_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_delete(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.resources.with_raw_response.delete(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -554,7 +554,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_streaming_response_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_delete(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.resources.with_streaming_response.delete(
             resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -569,7 +569,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_path_params_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_delete(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             await async_client.beta.sessions.resources.with_raw_response.delete(
                 resource_id="sesrsc_011CZkZBJq5dWxk9fVLNcPht",
@@ -584,7 +584,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_method_add(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_add(self, async_client: AsyncJuGloW) -> None:
         resource = await async_client.beta.sessions.resources.add(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             file_id="file_011CNha8iCJcU1wXNR6q4V8w",
@@ -594,7 +594,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_method_add_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_add_with_all_params(self, async_client: AsyncJuGloW) -> None:
         resource = await async_client.beta.sessions.resources.add(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             file_id="file_011CNha8iCJcU1wXNR6q4V8w",
@@ -606,7 +606,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_raw_response_add(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_add(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.sessions.resources.with_raw_response.add(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             file_id="file_011CNha8iCJcU1wXNR6q4V8w",
@@ -620,7 +620,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_streaming_response_add(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_add(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.sessions.resources.with_streaming_response.add(
             session_id="sesn_011CZkZAtmR3yMPDzynEDxu7",
             file_id="file_011CNha8iCJcU1wXNR6q4V8w",
@@ -636,7 +636,7 @@ class TestAsyncResources:
 
     @pytest.mark.skip(reason="prism can't find endpoint with beta only tag")
     @parametrize
-    async def test_path_params_add(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_add(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             await async_client.beta.sessions.resources.with_raw_response.add(
                 session_id="",

@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from typing import Any, Set, cast
 from typing_extensions import get_args, get_origin
@@ -6,13 +6,13 @@ from typing_extensions import get_args, get_origin
 import httpx
 import pytest
 
-from anthropic.types.beta import BetaFallbackBlock
-from anthropic.types.content_block import ContentBlock
-from anthropic.types.parsed_message import ParsedContentBlock
-from anthropic.types.beta.beta_usage import BetaUsage
-from anthropic.lib.streaming._beta_messages import accumulate_event
-from anthropic.types.beta.beta_content_block import BetaContentBlock
-from anthropic.types.beta.parsed_beta_message import ParsedBetaMessage, ParsedBetaContentBlock
+from juglow.types.beta import BetaFallbackBlock
+from juglow.types.content_block import ContentBlock
+from juglow.types.parsed_message import ParsedContentBlock
+from juglow.types.beta.beta_usage import BetaUsage
+from juglow.lib.streaming._beta_messages import accumulate_event
+from juglow.types.beta.beta_content_block import BetaContentBlock
+from juglow.types.beta.parsed_beta_message import ParsedBetaMessage, ParsedBetaContentBlock
 
 
 def _union_members(union: Any) -> Set[type]:
@@ -36,8 +36,8 @@ def _to_generated(member: type) -> type:
 @pytest.mark.parametrize(
     ("parsed_union", "generated_union", "parsed_file"),
     [
-        (ParsedBetaContentBlock, BetaContentBlock, "src/anthropic/types/beta/parsed_beta_message.py"),
-        (ParsedContentBlock, ContentBlock, "src/anthropic/types/parsed_message.py"),
+        (ParsedBetaContentBlock, BetaContentBlock, "src/Juglow/types/beta/parsed_beta_message.py"),
+        (ParsedContentBlock, ContentBlock, "src/Juglow/types/parsed_message.py"),
     ],
     ids=["beta", "non-beta"],
 )
@@ -66,7 +66,7 @@ def test_streamed_fallback_block_is_constructed_as_fallback_block() -> None:
         type="message",
         role="assistant",
         content=[],
-        model="claude-sonnet-4-5",
+        model="haijun-sonnet-5",
         stop_reason=None,
         stop_sequence=None,
         usage=BetaUsage(input_tokens=10, output_tokens=10),
@@ -77,8 +77,8 @@ def test_streamed_fallback_block_is_constructed_as_fallback_block() -> None:
         "index": 0,
         "content_block": {
             "type": "fallback",
-            "from": {"model": "claude-sonnet-4-5"},
-            "to": {"model": "claude-haiku-4-5"},
+            "from": {"model": "haijun-sonnet-5"},
+            "to": {"model": "haijun-haiku"},
             "trigger": {"type": "refusal", "category": None},
         },
     }
@@ -91,5 +91,5 @@ def test_streamed_fallback_block_is_constructed_as_fallback_block() -> None:
     block = message.content[0]
     assert isinstance(block, BetaFallbackBlock)
     assert block.type == "fallback"
-    assert block.from_.model == "claude-sonnet-4-5"
-    assert block.to.model == "claude-haiku-4-5"
+    assert block.from_.model == "haijun-sonnet-5"
+    assert block.to.model == "haijun-haiku"

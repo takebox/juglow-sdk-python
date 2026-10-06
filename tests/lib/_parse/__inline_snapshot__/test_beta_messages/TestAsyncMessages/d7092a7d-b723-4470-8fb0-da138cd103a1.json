@@ -1,16 +1,16 @@
-[
+﻿[
   {
     "request": {
       "method": "POST",
-      "url": "https://api.anthropic.com/v1/messages?beta=true",
+      "url": "https://platform.juglow.my.id/v1/messages?beta=true",
       "headers": {
-        "host": "api.anthropic.com",
+        "host": "platform.juglow.my.id",
         "accept-encoding": "gzip, deflate",
         "connection": "keep-alive",
         "x-stainless-timeout": "600",
         "accept": "application/json",
         "content-type": "application/json",
-        "user-agent": "AsyncAnthropic/Python 0.82.0",
+        "user-agent": "AsyncJuglow/Python 0.82.0",
         "x-stainless-lang": "python",
         "x-stainless-package-version": "0.82.0",
         "x-stainless-os": "MacOS",
@@ -18,9 +18,9 @@
         "x-stainless-runtime": "CPython",
         "x-stainless-runtime-version": "3.9.18",
         "x-stainless-async": "async:asyncio",
-        "anthropic-version": "2023-06-01",
+        "juglow-version": "2023-06-01",
         "x-stainless-helper": "beta.messages.parse",
-        "anthropic-beta": "structured-outputs-2025-12-15",
+        "juglow-beta": "structured-outputs-2025-12-15",
         "x-stainless-raw-response": "true",
         "x-stainless-retry-count": "0",
         "x-stainless-read-timeout": "600",
@@ -34,7 +34,7 @@
             "content": "Extract the user's name and age from the following text:\n\nMy name is John Doe and I am 30 years old."
           }
         ],
-        "model": "claude-sonnet-4-5",
+        "model": "haijun-sonnet-5",
         "output_config": {
           "format": {
             "schema": {
@@ -73,7 +73,7 @@
         "cf-cache-status": "DYNAMIC"
       },
       "body": {
-        "model": "claude-sonnet-4-5-20250929",
+        "model": "haijun-sonnet-5-20250929",
         "id": "msg_01EojSKby3oqoP7mb4PHsMJ7",
         "type": "message",
         "role": "assistant",

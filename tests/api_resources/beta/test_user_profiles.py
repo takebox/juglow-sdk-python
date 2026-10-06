@@ -7,10 +7,10 @@ from typing import Any, cast
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic.pagination import SyncPageCursor, AsyncPageCursor
-from anthropic.types.beta import (
+from juglow.pagination import SyncPageCursor, AsyncPageCursor
+from juglow.types.beta import (
     BetaUserProfile,
     BetaUserProfileEnrollmentURL,
 )
@@ -22,12 +22,12 @@ class TestUserProfiles:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    def test_method_create(self, client: Anthropic) -> None:
+    def test_method_create(self, client: JuGloW) -> None:
         user_profile = client.beta.user_profiles.create()
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    def test_method_create_with_all_params(self, client: Anthropic) -> None:
+    def test_method_create_with_all_params(self, client: JuGloW) -> None:
         user_profile = client.beta.user_profiles.create(
             external_id="user_12345",
             metadata={},
@@ -38,7 +38,7 @@ class TestUserProfiles:
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    def test_raw_response_create(self, client: Anthropic) -> None:
+    def test_raw_response_create(self, client: JuGloW) -> None:
         response = client.beta.user_profiles.with_raw_response.create()
 
         assert response.is_closed is True
@@ -47,7 +47,7 @@ class TestUserProfiles:
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    def test_streaming_response_create(self, client: Anthropic) -> None:
+    def test_streaming_response_create(self, client: JuGloW) -> None:
         with client.beta.user_profiles.with_streaming_response.create() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -58,14 +58,14 @@ class TestUserProfiles:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_retrieve(self, client: Anthropic) -> None:
+    def test_method_retrieve(self, client: JuGloW) -> None:
         user_profile = client.beta.user_profiles.retrieve(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         )
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    def test_method_retrieve_with_all_params(self, client: Anthropic) -> None:
+    def test_method_retrieve_with_all_params(self, client: JuGloW) -> None:
         user_profile = client.beta.user_profiles.retrieve(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
             betas=["message-batches-2024-09-24"],
@@ -73,7 +73,7 @@ class TestUserProfiles:
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    def test_raw_response_retrieve(self, client: Anthropic) -> None:
+    def test_raw_response_retrieve(self, client: JuGloW) -> None:
         response = client.beta.user_profiles.with_raw_response.retrieve(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         )
@@ -84,7 +84,7 @@ class TestUserProfiles:
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    def test_streaming_response_retrieve(self, client: Anthropic) -> None:
+    def test_streaming_response_retrieve(self, client: JuGloW) -> None:
         with client.beta.user_profiles.with_streaming_response.retrieve(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         ) as response:
@@ -97,21 +97,21 @@ class TestUserProfiles:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_retrieve(self, client: Anthropic) -> None:
+    def test_path_params_retrieve(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_profile_id` but received ''"):
             client.beta.user_profiles.with_raw_response.retrieve(
                 user_profile_id="",
             )
 
     @parametrize
-    def test_method_update(self, client: Anthropic) -> None:
+    def test_method_update(self, client: JuGloW) -> None:
         user_profile = client.beta.user_profiles.update(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         )
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    def test_method_update_with_all_params(self, client: Anthropic) -> None:
+    def test_method_update_with_all_params(self, client: JuGloW) -> None:
         user_profile = client.beta.user_profiles.update(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
             external_id="user_12345",
@@ -123,7 +123,7 @@ class TestUserProfiles:
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    def test_raw_response_update(self, client: Anthropic) -> None:
+    def test_raw_response_update(self, client: JuGloW) -> None:
         response = client.beta.user_profiles.with_raw_response.update(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         )
@@ -134,7 +134,7 @@ class TestUserProfiles:
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    def test_streaming_response_update(self, client: Anthropic) -> None:
+    def test_streaming_response_update(self, client: JuGloW) -> None:
         with client.beta.user_profiles.with_streaming_response.update(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         ) as response:
@@ -147,19 +147,19 @@ class TestUserProfiles:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_update(self, client: Anthropic) -> None:
+    def test_path_params_update(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_profile_id` but received ''"):
             client.beta.user_profiles.with_raw_response.update(
                 user_profile_id="",
             )
 
     @parametrize
-    def test_method_list(self, client: Anthropic) -> None:
+    def test_method_list(self, client: JuGloW) -> None:
         user_profile = client.beta.user_profiles.list()
         assert_matches_type(SyncPageCursor[BetaUserProfile], user_profile, path=["response"])
 
     @parametrize
-    def test_method_list_with_all_params(self, client: Anthropic) -> None:
+    def test_method_list_with_all_params(self, client: JuGloW) -> None:
         user_profile = client.beta.user_profiles.list(
             limit=0,
             order="asc",
@@ -169,7 +169,7 @@ class TestUserProfiles:
         assert_matches_type(SyncPageCursor[BetaUserProfile], user_profile, path=["response"])
 
     @parametrize
-    def test_raw_response_list(self, client: Anthropic) -> None:
+    def test_raw_response_list(self, client: JuGloW) -> None:
         response = client.beta.user_profiles.with_raw_response.list()
 
         assert response.is_closed is True
@@ -178,7 +178,7 @@ class TestUserProfiles:
         assert_matches_type(SyncPageCursor[BetaUserProfile], user_profile, path=["response"])
 
     @parametrize
-    def test_streaming_response_list(self, client: Anthropic) -> None:
+    def test_streaming_response_list(self, client: JuGloW) -> None:
         with client.beta.user_profiles.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -189,14 +189,14 @@ class TestUserProfiles:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_create_enrollment_url(self, client: Anthropic) -> None:
+    def test_method_create_enrollment_url(self, client: JuGloW) -> None:
         user_profile = client.beta.user_profiles.create_enrollment_url(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         )
         assert_matches_type(BetaUserProfileEnrollmentURL, user_profile, path=["response"])
 
     @parametrize
-    def test_method_create_enrollment_url_with_all_params(self, client: Anthropic) -> None:
+    def test_method_create_enrollment_url_with_all_params(self, client: JuGloW) -> None:
         user_profile = client.beta.user_profiles.create_enrollment_url(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
             betas=["message-batches-2024-09-24"],
@@ -204,7 +204,7 @@ class TestUserProfiles:
         assert_matches_type(BetaUserProfileEnrollmentURL, user_profile, path=["response"])
 
     @parametrize
-    def test_raw_response_create_enrollment_url(self, client: Anthropic) -> None:
+    def test_raw_response_create_enrollment_url(self, client: JuGloW) -> None:
         response = client.beta.user_profiles.with_raw_response.create_enrollment_url(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         )
@@ -215,7 +215,7 @@ class TestUserProfiles:
         assert_matches_type(BetaUserProfileEnrollmentURL, user_profile, path=["response"])
 
     @parametrize
-    def test_streaming_response_create_enrollment_url(self, client: Anthropic) -> None:
+    def test_streaming_response_create_enrollment_url(self, client: JuGloW) -> None:
         with client.beta.user_profiles.with_streaming_response.create_enrollment_url(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         ) as response:
@@ -228,7 +228,7 @@ class TestUserProfiles:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_create_enrollment_url(self, client: Anthropic) -> None:
+    def test_path_params_create_enrollment_url(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_profile_id` but received ''"):
             client.beta.user_profiles.with_raw_response.create_enrollment_url(
                 user_profile_id="",
@@ -241,12 +241,12 @@ class TestAsyncUserProfiles:
     )
 
     @parametrize
-    async def test_method_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create(self, async_client: AsyncJuGloW) -> None:
         user_profile = await async_client.beta.user_profiles.create()
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    async def test_method_create_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_with_all_params(self, async_client: AsyncJuGloW) -> None:
         user_profile = await async_client.beta.user_profiles.create(
             external_id="user_12345",
             metadata={},
@@ -257,7 +257,7 @@ class TestAsyncUserProfiles:
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    async def test_raw_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_create(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.user_profiles.with_raw_response.create()
 
         assert response.is_closed is True
@@ -266,7 +266,7 @@ class TestAsyncUserProfiles:
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    async def test_streaming_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_create(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.user_profiles.with_streaming_response.create() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -277,14 +277,14 @@ class TestAsyncUserProfiles:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve(self, async_client: AsyncJuGloW) -> None:
         user_profile = await async_client.beta.user_profiles.retrieve(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         )
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    async def test_method_retrieve_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve_with_all_params(self, async_client: AsyncJuGloW) -> None:
         user_profile = await async_client.beta.user_profiles.retrieve(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
             betas=["message-batches-2024-09-24"],
@@ -292,7 +292,7 @@ class TestAsyncUserProfiles:
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    async def test_raw_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.user_profiles.with_raw_response.retrieve(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         )
@@ -303,7 +303,7 @@ class TestAsyncUserProfiles:
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    async def test_streaming_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.user_profiles.with_streaming_response.retrieve(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         ) as response:
@@ -316,21 +316,21 @@ class TestAsyncUserProfiles:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_retrieve(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_profile_id` but received ''"):
             await async_client.beta.user_profiles.with_raw_response.retrieve(
                 user_profile_id="",
             )
 
     @parametrize
-    async def test_method_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update(self, async_client: AsyncJuGloW) -> None:
         user_profile = await async_client.beta.user_profiles.update(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         )
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    async def test_method_update_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update_with_all_params(self, async_client: AsyncJuGloW) -> None:
         user_profile = await async_client.beta.user_profiles.update(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
             external_id="user_12345",
@@ -342,7 +342,7 @@ class TestAsyncUserProfiles:
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    async def test_raw_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_update(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.user_profiles.with_raw_response.update(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         )
@@ -353,7 +353,7 @@ class TestAsyncUserProfiles:
         assert_matches_type(BetaUserProfile, user_profile, path=["response"])
 
     @parametrize
-    async def test_streaming_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_update(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.user_profiles.with_streaming_response.update(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         ) as response:
@@ -366,19 +366,19 @@ class TestAsyncUserProfiles:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_update(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_profile_id` but received ''"):
             await async_client.beta.user_profiles.with_raw_response.update(
                 user_profile_id="",
             )
 
     @parametrize
-    async def test_method_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list(self, async_client: AsyncJuGloW) -> None:
         user_profile = await async_client.beta.user_profiles.list()
         assert_matches_type(AsyncPageCursor[BetaUserProfile], user_profile, path=["response"])
 
     @parametrize
-    async def test_method_list_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list_with_all_params(self, async_client: AsyncJuGloW) -> None:
         user_profile = await async_client.beta.user_profiles.list(
             limit=0,
             order="asc",
@@ -388,7 +388,7 @@ class TestAsyncUserProfiles:
         assert_matches_type(AsyncPageCursor[BetaUserProfile], user_profile, path=["response"])
 
     @parametrize
-    async def test_raw_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_list(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.user_profiles.with_raw_response.list()
 
         assert response.is_closed is True
@@ -397,7 +397,7 @@ class TestAsyncUserProfiles:
         assert_matches_type(AsyncPageCursor[BetaUserProfile], user_profile, path=["response"])
 
     @parametrize
-    async def test_streaming_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_list(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.user_profiles.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -408,14 +408,14 @@ class TestAsyncUserProfiles:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_create_enrollment_url(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_enrollment_url(self, async_client: AsyncJuGloW) -> None:
         user_profile = await async_client.beta.user_profiles.create_enrollment_url(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         )
         assert_matches_type(BetaUserProfileEnrollmentURL, user_profile, path=["response"])
 
     @parametrize
-    async def test_method_create_enrollment_url_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_enrollment_url_with_all_params(self, async_client: AsyncJuGloW) -> None:
         user_profile = await async_client.beta.user_profiles.create_enrollment_url(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
             betas=["message-batches-2024-09-24"],
@@ -423,7 +423,7 @@ class TestAsyncUserProfiles:
         assert_matches_type(BetaUserProfileEnrollmentURL, user_profile, path=["response"])
 
     @parametrize
-    async def test_raw_response_create_enrollment_url(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_create_enrollment_url(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.user_profiles.with_raw_response.create_enrollment_url(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         )
@@ -434,7 +434,7 @@ class TestAsyncUserProfiles:
         assert_matches_type(BetaUserProfileEnrollmentURL, user_profile, path=["response"])
 
     @parametrize
-    async def test_streaming_response_create_enrollment_url(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_create_enrollment_url(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.user_profiles.with_streaming_response.create_enrollment_url(
             user_profile_id="uprof_011CZkZCu8hGbp5mYRQgUmz9",
         ) as response:
@@ -447,7 +447,7 @@ class TestAsyncUserProfiles:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_create_enrollment_url(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_create_enrollment_url(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_profile_id` but received ''"):
             await async_client.beta.user_profiles.with_raw_response.create_enrollment_url(
                 user_profile_id="",

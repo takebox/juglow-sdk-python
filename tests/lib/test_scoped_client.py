@@ -11,12 +11,12 @@ from __future__ import annotations
 import httpx
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
-from anthropic.lib._scoped_client import _copy_client_with_bearer_auth
+from juglow import JuGloW, AsyncJuGloW
+from juglow.lib._scoped_client import _copy_client_with_bearer_auth
 
 
 def test_sets_bearer_auth_token_on_copy() -> None:
-    parent = Anthropic(api_key="parent-key")
+    parent = JuGloW(api_key="parent-key")
     scoped = _copy_client_with_bearer_auth(parent, auth_token="env-key", helper="environments-work-poller")
     assert scoped.auth_token == "env-key"
 
@@ -26,7 +26,7 @@ def test_clears_parent_api_key_on_copy() -> None:
     keeping the parent's ``X-Api-Key`` off the sub-client's wire. If this ever
     starts returning a sub-client with ``api_key`` set, the parent's API
     credential would silently authenticate every helper request."""
-    parent = Anthropic(api_key="parent-key")
+    parent = JuGloW(api_key="parent-key")
     scoped = _copy_client_with_bearer_auth(parent, auth_token="env-key", helper="environments-work-poller")
     assert scoped.api_key is None
 
@@ -35,18 +35,18 @@ def test_clears_inherited_credentials_provider() -> None:
     """When the parent client carries a credentials provider (e.g. workload
     identity), the sub-client must use the explicit bearer token as the
     unambiguous credential — not stack the provider's auth on top of it."""
-    from anthropic.lib.credentials._types import AccessToken
+    from juglow.lib.credentials._types import AccessToken
 
     def fake_provider(*, force_refresh: bool = False) -> AccessToken:  # noqa: ARG001
         return AccessToken(token="provider-token")
 
-    parent = Anthropic(api_key="parent-key", credentials=fake_provider)
+    parent = JuGloW(api_key="parent-key", credentials=fake_provider)
     scoped = _copy_client_with_bearer_auth(parent, auth_token="env-key", helper="environments-work-poller")
     assert scoped.credentials is None
 
 
 def test_stamps_helper_telemetry_header() -> None:
-    parent = Anthropic(api_key="parent-key")
+    parent = JuGloW(api_key="parent-key")
     scoped = _copy_client_with_bearer_auth(parent, auth_token="env-key", helper="environments-worker")
     assert scoped._custom_headers.get("x-stainless-helper") == "environments-worker"
 
@@ -56,7 +56,7 @@ def test_does_not_mutate_parent_client() -> None:
 
     Without this, a long-lived parent client could be silently re-credentialed
     every time a runner helper started."""
-    parent = Anthropic(api_key="parent-key")
+    parent = JuGloW(api_key="parent-key")
     _copy_client_with_bearer_auth(parent, auth_token="env-key", helper="environments-work-poller")
     assert parent.api_key == "parent-key"
     assert parent.auth_token is None
@@ -66,18 +66,18 @@ def test_empty_auth_token_raises() -> None:
     """An empty ``auth_token`` would silently fall back to the parent's
     ``auth_token`` via ``copy()``'s truthy-or, producing a sub-client with no
     intentional credential set."""
-    parent = Anthropic(api_key="parent-key")
+    parent = JuGloW(api_key="parent-key")
     with pytest.raises(ValueError, match="auth_token"):
         _copy_client_with_bearer_auth(parent, auth_token="", helper="environments-work-poller")
 
 
 @pytest.mark.asyncio()
 async def test_async_client_path_clears_api_key_and_sets_bearer() -> None:
-    """The same invariants hold for ``AsyncAnthropic`` — verifies the
+    """The same invariants hold for ``AsyncJuGloW`` — verifies the
     ``ClientT`` typevar threads sync/async correctly through ``copy()``."""
-    parent = AsyncAnthropic(api_key="parent-key")
+    parent = AsyncJuGloW(api_key="parent-key")
     scoped = _copy_client_with_bearer_auth(parent, auth_token="env-key", helper="session-tool-runner")
-    assert isinstance(scoped, AsyncAnthropic)
+    assert isinstance(scoped, AsyncJuGloW)
     assert scoped.api_key is None
     assert scoped.auth_token == "env-key"
     assert scoped._custom_headers.get("x-stainless-helper") == "session-tool-runner"
@@ -87,10 +87,10 @@ def test_strips_inherited_authorization_from_parent_default_headers() -> None:
     """If the parent client was configured with a custom
     ``default_headers={"Authorization": ...}`` (or ``X-Api-Key``), those would
     otherwise win over the bearer we just set because
-    :meth:`AsyncAnthropic.default_headers` merges ``_custom_headers`` after
+    :meth:`AsyncJuGloW.default_headers` merges ``_custom_headers`` after
     ``auth_headers``. The helper strips them from the sub-client's custom
     headers so the bearer is unambiguous on the wire."""
-    parent = Anthropic(
+    parent = JuGloW(
         api_key="parent-key",
         default_headers={"Authorization": "Bearer parent-token", "X-Api-Key": "parent-key"},
     )
@@ -131,7 +131,7 @@ async def test_scoped_sub_client_sends_only_bearer_on_the_wire() -> None:
     http_client = httpx.AsyncClient(transport=transport)
     # Parent has *every* way a credential could leak: an api_key, an
     # Authorization in default_headers, AND an X-Api-Key in default_headers.
-    parent = AsyncAnthropic(
+    parent = AsyncJuGloW(
         api_key="parent-key",
         default_headers={
             "Authorization": "Bearer parent-token",

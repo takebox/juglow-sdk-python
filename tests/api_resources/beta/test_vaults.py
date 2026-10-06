@@ -7,10 +7,10 @@ from typing import Any, cast
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic.pagination import SyncPageCursor, AsyncPageCursor
-from anthropic.types.beta import (
+from juglow.pagination import SyncPageCursor, AsyncPageCursor
+from juglow.types.beta import (
     BetaManagedAgentsVault,
     BetaManagedAgentsDeletedVault,
 )
@@ -22,14 +22,14 @@ class TestVaults:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    def test_method_create(self, client: Anthropic) -> None:
+    def test_method_create(self, client: JuGloW) -> None:
         vault = client.beta.vaults.create(
             display_name="Example vault",
         )
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    def test_method_create_with_all_params(self, client: Anthropic) -> None:
+    def test_method_create_with_all_params(self, client: JuGloW) -> None:
         vault = client.beta.vaults.create(
             display_name="Example vault",
             metadata={"environment": "production"},
@@ -38,7 +38,7 @@ class TestVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    def test_raw_response_create(self, client: Anthropic) -> None:
+    def test_raw_response_create(self, client: JuGloW) -> None:
         response = client.beta.vaults.with_raw_response.create(
             display_name="Example vault",
         )
@@ -49,7 +49,7 @@ class TestVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    def test_streaming_response_create(self, client: Anthropic) -> None:
+    def test_streaming_response_create(self, client: JuGloW) -> None:
         with client.beta.vaults.with_streaming_response.create(
             display_name="Example vault",
         ) as response:
@@ -62,14 +62,14 @@ class TestVaults:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_retrieve(self, client: Anthropic) -> None:
+    def test_method_retrieve(self, client: JuGloW) -> None:
         vault = client.beta.vaults.retrieve(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    def test_method_retrieve_with_all_params(self, client: Anthropic) -> None:
+    def test_method_retrieve_with_all_params(self, client: JuGloW) -> None:
         vault = client.beta.vaults.retrieve(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
             betas=["string"],
@@ -77,7 +77,7 @@ class TestVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    def test_raw_response_retrieve(self, client: Anthropic) -> None:
+    def test_raw_response_retrieve(self, client: JuGloW) -> None:
         response = client.beta.vaults.with_raw_response.retrieve(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
@@ -88,7 +88,7 @@ class TestVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    def test_streaming_response_retrieve(self, client: Anthropic) -> None:
+    def test_streaming_response_retrieve(self, client: JuGloW) -> None:
         with client.beta.vaults.with_streaming_response.retrieve(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         ) as response:
@@ -101,21 +101,21 @@ class TestVaults:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_retrieve(self, client: Anthropic) -> None:
+    def test_path_params_retrieve(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `vault_id` but received ''"):
             client.beta.vaults.with_raw_response.retrieve(
                 vault_id="",
             )
 
     @parametrize
-    def test_method_update(self, client: Anthropic) -> None:
+    def test_method_update(self, client: JuGloW) -> None:
         vault = client.beta.vaults.update(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    def test_method_update_with_all_params(self, client: Anthropic) -> None:
+    def test_method_update_with_all_params(self, client: JuGloW) -> None:
         vault = client.beta.vaults.update(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
             display_name="Example vault",
@@ -125,7 +125,7 @@ class TestVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    def test_raw_response_update(self, client: Anthropic) -> None:
+    def test_raw_response_update(self, client: JuGloW) -> None:
         response = client.beta.vaults.with_raw_response.update(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
@@ -136,7 +136,7 @@ class TestVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    def test_streaming_response_update(self, client: Anthropic) -> None:
+    def test_streaming_response_update(self, client: JuGloW) -> None:
         with client.beta.vaults.with_streaming_response.update(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         ) as response:
@@ -149,7 +149,7 @@ class TestVaults:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_update(self, client: Anthropic) -> None:
+    def test_path_params_update(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `vault_id` but received ''"):
             client.beta.vaults.with_raw_response.update(
                 vault_id="",
@@ -157,13 +157,13 @@ class TestVaults:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list(self, client: Anthropic) -> None:
+    def test_method_list(self, client: JuGloW) -> None:
         vault = client.beta.vaults.list()
         assert_matches_type(SyncPageCursor[BetaManagedAgentsVault], vault, path=["response"])
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list_with_all_params(self, client: Anthropic) -> None:
+    def test_method_list_with_all_params(self, client: JuGloW) -> None:
         vault = client.beta.vaults.list(
             include_archived=True,
             limit=0,
@@ -174,7 +174,7 @@ class TestVaults:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_raw_response_list(self, client: Anthropic) -> None:
+    def test_raw_response_list(self, client: JuGloW) -> None:
         response = client.beta.vaults.with_raw_response.list()
 
         assert response.is_closed is True
@@ -184,7 +184,7 @@ class TestVaults:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_streaming_response_list(self, client: Anthropic) -> None:
+    def test_streaming_response_list(self, client: JuGloW) -> None:
         with client.beta.vaults.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -195,14 +195,14 @@ class TestVaults:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_delete(self, client: Anthropic) -> None:
+    def test_method_delete(self, client: JuGloW) -> None:
         vault = client.beta.vaults.delete(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
         assert_matches_type(BetaManagedAgentsDeletedVault, vault, path=["response"])
 
     @parametrize
-    def test_method_delete_with_all_params(self, client: Anthropic) -> None:
+    def test_method_delete_with_all_params(self, client: JuGloW) -> None:
         vault = client.beta.vaults.delete(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
             betas=["string"],
@@ -210,7 +210,7 @@ class TestVaults:
         assert_matches_type(BetaManagedAgentsDeletedVault, vault, path=["response"])
 
     @parametrize
-    def test_raw_response_delete(self, client: Anthropic) -> None:
+    def test_raw_response_delete(self, client: JuGloW) -> None:
         response = client.beta.vaults.with_raw_response.delete(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
@@ -221,7 +221,7 @@ class TestVaults:
         assert_matches_type(BetaManagedAgentsDeletedVault, vault, path=["response"])
 
     @parametrize
-    def test_streaming_response_delete(self, client: Anthropic) -> None:
+    def test_streaming_response_delete(self, client: JuGloW) -> None:
         with client.beta.vaults.with_streaming_response.delete(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         ) as response:
@@ -234,21 +234,21 @@ class TestVaults:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_delete(self, client: Anthropic) -> None:
+    def test_path_params_delete(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `vault_id` but received ''"):
             client.beta.vaults.with_raw_response.delete(
                 vault_id="",
             )
 
     @parametrize
-    def test_method_archive(self, client: Anthropic) -> None:
+    def test_method_archive(self, client: JuGloW) -> None:
         vault = client.beta.vaults.archive(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    def test_method_archive_with_all_params(self, client: Anthropic) -> None:
+    def test_method_archive_with_all_params(self, client: JuGloW) -> None:
         vault = client.beta.vaults.archive(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
             betas=["string"],
@@ -256,7 +256,7 @@ class TestVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    def test_raw_response_archive(self, client: Anthropic) -> None:
+    def test_raw_response_archive(self, client: JuGloW) -> None:
         response = client.beta.vaults.with_raw_response.archive(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
@@ -267,7 +267,7 @@ class TestVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    def test_streaming_response_archive(self, client: Anthropic) -> None:
+    def test_streaming_response_archive(self, client: JuGloW) -> None:
         with client.beta.vaults.with_streaming_response.archive(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         ) as response:
@@ -280,7 +280,7 @@ class TestVaults:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_archive(self, client: Anthropic) -> None:
+    def test_path_params_archive(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `vault_id` but received ''"):
             client.beta.vaults.with_raw_response.archive(
                 vault_id="",
@@ -293,14 +293,14 @@ class TestAsyncVaults:
     )
 
     @parametrize
-    async def test_method_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create(self, async_client: AsyncJuGloW) -> None:
         vault = await async_client.beta.vaults.create(
             display_name="Example vault",
         )
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    async def test_method_create_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_create_with_all_params(self, async_client: AsyncJuGloW) -> None:
         vault = await async_client.beta.vaults.create(
             display_name="Example vault",
             metadata={"environment": "production"},
@@ -309,7 +309,7 @@ class TestAsyncVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    async def test_raw_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_create(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.vaults.with_raw_response.create(
             display_name="Example vault",
         )
@@ -320,7 +320,7 @@ class TestAsyncVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    async def test_streaming_response_create(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_create(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.vaults.with_streaming_response.create(
             display_name="Example vault",
         ) as response:
@@ -333,14 +333,14 @@ class TestAsyncVaults:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve(self, async_client: AsyncJuGloW) -> None:
         vault = await async_client.beta.vaults.retrieve(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    async def test_method_retrieve_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve_with_all_params(self, async_client: AsyncJuGloW) -> None:
         vault = await async_client.beta.vaults.retrieve(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
             betas=["string"],
@@ -348,7 +348,7 @@ class TestAsyncVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    async def test_raw_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.vaults.with_raw_response.retrieve(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
@@ -359,7 +359,7 @@ class TestAsyncVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    async def test_streaming_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.vaults.with_streaming_response.retrieve(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         ) as response:
@@ -372,21 +372,21 @@ class TestAsyncVaults:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_retrieve(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `vault_id` but received ''"):
             await async_client.beta.vaults.with_raw_response.retrieve(
                 vault_id="",
             )
 
     @parametrize
-    async def test_method_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update(self, async_client: AsyncJuGloW) -> None:
         vault = await async_client.beta.vaults.update(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    async def test_method_update_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update_with_all_params(self, async_client: AsyncJuGloW) -> None:
         vault = await async_client.beta.vaults.update(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
             display_name="Example vault",
@@ -396,7 +396,7 @@ class TestAsyncVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    async def test_raw_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_update(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.vaults.with_raw_response.update(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
@@ -407,7 +407,7 @@ class TestAsyncVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    async def test_streaming_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_update(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.vaults.with_streaming_response.update(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         ) as response:
@@ -420,7 +420,7 @@ class TestAsyncVaults:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_update(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `vault_id` but received ''"):
             await async_client.beta.vaults.with_raw_response.update(
                 vault_id="",
@@ -428,13 +428,13 @@ class TestAsyncVaults:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list(self, async_client: AsyncJuGloW) -> None:
         vault = await async_client.beta.vaults.list()
         assert_matches_type(AsyncPageCursor[BetaManagedAgentsVault], vault, path=["response"])
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list_with_all_params(self, async_client: AsyncJuGloW) -> None:
         vault = await async_client.beta.vaults.list(
             include_archived=True,
             limit=0,
@@ -445,7 +445,7 @@ class TestAsyncVaults:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_raw_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_list(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.vaults.with_raw_response.list()
 
         assert response.is_closed is True
@@ -455,7 +455,7 @@ class TestAsyncVaults:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_streaming_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_list(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.vaults.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -466,14 +466,14 @@ class TestAsyncVaults:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_delete(self, async_client: AsyncJuGloW) -> None:
         vault = await async_client.beta.vaults.delete(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
         assert_matches_type(BetaManagedAgentsDeletedVault, vault, path=["response"])
 
     @parametrize
-    async def test_method_delete_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_delete_with_all_params(self, async_client: AsyncJuGloW) -> None:
         vault = await async_client.beta.vaults.delete(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
             betas=["string"],
@@ -481,7 +481,7 @@ class TestAsyncVaults:
         assert_matches_type(BetaManagedAgentsDeletedVault, vault, path=["response"])
 
     @parametrize
-    async def test_raw_response_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_delete(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.vaults.with_raw_response.delete(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
@@ -492,7 +492,7 @@ class TestAsyncVaults:
         assert_matches_type(BetaManagedAgentsDeletedVault, vault, path=["response"])
 
     @parametrize
-    async def test_streaming_response_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_delete(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.vaults.with_streaming_response.delete(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         ) as response:
@@ -505,21 +505,21 @@ class TestAsyncVaults:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_delete(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_delete(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `vault_id` but received ''"):
             await async_client.beta.vaults.with_raw_response.delete(
                 vault_id="",
             )
 
     @parametrize
-    async def test_method_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_archive(self, async_client: AsyncJuGloW) -> None:
         vault = await async_client.beta.vaults.archive(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    async def test_method_archive_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_archive_with_all_params(self, async_client: AsyncJuGloW) -> None:
         vault = await async_client.beta.vaults.archive(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
             betas=["string"],
@@ -527,7 +527,7 @@ class TestAsyncVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    async def test_raw_response_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_archive(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.vaults.with_raw_response.archive(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         )
@@ -538,7 +538,7 @@ class TestAsyncVaults:
         assert_matches_type(BetaManagedAgentsVault, vault, path=["response"])
 
     @parametrize
-    async def test_streaming_response_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_archive(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.vaults.with_streaming_response.archive(
             vault_id="vlt_011CZkZDLs7fYzm1hXNPeRjv",
         ) as response:
@@ -551,7 +551,7 @@ class TestAsyncVaults:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_archive(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_archive(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `vault_id` but received ''"):
             await async_client.beta.vaults.with_raw_response.archive(
                 vault_id="",

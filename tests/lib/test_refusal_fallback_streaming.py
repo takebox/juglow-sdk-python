@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import os
 import re
@@ -11,31 +11,31 @@ import httpx
 import pytest
 from respx import MockRouter
 
-from anthropic import (
+from juglow import (
     Omit,
     Stream,
-    Anthropic,
+    JuGloW,
     APIRequest,
     APIResponse,
     AsyncStream,
-    AnthropicError,
-    AsyncAnthropic,
+    JuGloWError,
+    AsyncJuGloW,
     BetaFallbackState,
     BetaRefusalFallbackMiddleware,
     omit,
 )
-from anthropic._models import FinalRequestOptions
-from anthropic.types.beta import BetaMessage, BetaFallbackParam, BetaRawMessageStreamEvent
-from anthropic.types.anthropic_beta_param import AnthropicBetaParam
+from juglow._models import FinalRequestOptions
+from juglow.types.beta import BetaMessage, BetaFallbackParam, BetaRawMessageStreamEvent
+from juglow.types.juglow_beta_param import JuglowBetaParam
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
-api_key = "my-anthropic-api-key"
+api_key = "my-Juglow-api-key"
 
-LOGGER_NAME = "anthropic.lib.middleware"
+LOGGER_NAME = "juglow.lib.middleware"
 
 
 def error_logs(caplog: pytest.LogCaptureFixture) -> list[str]:
-    """Messages the middleware logged at ERROR — refusals surfaced rather than retried."""
+    """Messages the middleware logged at ERROR â€” refusals surfaced rather than retried."""
     return [
         record.getMessage()
         for record in caplog.records
@@ -44,12 +44,12 @@ def error_logs(caplog: pytest.LogCaptureFixture) -> list[str]:
 
 
 FIXTURES = Path(__file__).parent.parent / "fixtures" / "fable-fallback"
-FALLBACK_MODEL = "claude-opus-4-8"
-SECOND_MODEL = "claude-sonnet-4-6"
+FALLBACK_MODEL = "haijun-opus-8"
+SECOND_MODEL = "haijun-sonnet"
 FALLBACKS: List[BetaFallbackParam] = [{"model": FALLBACK_MODEL}]
 TWO_FALLBACKS: List[BetaFallbackParam] = [{"model": FALLBACK_MODEL}, {"model": SECOND_MODEL}]
 
-# Wire-shaped synthetic capture — the primary refuses after a thinking +
+# Wire-shaped synthetic capture â€” the primary refuses after a thinking +
 # partial-text block and mints a credit token; the fallback then completes
 # the message.
 STREAM_A = (FIXTURES / "stream-a-refusal.sse").read_text()
@@ -64,30 +64,30 @@ STREAM_B = (FIXTURES / "stream-b-fallback.sse").read_text()
 STREAM_A_TOOL = (FIXTURES / "stream-a-toolrefusal.sse").read_text()
 
 PARAMS: dict[str, Any] = {
-    "model": "claude-fable-5",
+    "model": "haijun-opus",
     "max_tokens": 1024,
     "messages": [{"role": "user", "content": "Hey claudius! Can you tell me what a solar eclipse is?"}],
 }
 
 
-def make_sync_client(**kwargs: Any) -> Anthropic:
-    return Anthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=0, **kwargs)
+def make_sync_client(**kwargs: Any) -> JuGloW:
+    return JuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=0, **kwargs)
 
 
-def make_async_client(**kwargs: Any) -> AsyncAnthropic:
-    return AsyncAnthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=0, **kwargs)
+def make_async_client(**kwargs: Any) -> AsyncJuGloW:
+    return AsyncJuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=0, **kwargs)
 
 
-def make_lenient_client(**kwargs: Any) -> Anthropic:
+def make_lenient_client(**kwargs: Any) -> JuGloW:
     """A client with the default (non-strict) response validation.
 
     The fixture wire's terminal refusal delta self-reports a `{type: "message"}`
     iteration without a `model` key, which the generated
-    `BetaMessageIterationUsage` type marks required — strict validation rejects
+    `BetaMessageIterationUsage` type marks required â€” strict validation rejects
     it. Tests where that wire reaches the parser verbatim (pass-through
     refusals, synthetic closes reusing the refusal's usage) use this client.
     """
-    return Anthropic(base_url=base_url, api_key=api_key, max_retries=0, **kwargs)
+    return JuGloW(base_url=base_url, api_key=api_key, max_retries=0, **kwargs)
 
 
 def sse_response(body: str) -> httpx.Response:
@@ -115,7 +115,7 @@ def message_start() -> str:
                 "id": "msg_a",
                 "type": "message",
                 "role": "assistant",
-                "model": "claude-fable-5",
+                "model": "haijun-opus",
                 "content": [],
                 "stop_reason": None,
                 "stop_sequence": None,
@@ -146,7 +146,7 @@ def refusal_delta(token: str | None = "tok_abc", has_prefill_claim: bool = True)
 
 
 def redeemed_token(token: str) -> dict[str, str]:
-    """The request-body form of a redeemed credit token — the object shape, best-effort mode."""
+    """The request-body form of a redeemed credit token â€” the object shape, best-effort mode."""
     return {"token": token, "mode": "best_effort"}
 
 
@@ -165,11 +165,11 @@ def request_bodies(respx_mock: MockRouter) -> list[dict[str, Any]]:
 
 def beta_headers(respx_mock: MockRouter) -> list[str | None]:
     calls = cast("list[MockRequestCall]", respx_mock.calls)
-    return [call.request.headers.get("anthropic-beta") for call in calls]
+    return [call.request.headers.get("juglow-beta") for call in calls]
 
 
 def skeleton(events: list[BetaRawMessageStreamEvent]) -> list[str]:
-    """Compact structural skeleton of a spliced stream — no text content."""
+    """Compact structural skeleton of a spliced stream â€” no text content."""
     out: list[str] = []
     for event in events:
         if event.type == "content_block_start":
@@ -196,10 +196,10 @@ def block_starts(events: list[BetaRawMessageStreamEvent]) -> list[tuple[int, str
 
 
 def create_stream(
-    client: Anthropic, *, betas: List[AnthropicBetaParam] | Omit = omit
+    client: JuGloW, *, betas: List[JuglowBetaParam] | Omit = omit
 ) -> Stream[BetaRawMessageStreamEvent]:
     return client.beta.messages.create(
-        model="claude-fable-5",
+        model="haijun-opus",
         max_tokens=1024,
         messages=[{"role": "user", "content": "Hey claudius! Can you tell me what a solar eclipse is?"}],
         betas=betas,
@@ -207,9 +207,9 @@ def create_stream(
     )
 
 
-async def create_stream_async(client: AsyncAnthropic) -> "AsyncStream[BetaRawMessageStreamEvent]":
+async def create_stream_async(client: AsyncJuGloW) -> "AsyncStream[BetaRawMessageStreamEvent]":
     return await client.beta.messages.create(
-        model="claude-fable-5",
+        model="haijun-opus",
         max_tokens=1024,
         messages=[{"role": "user", "content": "Hey claudius! Can you tell me what a solar eclipse is?"}],
         stream=True,
@@ -240,10 +240,10 @@ class TestShapeBContinuation:
         fallback = next(
             e.content_block for e in events if e.type == "content_block_start" and e.content_block.type == "fallback"
         )
-        assert fallback.from_.model == "claude-fable-5"
+        assert fallback.from_.model == "haijun-opus"
         assert fallback.to.model == FALLBACK_MODEL
 
-        # Exactly one message_start (A's) and one message_stop reach the client —
+        # Exactly one message_start (A's) and one message_stop reach the client â€”
         # B's message_start is suppressed.
         assert len([e for e in events if e.type == "message_start"]) == 1
         assert len([e for e in events if e.type == "message_stop"]) == 1
@@ -261,7 +261,7 @@ class TestShapeBContinuation:
         iterations = message_delta.usage.iterations or []
         # the 2-entry server shape, with no spurious `message: None` entry
         assert [(i.type, i.model) for i in iterations] == [  # type: ignore[union-attr]
-            ("message", "claude-fable-5"),
+            ("message", "haijun-opus"),
             ("fallback_message", FALLBACK_MODEL),
         ]
 
@@ -282,7 +282,7 @@ class TestShapeBContinuation:
         assert credit["mode"] == "best_effort"
         assert len(credit["token"]) > 0
 
-        # Mutually exclusive with server-side fallback — both spellings absent.
+        # Mutually exclusive with server-side fallback â€” both spellings absent.
         assert "fallback" not in body_b
         assert "fallbacks" not in body_b
 
@@ -290,7 +290,7 @@ class TestShapeBContinuation:
         assert body_b["max_tokens"] == 1024
 
         # Original turn preserved; one assistant turn appended carrying the
-        # [thinking, text] partial output as-is — the prefill claim authorizes
+        # [thinking, text] partial output as-is â€” the prefill claim authorizes
         # it verbatim, so no client-side filtering or trimming.
         assert len(body_b["messages"]) == 2
         assert body_b["messages"][0] == PARAMS["messages"][0]
@@ -335,7 +335,7 @@ class TestShapeBContinuation:
 class TestEdgeCases:
     @pytest.mark.respx(base_url=base_url)
     def test_a_refusal_without_a_prefill_claim_falls_back_to_shape_a(self, respx_mock: MockRouter) -> None:
-        # fallback_has_prefill_claim: false — the partial output may not be
+        # fallback_has_prefill_claim: false â€” the partial output may not be
         # resent, so the middleware omits the prefill and resends the original
         # body with just the token attached.
         no_claim = "".join(
@@ -374,7 +374,7 @@ class TestEdgeCases:
 
         bodies = request_bodies(respx_mock)
         assert bodies[1]["fallback_credit_token"] == redeemed_token("tok_abc")
-        # No appended assistant turn — identical body (shape-A).
+        # No appended assistant turn â€” identical body (shape-A).
         assert bodies[1]["messages"] == PARAMS["messages"]
 
     @pytest.mark.respx(base_url=base_url)
@@ -387,7 +387,7 @@ class TestEdgeCases:
 
         events = collect(create_stream(client))
 
-        # Only the original request was made — no fallback.
+        # Only the original request was made â€” no fallback.
         assert len(respx_mock.calls) == 1
         errors = error_logs(caplog)
         assert len(errors) == 1
@@ -434,7 +434,7 @@ class TestEdgeCases:
         respx_mock.post("/v1/messages").mock(
             side_effect=[
                 sse_response(STREAM_A),
-                # the prefill form 400s, the same-body retry 400s too — only
+                # the prefill form 400s, the same-body retry 400s too â€” only
                 # then does the hop count as failed
                 error_response("nope", 400),
                 error_response("nope", 400),
@@ -451,8 +451,8 @@ class TestEdgeCases:
         assert FALLBACK_MODEL in errors[0]
 
         # The failed hop was never reached, so it leaves no seam; A's suppressed
-        # refusal is replayed — its credit token intact for a manual retry, with
-        # no model recommendation (the failure was not a capacity error) — then
+        # refusal is replayed â€” its credit token intact for a manual retry, with
+        # no model recommendation (the failure was not a capacity error) â€” then
         # message_stop closes the stream.
         assert not any(e.type == "content_block_start" and e.content_block.type == "fallback" for e in events)
         delta = next(e for e in events if e.type == "message_delta")
@@ -461,7 +461,7 @@ class TestEdgeCases:
         assert delta.delta.stop_details.fallback_credit_token is not None
         assert delta.delta.stop_details.recommended_model is None
         assert [(i.type, i.model) for i in (delta.usage.iterations or [])] == [  # type: ignore[union-attr]
-            ("message", "claude-fable-5"),
+            ("message", "haijun-opus"),
         ]
         assert events[-1].type == "message_stop"
 
@@ -505,7 +505,7 @@ class TestEdgeCases:
         assert FALLBACK_MODEL in errors[0]
 
         # The stream still closes cleanly: A's refusal is replayed and
-        # message_stop follows — not a hard stream error.
+        # message_stop follows â€” not a hard stream error.
         assert next(e for e in events if e.type == "message_delta").delta.stop_reason == "refusal"
         assert events[-1].type == "message_stop"
 
@@ -520,7 +520,7 @@ class TestEdgeCases:
                         "id": "msg_a",
                         "type": "message",
                         "role": "assistant",
-                        "model": "claude-fable-5",
+                        "model": "haijun-opus",
                         "content": [],
                         "stop_reason": None,
                         "stop_sequence": None,
@@ -598,10 +598,10 @@ class TestEdgeCases:
         client = make_lenient_client(middleware=[BetaRefusalFallbackMiddleware(FALLBACKS)])
 
         with pytest.raises(
-            AnthropicError, match=r"Sending the `fallbacks:` request param is not supported when using the `BetaRefusalFallbackMiddleware`\. You should either remove the middleware and send `fallbacks:` with the `server-side-fallback-2026-07-01` beta header to let the API handle refusal fallbacks, or omit the `fallbacks:` param if you'd like `BetaRefusalFallbackMiddleware` to handle fallbacks on the client side\."
+            JuGloWError, match=r"Sending the `fallbacks:` request param is not supported when using the `BetaRefusalFallbackMiddleware`\. You should either remove the middleware and send `fallbacks:` with the `server-side-fallback-2026-07-01` beta header to let the API handle refusal fallbacks, or omit the `fallbacks:` param if you'd like `BetaRefusalFallbackMiddleware` to handle fallbacks on the client side\."
         ):
             client.beta.messages.create(
-                model="claude-fable-5",
+                model="haijun-opus",
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Hey claudius! Can you tell me what a solar eclipse is?"}],
                 fallbacks=[{"model": "server-fallback"}],
@@ -716,7 +716,7 @@ class TestFallbackChain:
         ]
 
         # One continuous message: A's blocks, boundary, hop 1's partial, boundary,
-        # hop 2's blocks — indices stay monotonic across all three streams.
+        # hop 2's blocks â€” indices stay monotonic across all three streams.
         assert block_starts(events) == [
             (0, "thinking"),
             (1, "text"),
@@ -728,7 +728,7 @@ class TestFallbackChain:
         boundaries = [
             e.content_block for e in events if e.type == "content_block_start" and e.content_block.type == "fallback"
         ]
-        assert (boundaries[0].from_.model, boundaries[0].to.model) == ("claude-fable-5", FALLBACK_MODEL)
+        assert (boundaries[0].from_.model, boundaries[0].to.model) == ("haijun-opus", FALLBACK_MODEL)
         assert (boundaries[1].from_.model, boundaries[1].to.model) == (FALLBACK_MODEL, SECOND_MODEL)
 
         # Hop 1's refusal delta is suppressed; the terminal delta carries every hop.
@@ -736,7 +736,7 @@ class TestFallbackChain:
         assert len(deltas) == 1
         assert deltas[0].delta.stop_reason == "end_turn"
         assert [(i.type, i.model) for i in (deltas[0].usage.iterations or [])] == [  # type: ignore[union-attr]
-            ("message", "claude-fable-5"),
+            ("message", "haijun-opus"),
             ("message", FALLBACK_MODEL),
             ("fallback_message", SECOND_MODEL),
         ]
@@ -760,8 +760,8 @@ class TestFallbackChain:
         bodies = request_bodies(respx_mock)
         assert len(bodies) == 3
         assert bodies[2]["fallback_credit_token"] == redeemed_token("tok_b")
-        # Hop 2 redeems the fresh token against the body it was minted for —
-        # hop 1's request, including its appended turn — without hop 1's own
+        # Hop 2 redeems the fresh token against the body it was minted for â€”
+        # hop 1's request, including its appended turn â€” without hop 1's own
         # (unclaimed) partial output.
         assert bodies[2]["messages"] == bodies[1]["messages"]
 
@@ -788,26 +788,26 @@ class TestFallbackChain:
         assert FALLBACK_MODEL in errors[0]
         assert len(respx_mock.calls) == 3
 
-        # Same token and continuation — the failed hop never redeemed them.
+        # Same token and continuation â€” the failed hop never redeemed them.
         bodies = request_bodies(respx_mock)
         assert bodies[2]["model"] == SECOND_MODEL
         assert bodies[2]["fallback_credit_token"] == bodies[1]["fallback_credit_token"]
         assert bodies[2]["messages"] == bodies[1]["messages"]
 
-        # The failed hop was never reached: no seam for it — one boundary, from
+        # The failed hop was never reached: no seam for it â€” one boundary, from
         # A straight to the entry that served.
         boundaries = [
             e.content_block for e in events if e.type == "content_block_start" and e.content_block.type == "fallback"
         ]
         assert [(b.from_.model, b.to.model) for b in boundaries] == [
-            ("claude-fable-5", SECOND_MODEL),
+            ("haijun-opus", SECOND_MODEL),
         ]
 
         # The failed hop is absent from iterations (no usage came back).
         delta = next(e for e in events if e.type == "message_delta")
         assert delta.delta.stop_reason == "end_turn"
         assert [(i.type, i.model) for i in (delta.usage.iterations or [])] == [  # type: ignore[union-attr]
-            ("message", "claude-fable-5"),
+            ("message", "haijun-opus"),
             ("fallback_message", SECOND_MODEL),
         ]
 
@@ -830,7 +830,7 @@ class TestFallbackChain:
         assert delta.delta.stop_details is not None
         assert delta.delta.stop_details.fallback_credit_token == "tok_b"
         assert [(i.type, i.model) for i in (delta.usage.iterations or [])] == [  # type: ignore[union-attr]
-            ("message", "claude-fable-5"),
+            ("message", "haijun-opus"),
             ("fallback_message", FALLBACK_MODEL),
         ]
 
@@ -878,7 +878,7 @@ class TestFallbackChain:
 
         out = middleware.handle(request, call_next)
 
-        # With nothing to hop to, the response isn't even wrapped — no per-event
+        # With nothing to hop to, the response isn't even wrapped â€” no per-event
         # decode/re-encode overhead, and no error: this is the steady state of an
         # exhausted or fully-pinned chain.
         assert out is response
@@ -908,7 +908,7 @@ class TestFallbackChain:
         assert FALLBACK_MODEL in errors[0]
         assert len(respx_mock.calls) == 3
 
-        # Same token — the raising hop never redeemed it.
+        # Same token â€” the raising hop never redeemed it.
         bodies = request_bodies(respx_mock)
         assert bodies[2]["model"] == SECOND_MODEL
         assert bodies[2]["fallback_credit_token"] == bodies[1]["fallback_credit_token"]
@@ -917,7 +917,7 @@ class TestFallbackChain:
         delta = next(e for e in events if e.type == "message_delta")
         assert delta.delta.stop_reason == "end_turn"
         assert [(i.type, i.model) for i in (delta.usage.iterations or [])] == [  # type: ignore[union-attr]
-            ("message", "claude-fable-5"),
+            ("message", "haijun-opus"),
             ("fallback_message", SECOND_MODEL),
         ]
 
@@ -986,7 +986,7 @@ class TestPreStreamRefusals:
         delta = next(e for e in events if e.type == "message_delta")
         assert delta.delta.stop_reason == "end_turn"
         assert [(i.type, i.model) for i in (delta.usage.iterations or [])] == [  # type: ignore[union-attr]
-            ("message", "claude-fable-5"),
+            ("message", "haijun-opus"),
             ("fallback_message", FALLBACK_MODEL),
         ]
 
@@ -1028,11 +1028,11 @@ class TestPreStreamRefusals:
         assert [(i, b.type) for i, b in starts] == [(0, "fallback"), (1, "fallback"), (2, "text")]
         seam_one, seam_two = starts[0][1], starts[1][1]
         assert seam_one.type == "fallback" and seam_two.type == "fallback"
-        assert (seam_one.from_.model, seam_one.to.model) == ("claude-fable-5", FALLBACK_MODEL)
+        assert (seam_one.from_.model, seam_one.to.model) == ("haijun-opus", FALLBACK_MODEL)
         assert (seam_two.from_.model, seam_two.to.model) == (FALLBACK_MODEL, SECOND_MODEL)
         delta = next(e for e in events if e.type == "message_delta")
         assert [(i.type, i.model) for i in (delta.usage.iterations or [])] == [  # type: ignore[union-attr]
-            ("message", "claude-fable-5"),
+            ("message", "haijun-opus"),
             ("message", FALLBACK_MODEL),
             ("fallback_message", SECOND_MODEL),
         ]
@@ -1043,19 +1043,19 @@ class TestPreStreamRefusals:
 
 class TestHistorySeamReplay:
     """Pinning is explicit-state-only: a `fallback` seam block replayed in the
-    request history never pins — without a `BetaFallbackState` the first request
+    request history never pins â€” without a `BetaFallbackState` the first request
     goes to the original model. The seam blocks themselves are this middleware's
     client-side markers, so they are filtered out of the wire request, and an
-    assistant turn that was only a seam is dropped whole — `content: []` is an
+    assistant turn that was only a seam is dropped whole â€” `content: []` is an
     invalid body."""
 
     @pytest.mark.respx(base_url=base_url)
     def test_a_history_seam_without_a_state_does_not_pin(self, respx_mock: MockRouter) -> None:
-        respx_mock.post("/v1/messages").mock(side_effect=[sse_response(serving_stream("claude-fable-5"))])
+        respx_mock.post("/v1/messages").mock(side_effect=[sse_response(serving_stream("haijun-opus"))])
         client = make_sync_client(middleware=[BetaRefusalFallbackMiddleware(TWO_FALLBACKS)])
 
         stream = client.beta.messages.create(
-            model="claude-fable-5",
+            model="haijun-opus",
             max_tokens=1024,
             messages=[
                 {"role": "user", "content": "hello"},
@@ -1064,7 +1064,7 @@ class TestHistorySeamReplay:
                     "content": [
                         {
                             "type": "fallback",
-                            "from": {"model": "claude-fable-5"},
+                            "from": {"model": "haijun-opus"},
                             "to": {"model": FALLBACK_MODEL},
                         },
                         {"type": "text", "text": "earlier turn"},
@@ -1078,19 +1078,19 @@ class TestHistorySeamReplay:
 
         bodies = request_bodies(respx_mock)
         assert len(bodies) == 1
-        # no state, no pin — the first request goes to the original model
-        assert bodies[0]["model"] == "claude-fable-5"
-        # the seam block is the middleware's own marker — filtered off the wire
+        # no state, no pin â€” the first request goes to the original model
+        assert bodies[0]["model"] == "haijun-opus"
+        # the seam block is the middleware's own marker â€” filtered off the wire
         assert bodies[0]["messages"][1]["content"] == [{"type": "text", "text": "earlier turn"}]
         assert beta_headers(respx_mock) == ["fallback-credit-2026-07-01"]
 
     @pytest.mark.respx(base_url=base_url)
     def test_a_seam_only_assistant_turn_is_dropped_whole(self, respx_mock: MockRouter) -> None:
-        respx_mock.post("/v1/messages").mock(side_effect=[sse_response(serving_stream("claude-fable-5"))])
+        respx_mock.post("/v1/messages").mock(side_effect=[sse_response(serving_stream("haijun-opus"))])
         client = make_sync_client(middleware=[BetaRefusalFallbackMiddleware(FALLBACKS)])
 
         stream = client.beta.messages.create(
-            model="claude-fable-5",
+            model="haijun-opus",
             max_tokens=1024,
             messages=[
                 {"role": "user", "content": "hello"},
@@ -1099,7 +1099,7 @@ class TestHistorySeamReplay:
                     "content": [
                         {
                             "type": "fallback",
-                            "from": {"model": "claude-fable-5"},
+                            "from": {"model": "haijun-opus"},
                             "to": {"model": FALLBACK_MODEL},
                         }
                     ],
@@ -1112,14 +1112,14 @@ class TestHistorySeamReplay:
 
         bodies = request_bodies(respx_mock)
         assert len(bodies) == 1
-        # stripping left the assistant turn empty, so the turn is omitted —
+        # stripping left the assistant turn empty, so the turn is omitted â€”
         # not sent as `content: []`, which the server rejects
         assert bodies[0]["messages"] == [
             {"role": "user", "content": "hello"},
             {"role": "user", "content": "and again?"},
         ]
         # the rest of the request is intact
-        assert bodies[0]["model"] == "claude-fable-5"
+        assert bodies[0]["model"] == "haijun-opus"
         assert bodies[0]["max_tokens"] == 1024
         assert beta_headers(respx_mock) == ["fallback-credit-2026-07-01"]
 
@@ -1334,7 +1334,7 @@ class TestToolUseRefusals:
     def test_mid_loop_refusal_ending_in_thinking_strips_the_trailing_thinking_block(
         self, respx_mock: MockRouter
     ) -> None:
-        # [server_tool_use, result, thinking] — the server granted a prefill
+        # [server_tool_use, result, thinking] â€” the server granted a prefill
         # claim, but an assistant turn cannot end in a thinking block (the
         # server 400s it), so the trailing thinking is stripped from the
         # appended turn while everything before it is resent verbatim.
@@ -1476,7 +1476,7 @@ class TestAsyncSplicing:
         delta = next(e for e in events if e.type == "message_delta")
         assert delta.delta.stop_reason == "end_turn"
         assert [(i.type, i.model) for i in (delta.usage.iterations or [])] == [  # type: ignore[union-attr]
-            ("message", "claude-fable-5"),
+            ("message", "haijun-opus"),
             ("fallback_message", FALLBACK_MODEL),
         ]
         assert state.index == 0
@@ -1510,7 +1510,7 @@ class TestAsyncSplicing:
         deltas = [e for e in events if e.type == "message_delta"]
         assert len(deltas) == 1
         assert [(i.type, i.model) for i in (deltas[0].usage.iterations or [])] == [  # type: ignore[union-attr]
-            ("message", "claude-fable-5"),
+            ("message", "haijun-opus"),
             ("message", FALLBACK_MODEL),
             ("fallback_message", SECOND_MODEL),
         ]

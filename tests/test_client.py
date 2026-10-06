@@ -1,4 +1,4 @@
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+﻿# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from __future__ import annotations
 
@@ -19,13 +19,13 @@ import pytest
 from respx import MockRouter
 from pydantic import ValidationError
 
-from anthropic import Anthropic, AsyncAnthropic, APIResponseValidationError
-from anthropic._types import Omit
-from anthropic._utils import asyncify
-from anthropic._models import BaseModel, FinalRequestOptions
-from anthropic._streaming import Stream, AsyncStream
-from anthropic._exceptions import APIStatusError, APITimeoutError, APIResponseValidationError
-from anthropic._base_client import (
+from juglow import JuGloW, AsyncJuGloW, APIResponseValidationError
+from juglow._types import Omit
+from juglow._utils import asyncify
+from juglow._models import BaseModel, FinalRequestOptions
+from juglow._streaming import Stream, AsyncStream
+from juglow._exceptions import APIStatusError, APITimeoutError, APIResponseValidationError
+from juglow._base_client import (
     DEFAULT_TIMEOUT,
     HTTPX_DEFAULT_TIMEOUT,
     BaseClient,
@@ -40,7 +40,7 @@ from .utils import update_env
 
 T = TypeVar("T")
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
-api_key = "my-anthropic-api-key"
+api_key = "my-Juglow-api-key"
 
 
 def _get_params(client: BaseClient[Any, Any]) -> dict[str, str]:
@@ -104,7 +104,7 @@ async def _make_async_iterator(iterable: Iterable[T], counter: Optional[Counter]
         yield item
 
 
-def _get_open_connections(client: Anthropic | AsyncAnthropic) -> int:
+def _get_open_connections(client: JuGloW | AsyncJuglow) -> int:
     transport = client._client._transport
     assert isinstance(transport, httpx.HTTPTransport) or isinstance(transport, httpx.AsyncHTTPTransport)
 
@@ -114,10 +114,10 @@ def _get_open_connections(client: Anthropic | AsyncAnthropic) -> int:
 
 @pytest.mark.parametrize("status_code", [400, 401, 403, 404, 409, 413, 422, 429, 500, 503, 529])
 def test_make_status_error_sync_async_parity(status_code: int) -> None:
-    # Anthropic._make_status_error and AsyncAnthropic._make_status_error are
+    # JuGloW._make_status_error and AsyncJuGloW._make_status_error are
     # separate manually-maintained copies; this guards against them drifting.
-    sync_client = Anthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
-    async_client = AsyncAnthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+    sync_client = JuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+    async_client = AsyncJuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
     response = httpx.Response(status_code, request=httpx.Request("GET", "/"))
 
     sync_err = sync_client._make_status_error("msg", body=None, response=response)
@@ -128,9 +128,9 @@ def test_make_status_error_sync_async_parity(status_code: int) -> None:
     )
 
 
-class TestAnthropic:
+class TestJuglow:
     @pytest.mark.respx(base_url=base_url)
-    def test_raw_response(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_raw_response(self, respx_mock: MockRouter, client: JuGloW) -> None:
         respx_mock.post("/foo").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
 
         response = client.post("/foo", cast_to=httpx.Response)
@@ -139,7 +139,7 @@ class TestAnthropic:
         assert response.json() == {"foo": "bar"}
 
     @pytest.mark.respx(base_url=base_url)
-    def test_raw_response_for_binary(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_raw_response_for_binary(self, respx_mock: MockRouter, client: JuGloW) -> None:
         respx_mock.post("/foo").mock(
             return_value=httpx.Response(200, headers={"Content-Type": "application/binary"}, content='{"foo": "bar"}')
         )
@@ -149,15 +149,15 @@ class TestAnthropic:
         assert isinstance(response, httpx.Response)
         assert response.json() == {"foo": "bar"}
 
-    def test_copy(self, client: Anthropic) -> None:
+    def test_copy(self, client: JuGloW) -> None:
         copied = client.copy()
         assert id(copied) != id(client)
 
-        copied = client.copy(api_key="another my-anthropic-api-key")
-        assert copied.api_key == "another my-anthropic-api-key"
-        assert client.api_key == "my-anthropic-api-key"
+        copied = client.copy(api_key="another my-Juglow-api-key")
+        assert copied.api_key == "another my-Juglow-api-key"
+        assert client.api_key == "my-Juglow-api-key"
 
-    def test_copy_default_options(self, client: Anthropic) -> None:
+    def test_copy_default_options(self, client: JuGloW) -> None:
         # options that have a default are overridden correctly
         copied = client.copy(max_retries=7)
         assert copied.max_retries == 7
@@ -174,7 +174,7 @@ class TestAnthropic:
         assert isinstance(client.timeout, httpx.Timeout)
 
     def test_copy_default_headers(self) -> None:
-        client = Anthropic(
+        client = JuGloW(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_headers={"X-Foo": "bar"}
         )
         assert client.default_headers["X-Foo"] == "bar"
@@ -209,7 +209,7 @@ class TestAnthropic:
         client.close()
 
     def test_copy_default_query(self) -> None:
-        client = Anthropic(
+        client = JuGloW(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_query={"foo": "bar"}
         )
         assert _get_params(client)["foo"] == "bar"
@@ -246,7 +246,7 @@ class TestAnthropic:
 
         client.close()
 
-    def test_copy_signature(self, client: Anthropic) -> None:
+    def test_copy_signature(self, client: JuGloW) -> None:
         # ensure the same parameters that can be passed to the client are defined in the `.copy()` method
         init_signature = inspect.signature(
             # mypy doesn't like that we access the `__init__` property.
@@ -263,7 +263,7 @@ class TestAnthropic:
             assert copy_param is not None, f"copy() signature is missing the {name} param"
 
     @pytest.mark.skipif(sys.version_info >= (3, 10), reason="fails because of a memory leak that started from 3.12")
-    def test_copy_build_request(self, client: Anthropic) -> None:
+    def test_copy_build_request(self, client: JuGloW) -> None:
         options = FinalRequestOptions(method="get", url="/foo")
 
         def build_request(options: FinalRequestOptions) -> None:
@@ -303,10 +303,10 @@ class TestAnthropic:
                         # to_raw_response_wrapper leaks through the @functools.wraps() decorator.
                         #
                         # removing the decorator fixes the leak for reasons we don't understand.
-                        "anthropic/_legacy_response.py",
-                        "anthropic/_response.py",
+                        "Juglow/_legacy_response.py",
+                        "Juglow/_response.py",
                         # pydantic.BaseModel.model_dump || pydantic.BaseModel.dict leak memory for some reason.
-                        "anthropic/_compat.py",
+                        "Juglow/_compat.py",
                         # Standard library leaks we don't care about.
                         "/logging/__init__.py",
                     ]
@@ -325,7 +325,7 @@ class TestAnthropic:
                     print(frame)
             raise AssertionError()
 
-    def test_request_timeout(self, client: Anthropic) -> None:
+    def test_request_timeout(self, client: JuGloW) -> None:
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
         assert timeout == DEFAULT_TIMEOUT
@@ -335,7 +335,7 @@ class TestAnthropic:
         assert timeout == httpx.Timeout(100.0)
 
     def test_client_timeout_option(self) -> None:
-        client = Anthropic(
+        client = JuGloW(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, timeout=httpx.Timeout(0)
         )
 
@@ -348,7 +348,7 @@ class TestAnthropic:
     def test_http_client_timeout_option(self) -> None:
         # custom timeout given to the httpx client should be used
         with httpx.Client(timeout=None) as http_client:
-            client = Anthropic(
+            client = JuGloW(
                 base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
@@ -360,7 +360,7 @@ class TestAnthropic:
 
         # no timeout given to the httpx client should not use the httpx default
         with httpx.Client() as http_client:
-            client = Anthropic(
+            client = JuGloW(
                 base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
@@ -372,7 +372,7 @@ class TestAnthropic:
 
         # explicitly passing the default timeout currently results in it being ignored
         with httpx.Client(timeout=HTTPX_DEFAULT_TIMEOUT) as http_client:
-            client = Anthropic(
+            client = JuGloW(
                 base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
@@ -385,7 +385,7 @@ class TestAnthropic:
     async def test_invalid_http_client(self) -> None:
         with pytest.raises(TypeError, match="Invalid `http_client` arg"):
             async with httpx.AsyncClient() as http_client:
-                Anthropic(
+                JuGloW(
                     base_url=base_url,
                     api_key=api_key,
                     _strict_response_validation=True,
@@ -393,14 +393,14 @@ class TestAnthropic:
                 )
 
     def test_default_headers_option(self) -> None:
-        test_client = Anthropic(
+        test_client = JuGloW(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_headers={"X-Foo": "bar"}
         )
         request = test_client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "bar"
         assert request.headers.get("x-stainless-lang") == "python"
 
-        test_client2 = Anthropic(
+        test_client2 = JuGloW(
             base_url=base_url,
             api_key=api_key,
             _strict_response_validation=True,
@@ -417,13 +417,13 @@ class TestAnthropic:
         test_client2.close()
 
     def test_validate_headers(self) -> None:
-        client = Anthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        client = JuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("X-Api-Key") == api_key
 
-        with mock.patch("anthropic._client.default_credentials", return_value=None):
-            with update_env(**{"ANTHROPIC_API_KEY": Omit()}):
-                client2 = Anthropic(base_url=base_url, api_key=None, _strict_response_validation=True)
+        with mock.patch("juglow._client.default_credentials", return_value=None):
+            with update_env(**{"HAIJUN_API_KEY": Omit()}):
+                client2 = JuGloW(base_url=base_url, api_key=None, _strict_response_validation=True)
 
         with pytest.raises(
             TypeError,
@@ -435,7 +435,7 @@ class TestAnthropic:
         assert request2.headers.get("X-Api-Key") is None
 
     def test_default_query_option(self) -> None:
-        client = Anthropic(
+        client = JuGloW(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_query={"query_param": "bar"}
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -454,7 +454,7 @@ class TestAnthropic:
 
         client.close()
 
-    def test_hardcoded_query_params_in_url(self, client: Anthropic) -> None:
+    def test_hardcoded_query_params_in_url(self, client: JuGloW) -> None:
         request = client._build_request(FinalRequestOptions(method="get", url="/foo?beta=true"))
         url = httpx.URL(request.url)
         assert dict(url.params) == {"beta": "true"}
@@ -478,7 +478,7 @@ class TestAnthropic:
         )
         assert request.url.raw_path == b"/files/a%2Fb?beta=true&limit=10"
 
-    def test_request_extra_json(self, client: Anthropic) -> None:
+    def test_request_extra_json(self, client: JuGloW) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -512,7 +512,7 @@ class TestAnthropic:
         data = json.loads(request.content.decode("utf-8"))
         assert data == {"foo": "bar", "baz": None}
 
-    def test_request_extra_headers(self, client: Anthropic) -> None:
+    def test_request_extra_headers(self, client: JuGloW) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -534,7 +534,7 @@ class TestAnthropic:
         )
         assert request.headers.get("X-Bar") == "false"
 
-    def test_request_extra_headers_httpx_headers(self, client: Anthropic) -> None:
+    def test_request_extra_headers_httpx_headers(self, client: JuGloW) -> None:
         # `httpx.Headers` is accepted anywhere a header mapping is, in addition to a plain dict
         request = client.with_options(default_headers=httpx.Headers({"X-Bar": "true"}))._build_request(
             FinalRequestOptions(
@@ -547,7 +547,7 @@ class TestAnthropic:
         # `extra_headers` still takes priority over `default_headers` when keys clash
         assert request.headers.get("X-Bar") == "false"
 
-    def test_request_x_stainless_helper_header_appends(self, client: Anthropic) -> None:
+    def test_request_x_stainless_helper_header_appends(self, client: JuGloW) -> None:
         # `x-stainless-helper` accumulates across mappings instead of being clobbered,
         # so a helper set on the client and one passed per-request both survive.
         request = client.with_options(default_headers={"x-stainless-helper": "session_runner"})._build_request(
@@ -559,7 +559,7 @@ class TestAnthropic:
         )
         assert request.headers.get("x-stainless-helper") == "session_runner, message_batches"
 
-    def test_request_x_stainless_helper_header_dedupes(self, client: Anthropic) -> None:
+    def test_request_x_stainless_helper_header_dedupes(self, client: JuGloW) -> None:
         # the same helper set in both places is recorded once
         request = client.with_options(default_headers={"x-stainless-helper": "session_runner"})._build_request(
             FinalRequestOptions(
@@ -570,7 +570,7 @@ class TestAnthropic:
         )
         assert request.headers.get("x-stainless-helper") == "session_runner"
 
-    def test_request_x_stainless_helper_header_collapses_case_variants(self, client: Anthropic) -> None:
+    def test_request_x_stainless_helper_header_collapses_case_variants(self, client: JuGloW) -> None:
         # differently-cased duplicates of the helper header fold into a single
         # deduplicated value instead of being sent as conflicting entries
         copied = client.with_options(
@@ -585,7 +585,7 @@ class TestAnthropic:
         )
         assert request.headers.get("x-stainless-helper") == "parent, scoped, message_batches"
 
-    def test_request_x_stainless_helper_header_dedupes_multi_value(self, client: Anthropic) -> None:
+    def test_request_x_stainless_helper_header_dedupes_multi_value(self, client: JuGloW) -> None:
         # comma-separated values (e.g. several tagged tools) are deduplicated per token
         copied = client.with_options(default_headers={"x-stainless-helper": "session_runner, memory_tool"})
         request = copied._build_request(
@@ -597,7 +597,7 @@ class TestAnthropic:
         )
         assert request.headers.get("x-stainless-helper") == "session_runner, memory_tool, message_batches"
 
-    def test_copy_x_stainless_helper_header_appends(self, client: Anthropic) -> None:
+    def test_copy_x_stainless_helper_header_appends(self, client: JuGloW) -> None:
         # stacking `default_headers` via copy()/with_options accumulates the
         # helper instead of clobbering, so e.g. a scoped sub-client's tag adds to
         # one already carried by the parent.
@@ -607,7 +607,7 @@ class TestAnthropic:
         request = copied._build_request(FinalRequestOptions(method="post", url="/foo"))
         assert request.headers.get("x-stainless-helper") == "parent, child"
 
-    def test_copy_preserves_header_removal(self, client: Anthropic) -> None:
+    def test_copy_preserves_header_removal(self, client: JuGloW) -> None:
         # an Omit removal set on the client still survives a subsequent copy()
         copied = client.with_options(
             default_headers=cast("dict[str, str]", {"X-Foo": Omit()}),
@@ -616,7 +616,7 @@ class TestAnthropic:
         assert request.headers.get("X-Foo") is None
         assert request.headers.get("X-Bar") == "true"
 
-    def test_request_extra_query(self, client: Anthropic) -> None:
+    def test_request_extra_query(self, client: JuGloW) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -657,7 +657,7 @@ class TestAnthropic:
         params = dict(request.url.params)
         assert params == {"foo": "2"}
 
-    def test_multipart_repeating_array(self, client: Anthropic) -> None:
+    def test_multipart_repeating_array(self, client: JuGloW) -> None:
         request = client._build_request(
             FinalRequestOptions.construct(
                 method="post",
@@ -687,7 +687,7 @@ class TestAnthropic:
         ]
 
     @pytest.mark.respx(base_url=base_url)
-    def test_binary_content_upload(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_binary_content_upload(self, respx_mock: MockRouter, client: JuGloW) -> None:
         respx_mock.post("/upload").mock(side_effect=mirror_request_content)
 
         file_content = b"Hello, this is a test file."
@@ -712,7 +712,7 @@ class TestAnthropic:
             assert counter.value == 0, "the request body should not have been read"
             return httpx.Response(200, content=request.read())
 
-        with Anthropic(
+        with JuGloW(
             base_url=base_url,
             api_key=api_key,
             _strict_response_validation=True,
@@ -731,7 +731,7 @@ class TestAnthropic:
             assert counter.value == 1
 
     @pytest.mark.respx(base_url=base_url)
-    def test_binary_content_upload_with_body_is_deprecated(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_binary_content_upload_with_body_is_deprecated(self, respx_mock: MockRouter, client: JuGloW) -> None:
         respx_mock.post("/upload").mock(side_effect=mirror_request_content)
 
         file_content = b"Hello, this is a test file."
@@ -751,7 +751,7 @@ class TestAnthropic:
         assert response.content == file_content
 
     @pytest.mark.respx(base_url=base_url)
-    def test_basic_union_response(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_basic_union_response(self, respx_mock: MockRouter, client: JuGloW) -> None:
         class Model1(BaseModel):
             name: str
 
@@ -765,7 +765,7 @@ class TestAnthropic:
         assert response.foo == "bar"
 
     @pytest.mark.respx(base_url=base_url)
-    def test_union_response_different_types(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_union_response_different_types(self, respx_mock: MockRouter, client: JuGloW) -> None:
         """Union of objects with the same field name using a different type"""
 
         class Model1(BaseModel):
@@ -787,7 +787,7 @@ class TestAnthropic:
         assert response.foo == 1
 
     @pytest.mark.respx(base_url=base_url)
-    def test_non_application_json_content_type_for_json_data(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_non_application_json_content_type_for_json_data(self, respx_mock: MockRouter, client: JuGloW) -> None:
         """
         Response that sets Content-Type to something other than application/json but returns json data
         """
@@ -808,7 +808,7 @@ class TestAnthropic:
         assert response.foo == 2
 
     def test_base_url_setter(self) -> None:
-        client = Anthropic(base_url="https://example.com/from_init", api_key=api_key, _strict_response_validation=True)
+        client = JuGloW(base_url="https://example.com/from_init", api_key=api_key, _strict_response_validation=True)
         assert client.base_url == "https://example.com/from_init/"
 
         client.base_url = "https://example.com/from_setter"  # type: ignore[assignment]
@@ -818,15 +818,15 @@ class TestAnthropic:
         client.close()
 
     def test_base_url_env(self) -> None:
-        with update_env(ANTHROPIC_BASE_URL="http://localhost:5000/from/env"):
-            client = Anthropic(api_key=api_key, _strict_response_validation=True)
+        with update_env(HAIJUN_BASE_URL="http://localhost:5000/from/env"):
+            client = JuGloW(api_key=api_key, _strict_response_validation=True)
             assert client.base_url == "http://localhost:5000/from/env/"
 
     @pytest.mark.parametrize(
         "client",
         [
-            Anthropic(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
-            Anthropic(
+            JuGloW(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
+            JuGloW(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 _strict_response_validation=True,
@@ -835,7 +835,7 @@ class TestAnthropic:
         ],
         ids=["standard", "custom http client"],
     )
-    def test_base_url_trailing_slash(self, client: Anthropic) -> None:
+    def test_base_url_trailing_slash(self, client: JuGloW) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -849,8 +849,8 @@ class TestAnthropic:
     @pytest.mark.parametrize(
         "client",
         [
-            Anthropic(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
-            Anthropic(
+            JuGloW(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
+            JuGloW(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 _strict_response_validation=True,
@@ -859,7 +859,7 @@ class TestAnthropic:
         ],
         ids=["standard", "custom http client"],
     )
-    def test_base_url_no_trailing_slash(self, client: Anthropic) -> None:
+    def test_base_url_no_trailing_slash(self, client: JuGloW) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -873,8 +873,8 @@ class TestAnthropic:
     @pytest.mark.parametrize(
         "client",
         [
-            Anthropic(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
-            Anthropic(
+            JuGloW(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
+            JuGloW(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 _strict_response_validation=True,
@@ -883,7 +883,7 @@ class TestAnthropic:
         ],
         ids=["standard", "custom http client"],
     )
-    def test_absolute_request_url(self, client: Anthropic) -> None:
+    def test_absolute_request_url(self, client: JuGloW) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -895,7 +895,7 @@ class TestAnthropic:
         client.close()
 
     def test_copied_client_does_not_close_http(self) -> None:
-        test_client = Anthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        test_client = JuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         assert not test_client.is_closed()
 
         copied = test_client.copy()
@@ -906,7 +906,7 @@ class TestAnthropic:
         assert not test_client.is_closed()
 
     def test_client_context_manager(self) -> None:
-        test_client = Anthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        test_client = JuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         with test_client as c2:
             assert c2 is test_client
             assert not c2.is_closed()
@@ -914,7 +914,7 @@ class TestAnthropic:
         assert test_client.is_closed()
 
     @pytest.mark.respx(base_url=base_url)
-    def test_client_response_validation_error(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_client_response_validation_error(self, respx_mock: MockRouter, client: JuGloW) -> None:
         class Model(BaseModel):
             foo: str
 
@@ -927,10 +927,10 @@ class TestAnthropic:
 
     def test_client_max_retries_validation(self) -> None:
         with pytest.raises(TypeError, match=r"max_retries cannot be None"):
-            Anthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=cast(Any, None))
+            JuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=cast(Any, None))
 
     @pytest.mark.respx(base_url=base_url)
-    def test_default_stream_cls(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_default_stream_cls(self, respx_mock: MockRouter, client: JuGloW) -> None:
         class Model(BaseModel):
             name: str
 
@@ -947,12 +947,12 @@ class TestAnthropic:
 
         respx_mock.get("/foo").mock(return_value=httpx.Response(200, text="my-custom-format"))
 
-        strict_client = Anthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        strict_client = JuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
         with pytest.raises(APIResponseValidationError):
             strict_client.get("/foo", cast_to=Model)
 
-        non_strict_client = Anthropic(base_url=base_url, api_key=api_key, _strict_response_validation=False)
+        non_strict_client = JuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=False)
 
         response = non_strict_client.get("/foo", cast_to=Model)
         assert isinstance(response, str)  # type: ignore[unreachable]
@@ -983,16 +983,16 @@ class TestAnthropic:
     )
     @mock.patch("time.time", mock.MagicMock(return_value=1696004797))
     def test_parse_retry_after_header(
-        self, remaining_retries: int, retry_after: str, timeout: float, client: Anthropic
+        self, remaining_retries: int, retry_after: str, timeout: float, client: JuGloW
     ) -> None:
         headers = httpx.Headers({"retry-after": retry_after})
         options = FinalRequestOptions(method="get", url="/foo", max_retries=3)
         calculated = client._calculate_retry_timeout(remaining_retries, options, headers)
         assert calculated == pytest.approx(timeout, 0.5 * 0.875)  # pyright: ignore[reportUnknownMemberType]
 
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
-    def test_retrying_timeout_errors_doesnt_leak(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_retrying_timeout_errors_doesnt_leak(self, respx_mock: MockRouter, client: JuGloW) -> None:
         respx_mock.post("/v1/messages").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
@@ -1004,14 +1004,14 @@ class TestAnthropic:
                         "role": "user",
                     }
                 ],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             ).__enter__()
 
         assert _get_open_connections(client) == 0
 
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
-    def test_retrying_status_errors_doesnt_leak(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_retrying_status_errors_doesnt_leak(self, respx_mock: MockRouter, client: JuGloW) -> None:
         respx_mock.post("/v1/messages").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
@@ -1023,17 +1023,17 @@ class TestAnthropic:
                         "role": "user",
                     }
                 ],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             ).__enter__()
         assert _get_open_connections(client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     @pytest.mark.parametrize("failure_mode", ["status", "exception"])
     def test_retries_taken(
         self,
-        client: Anthropic,
+        client: JuGloW,
         failures_before_success: int,
         failure_mode: Literal["status", "exception"],
         respx_mock: MockRouter,
@@ -1061,17 +1061,17 @@ class TestAnthropic:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert response.retries_taken == failures_before_success
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_omit_retry_count_header(
-        self, client: Anthropic, failures_before_success: int, respx_mock: MockRouter
+        self, client: JuGloW, failures_before_success: int, respx_mock: MockRouter
     ) -> None:
         client = client.with_options(max_retries=4)
 
@@ -1094,17 +1094,17 @@ class TestAnthropic:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             extra_headers={"x-stainless-retry-count": Omit()},
         )
 
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_overwrite_retry_count_header(
-        self, client: Anthropic, failures_before_success: int, respx_mock: MockRouter
+        self, client: JuGloW, failures_before_success: int, respx_mock: MockRouter
     ) -> None:
         client = client.with_options(max_retries=4)
 
@@ -1127,17 +1127,17 @@ class TestAnthropic:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             extra_headers={"x-stainless-retry-count": "42"},
         )
 
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_retries_taken_new_response_class(
-        self, client: Anthropic, failures_before_success: int, respx_mock: MockRouter
+        self, client: JuGloW, failures_before_success: int, respx_mock: MockRouter
     ) -> None:
         client = client.with_options(max_retries=4)
 
@@ -1160,7 +1160,7 @@ class TestAnthropic:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         ) as response:
             assert response.retries_taken == failures_before_success
             assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
@@ -1196,7 +1196,7 @@ class TestAnthropic:
         )
 
     @pytest.mark.respx(base_url=base_url)
-    def test_follow_redirects(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_follow_redirects(self, respx_mock: MockRouter, client: JuGloW) -> None:
         # Test that the default follow_redirects=True allows following redirects
         respx_mock.post("/redirect").mock(
             return_value=httpx.Response(302, headers={"Location": f"{base_url}/redirected"})
@@ -1208,7 +1208,7 @@ class TestAnthropic:
         assert response.json() == {"status": "ok"}
 
     @pytest.mark.respx(base_url=base_url)
-    def test_follow_redirects_disabled(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_follow_redirects_disabled(self, respx_mock: MockRouter, client: JuGloW) -> None:
         # Test that follow_redirects=False prevents following redirects
         respx_mock.post("/redirect").mock(
             return_value=httpx.Response(302, headers={"Location": f"{base_url}/redirected"})
@@ -1221,7 +1221,7 @@ class TestAnthropic:
         assert exc_info.value.response.headers["Location"] == f"{base_url}/redirected"
 
     @pytest.mark.respx(base_url=base_url)
-    def test_status_error_type_field(self, respx_mock: MockRouter, client: Anthropic) -> None:
+    def test_status_error_type_field(self, respx_mock: MockRouter, client: JuGloW) -> None:
         respx_mock.post("/v1/messages").mock(
             return_value=httpx.Response(
                 400,
@@ -1232,15 +1232,15 @@ class TestAnthropic:
             client.messages.create(
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Hello"}],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             )
         assert exc_info.value.type == "invalid_request_error"
         assert exc_info.value.status_code == 400
 
 
-class TestAsyncAnthropic:
+class TestAsyncJuGloW:
     @pytest.mark.respx(base_url=base_url)
-    async def test_raw_response(self, respx_mock: MockRouter, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response(self, respx_mock: MockRouter, async_client: AsyncJuGloW) -> None:
         respx_mock.post("/foo").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
 
         response = await async_client.post("/foo", cast_to=httpx.Response)
@@ -1249,7 +1249,7 @@ class TestAsyncAnthropic:
         assert response.json() == {"foo": "bar"}
 
     @pytest.mark.respx(base_url=base_url)
-    async def test_raw_response_for_binary(self, respx_mock: MockRouter, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_for_binary(self, respx_mock: MockRouter, async_client: AsyncJuGloW) -> None:
         respx_mock.post("/foo").mock(
             return_value=httpx.Response(200, headers={"Content-Type": "application/binary"}, content='{"foo": "bar"}')
         )
@@ -1259,15 +1259,15 @@ class TestAsyncAnthropic:
         assert isinstance(response, httpx.Response)
         assert response.json() == {"foo": "bar"}
 
-    def test_copy(self, async_client: AsyncAnthropic) -> None:
+    def test_copy(self, async_client: AsyncJuGloW) -> None:
         copied = async_client.copy()
         assert id(copied) != id(async_client)
 
-        copied = async_client.copy(api_key="another my-anthropic-api-key")
-        assert copied.api_key == "another my-anthropic-api-key"
-        assert async_client.api_key == "my-anthropic-api-key"
+        copied = async_client.copy(api_key="another my-Juglow-api-key")
+        assert copied.api_key == "another my-Juglow-api-key"
+        assert async_client.api_key == "my-Juglow-api-key"
 
-    def test_copy_default_options(self, async_client: AsyncAnthropic) -> None:
+    def test_copy_default_options(self, async_client: AsyncJuGloW) -> None:
         # options that have a default are overridden correctly
         copied = async_client.copy(max_retries=7)
         assert copied.max_retries == 7
@@ -1284,7 +1284,7 @@ class TestAsyncAnthropic:
         assert isinstance(async_client.timeout, httpx.Timeout)
 
     async def test_copy_default_headers(self) -> None:
-        client = AsyncAnthropic(
+        client = AsyncJuGloW(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_headers={"X-Foo": "bar"}
         )
         assert client.default_headers["X-Foo"] == "bar"
@@ -1319,7 +1319,7 @@ class TestAsyncAnthropic:
         await client.close()
 
     async def test_copy_default_query(self) -> None:
-        client = AsyncAnthropic(
+        client = AsyncJuGloW(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_query={"foo": "bar"}
         )
         assert _get_params(client)["foo"] == "bar"
@@ -1356,7 +1356,7 @@ class TestAsyncAnthropic:
 
         await client.close()
 
-    def test_copy_signature(self, async_client: AsyncAnthropic) -> None:
+    def test_copy_signature(self, async_client: AsyncJuGloW) -> None:
         # ensure the same parameters that can be passed to the client are defined in the `.copy()` method
         init_signature = inspect.signature(
             # mypy doesn't like that we access the `__init__` property.
@@ -1373,7 +1373,7 @@ class TestAsyncAnthropic:
             assert copy_param is not None, f"copy() signature is missing the {name} param"
 
     @pytest.mark.skipif(sys.version_info >= (3, 10), reason="fails because of a memory leak that started from 3.12")
-    def test_copy_build_request(self, async_client: AsyncAnthropic) -> None:
+    def test_copy_build_request(self, async_client: AsyncJuGloW) -> None:
         options = FinalRequestOptions(method="get", url="/foo")
 
         def build_request(options: FinalRequestOptions) -> None:
@@ -1413,10 +1413,10 @@ class TestAsyncAnthropic:
                         # to_raw_response_wrapper leaks through the @functools.wraps() decorator.
                         #
                         # removing the decorator fixes the leak for reasons we don't understand.
-                        "anthropic/_legacy_response.py",
-                        "anthropic/_response.py",
+                        "Juglow/_legacy_response.py",
+                        "Juglow/_response.py",
                         # pydantic.BaseModel.model_dump || pydantic.BaseModel.dict leak memory for some reason.
-                        "anthropic/_compat.py",
+                        "Juglow/_compat.py",
                         # Standard library leaks we don't care about.
                         "/logging/__init__.py",
                     ]
@@ -1435,7 +1435,7 @@ class TestAsyncAnthropic:
                     print(frame)
             raise AssertionError()
 
-    async def test_request_timeout(self, async_client: AsyncAnthropic) -> None:
+    async def test_request_timeout(self, async_client: AsyncJuGloW) -> None:
         request = async_client._build_request(FinalRequestOptions(method="get", url="/foo"))
         timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
         assert timeout == DEFAULT_TIMEOUT
@@ -1447,7 +1447,7 @@ class TestAsyncAnthropic:
         assert timeout == httpx.Timeout(100.0)
 
     async def test_client_timeout_option(self) -> None:
-        client = AsyncAnthropic(
+        client = AsyncJuGloW(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, timeout=httpx.Timeout(0)
         )
 
@@ -1460,7 +1460,7 @@ class TestAsyncAnthropic:
     async def test_http_client_timeout_option(self) -> None:
         # custom timeout given to the httpx client should be used
         async with httpx.AsyncClient(timeout=None) as http_client:
-            client = AsyncAnthropic(
+            client = AsyncJuGloW(
                 base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
@@ -1472,7 +1472,7 @@ class TestAsyncAnthropic:
 
         # no timeout given to the httpx client should not use the httpx default
         async with httpx.AsyncClient() as http_client:
-            client = AsyncAnthropic(
+            client = AsyncJuGloW(
                 base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
@@ -1484,7 +1484,7 @@ class TestAsyncAnthropic:
 
         # explicitly passing the default timeout currently results in it being ignored
         async with httpx.AsyncClient(timeout=HTTPX_DEFAULT_TIMEOUT) as http_client:
-            client = AsyncAnthropic(
+            client = AsyncJuGloW(
                 base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
@@ -1497,7 +1497,7 @@ class TestAsyncAnthropic:
     def test_invalid_http_client(self) -> None:
         with pytest.raises(TypeError, match="Invalid `http_client` arg"):
             with httpx.Client() as http_client:
-                AsyncAnthropic(
+                AsyncJuGloW(
                     base_url=base_url,
                     api_key=api_key,
                     _strict_response_validation=True,
@@ -1505,14 +1505,14 @@ class TestAsyncAnthropic:
                 )
 
     async def test_default_headers_option(self) -> None:
-        test_client = AsyncAnthropic(
+        test_client = AsyncJuGloW(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_headers={"X-Foo": "bar"}
         )
         request = test_client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "bar"
         assert request.headers.get("x-stainless-lang") == "python"
 
-        test_client2 = AsyncAnthropic(
+        test_client2 = AsyncJuGloW(
             base_url=base_url,
             api_key=api_key,
             _strict_response_validation=True,
@@ -1529,13 +1529,13 @@ class TestAsyncAnthropic:
         await test_client2.close()
 
     def test_validate_headers(self) -> None:
-        client = AsyncAnthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        client = AsyncJuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("X-Api-Key") == api_key
 
-        with mock.patch("anthropic._client.default_credentials", return_value=None):
-            with update_env(**{"ANTHROPIC_API_KEY": Omit()}):
-                client2 = AsyncAnthropic(base_url=base_url, api_key=None, _strict_response_validation=True)
+        with mock.patch("juglow._client.default_credentials", return_value=None):
+            with update_env(**{"HAIJUN_API_KEY": Omit()}):
+                client2 = AsyncJuGloW(base_url=base_url, api_key=None, _strict_response_validation=True)
 
         with pytest.raises(
             TypeError,
@@ -1547,7 +1547,7 @@ class TestAsyncAnthropic:
         assert request2.headers.get("X-Api-Key") is None
 
     async def test_default_query_option(self) -> None:
-        client = AsyncAnthropic(
+        client = AsyncJuGloW(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_query={"query_param": "bar"}
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -1566,7 +1566,7 @@ class TestAsyncAnthropic:
 
         await client.close()
 
-    async def test_hardcoded_query_params_in_url(self, async_client: AsyncAnthropic) -> None:
+    async def test_hardcoded_query_params_in_url(self, async_client: AsyncJuGloW) -> None:
         request = async_client._build_request(FinalRequestOptions(method="get", url="/foo?beta=true"))
         url = httpx.URL(request.url)
         assert dict(url.params) == {"beta": "true"}
@@ -1590,7 +1590,7 @@ class TestAsyncAnthropic:
         )
         assert request.url.raw_path == b"/files/a%2Fb?beta=true&limit=10"
 
-    def test_request_extra_json(self, client: Anthropic) -> None:
+    def test_request_extra_json(self, client: JuGloW) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -1624,7 +1624,7 @@ class TestAsyncAnthropic:
         data = json.loads(request.content.decode("utf-8"))
         assert data == {"foo": "bar", "baz": None}
 
-    def test_request_extra_headers(self, client: Anthropic) -> None:
+    def test_request_extra_headers(self, client: JuGloW) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -1646,7 +1646,7 @@ class TestAsyncAnthropic:
         )
         assert request.headers.get("X-Bar") == "false"
 
-    def test_request_extra_headers_httpx_headers(self, async_client: AsyncAnthropic) -> None:
+    def test_request_extra_headers_httpx_headers(self, async_client: AsyncJuGloW) -> None:
         # `httpx.Headers` is accepted anywhere a header mapping is, in addition to a plain dict
         request = async_client.with_options(default_headers=httpx.Headers({"X-Bar": "true"}))._build_request(
             FinalRequestOptions(
@@ -1659,7 +1659,7 @@ class TestAsyncAnthropic:
         # `extra_headers` still takes priority over `default_headers` when keys clash
         assert request.headers.get("X-Bar") == "false"
 
-    def test_request_x_stainless_helper_header_appends(self, async_client: AsyncAnthropic) -> None:
+    def test_request_x_stainless_helper_header_appends(self, async_client: AsyncJuGloW) -> None:
         # `x-stainless-helper` accumulates across mappings instead of being clobbered,
         # so a helper set on the client and one passed per-request both survive.
         request = async_client.with_options(default_headers={"x-stainless-helper": "session_runner"})._build_request(
@@ -1671,7 +1671,7 @@ class TestAsyncAnthropic:
         )
         assert request.headers.get("x-stainless-helper") == "session_runner, message_batches"
 
-    def test_request_x_stainless_helper_header_dedupes(self, async_client: AsyncAnthropic) -> None:
+    def test_request_x_stainless_helper_header_dedupes(self, async_client: AsyncJuGloW) -> None:
         # the same helper set in both places is recorded once
         request = async_client.with_options(default_headers={"x-stainless-helper": "session_runner"})._build_request(
             FinalRequestOptions(
@@ -1682,7 +1682,7 @@ class TestAsyncAnthropic:
         )
         assert request.headers.get("x-stainless-helper") == "session_runner"
 
-    def test_request_x_stainless_helper_header_collapses_case_variants(self, async_client: AsyncAnthropic) -> None:
+    def test_request_x_stainless_helper_header_collapses_case_variants(self, async_client: AsyncJuGloW) -> None:
         # differently-cased duplicates of the helper header fold into a single
         # deduplicated value instead of being sent as conflicting entries
         copied = async_client.with_options(
@@ -1697,7 +1697,7 @@ class TestAsyncAnthropic:
         )
         assert request.headers.get("x-stainless-helper") == "parent, scoped, message_batches"
 
-    def test_request_x_stainless_helper_header_dedupes_multi_value(self, async_client: AsyncAnthropic) -> None:
+    def test_request_x_stainless_helper_header_dedupes_multi_value(self, async_client: AsyncJuGloW) -> None:
         # comma-separated values (e.g. several tagged tools) are deduplicated per token
         copied = async_client.with_options(default_headers={"x-stainless-helper": "session_runner, memory_tool"})
         request = copied._build_request(
@@ -1709,7 +1709,7 @@ class TestAsyncAnthropic:
         )
         assert request.headers.get("x-stainless-helper") == "session_runner, memory_tool, message_batches"
 
-    def test_copy_x_stainless_helper_header_appends(self, async_client: AsyncAnthropic) -> None:
+    def test_copy_x_stainless_helper_header_appends(self, async_client: AsyncJuGloW) -> None:
         # stacking `default_headers` via copy()/with_options accumulates the
         # helper instead of clobbering, so e.g. a scoped sub-client's tag adds to
         # one already carried by the parent.
@@ -1719,7 +1719,7 @@ class TestAsyncAnthropic:
         request = copied._build_request(FinalRequestOptions(method="post", url="/foo"))
         assert request.headers.get("x-stainless-helper") == "parent, child"
 
-    def test_copy_preserves_header_removal(self, async_client: AsyncAnthropic) -> None:
+    def test_copy_preserves_header_removal(self, async_client: AsyncJuGloW) -> None:
         # an Omit removal set on the client still survives a subsequent copy()
         copied = async_client.with_options(
             default_headers=cast("dict[str, str]", {"X-Foo": Omit()}),
@@ -1728,7 +1728,7 @@ class TestAsyncAnthropic:
         assert request.headers.get("X-Foo") is None
         assert request.headers.get("X-Bar") == "true"
 
-    def test_request_extra_query(self, client: Anthropic) -> None:
+    def test_request_extra_query(self, client: JuGloW) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -1769,7 +1769,7 @@ class TestAsyncAnthropic:
         params = dict(request.url.params)
         assert params == {"foo": "2"}
 
-    def test_multipart_repeating_array(self, async_client: AsyncAnthropic) -> None:
+    def test_multipart_repeating_array(self, async_client: AsyncJuGloW) -> None:
         request = async_client._build_request(
             FinalRequestOptions.construct(
                 method="post",
@@ -1799,7 +1799,7 @@ class TestAsyncAnthropic:
         ]
 
     @pytest.mark.respx(base_url=base_url)
-    async def test_binary_content_upload(self, respx_mock: MockRouter, async_client: AsyncAnthropic) -> None:
+    async def test_binary_content_upload(self, respx_mock: MockRouter, async_client: AsyncJuGloW) -> None:
         respx_mock.post("/upload").mock(side_effect=mirror_request_content)
 
         file_content = b"Hello, this is a test file."
@@ -1824,7 +1824,7 @@ class TestAsyncAnthropic:
             assert counter.value == 0, "the request body should not have been read"
             return httpx.Response(200, content=await request.aread())
 
-        async with AsyncAnthropic(
+        async with AsyncJuGloW(
             base_url=base_url,
             api_key=api_key,
             _strict_response_validation=True,
@@ -1844,7 +1844,7 @@ class TestAsyncAnthropic:
 
     @pytest.mark.respx(base_url=base_url)
     async def test_binary_content_upload_with_body_is_deprecated(
-        self, respx_mock: MockRouter, async_client: AsyncAnthropic
+        self, respx_mock: MockRouter, async_client: AsyncJuGloW
     ) -> None:
         respx_mock.post("/upload").mock(side_effect=mirror_request_content)
 
@@ -1865,7 +1865,7 @@ class TestAsyncAnthropic:
         assert response.content == file_content
 
     @pytest.mark.respx(base_url=base_url)
-    async def test_basic_union_response(self, respx_mock: MockRouter, async_client: AsyncAnthropic) -> None:
+    async def test_basic_union_response(self, respx_mock: MockRouter, async_client: AsyncJuGloW) -> None:
         class Model1(BaseModel):
             name: str
 
@@ -1879,7 +1879,7 @@ class TestAsyncAnthropic:
         assert response.foo == "bar"
 
     @pytest.mark.respx(base_url=base_url)
-    async def test_union_response_different_types(self, respx_mock: MockRouter, async_client: AsyncAnthropic) -> None:
+    async def test_union_response_different_types(self, respx_mock: MockRouter, async_client: AsyncJuGloW) -> None:
         """Union of objects with the same field name using a different type"""
 
         class Model1(BaseModel):
@@ -1902,7 +1902,7 @@ class TestAsyncAnthropic:
 
     @pytest.mark.respx(base_url=base_url)
     async def test_non_application_json_content_type_for_json_data(
-        self, respx_mock: MockRouter, async_client: AsyncAnthropic
+        self, respx_mock: MockRouter, async_client: AsyncJuGloW
     ) -> None:
         """
         Response that sets Content-Type to something other than application/json but returns json data
@@ -1924,7 +1924,7 @@ class TestAsyncAnthropic:
         assert response.foo == 2
 
     async def test_base_url_setter(self) -> None:
-        client = AsyncAnthropic(
+        client = AsyncJuGloW(
             base_url="https://example.com/from_init", api_key=api_key, _strict_response_validation=True
         )
         assert client.base_url == "https://example.com/from_init/"
@@ -1936,17 +1936,17 @@ class TestAsyncAnthropic:
         await client.close()
 
     async def test_base_url_env(self) -> None:
-        with update_env(ANTHROPIC_BASE_URL="http://localhost:5000/from/env"):
-            client = AsyncAnthropic(api_key=api_key, _strict_response_validation=True)
+        with update_env(HAIJUN_BASE_URL="http://localhost:5000/from/env"):
+            client = AsyncJuGloW(api_key=api_key, _strict_response_validation=True)
             assert client.base_url == "http://localhost:5000/from/env/"
 
     @pytest.mark.parametrize(
         "client",
         [
-            AsyncAnthropic(
+            AsyncJuGloW(
                 base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True
             ),
-            AsyncAnthropic(
+            AsyncJuGloW(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 _strict_response_validation=True,
@@ -1955,7 +1955,7 @@ class TestAsyncAnthropic:
         ],
         ids=["standard", "custom http client"],
     )
-    async def test_base_url_trailing_slash(self, client: AsyncAnthropic) -> None:
+    async def test_base_url_trailing_slash(self, client: AsyncJuGloW) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -1969,10 +1969,10 @@ class TestAsyncAnthropic:
     @pytest.mark.parametrize(
         "client",
         [
-            AsyncAnthropic(
+            AsyncJuGloW(
                 base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True
             ),
-            AsyncAnthropic(
+            AsyncJuGloW(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 _strict_response_validation=True,
@@ -1981,7 +1981,7 @@ class TestAsyncAnthropic:
         ],
         ids=["standard", "custom http client"],
     )
-    async def test_base_url_no_trailing_slash(self, client: AsyncAnthropic) -> None:
+    async def test_base_url_no_trailing_slash(self, client: AsyncJuGloW) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -1995,10 +1995,10 @@ class TestAsyncAnthropic:
     @pytest.mark.parametrize(
         "client",
         [
-            AsyncAnthropic(
+            AsyncJuGloW(
                 base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True
             ),
-            AsyncAnthropic(
+            AsyncJuGloW(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 _strict_response_validation=True,
@@ -2007,7 +2007,7 @@ class TestAsyncAnthropic:
         ],
         ids=["standard", "custom http client"],
     )
-    async def test_absolute_request_url(self, client: AsyncAnthropic) -> None:
+    async def test_absolute_request_url(self, client: AsyncJuGloW) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -2019,7 +2019,7 @@ class TestAsyncAnthropic:
         await client.close()
 
     async def test_copied_client_does_not_close_http(self) -> None:
-        test_client = AsyncAnthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        test_client = AsyncJuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         assert not test_client.is_closed()
 
         copied = test_client.copy()
@@ -2031,7 +2031,7 @@ class TestAsyncAnthropic:
         assert not test_client.is_closed()
 
     async def test_client_context_manager(self) -> None:
-        test_client = AsyncAnthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        test_client = AsyncJuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         async with test_client as c2:
             assert c2 is test_client
             assert not c2.is_closed()
@@ -2039,7 +2039,7 @@ class TestAsyncAnthropic:
         assert test_client.is_closed()
 
     @pytest.mark.respx(base_url=base_url)
-    async def test_client_response_validation_error(self, respx_mock: MockRouter, async_client: AsyncAnthropic) -> None:
+    async def test_client_response_validation_error(self, respx_mock: MockRouter, async_client: AsyncJuGloW) -> None:
         class Model(BaseModel):
             foo: str
 
@@ -2052,12 +2052,12 @@ class TestAsyncAnthropic:
 
     async def test_client_max_retries_validation(self) -> None:
         with pytest.raises(TypeError, match=r"max_retries cannot be None"):
-            AsyncAnthropic(
+            AsyncJuGloW(
                 base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=cast(Any, None)
             )
 
     @pytest.mark.respx(base_url=base_url)
-    async def test_default_stream_cls(self, respx_mock: MockRouter, async_client: AsyncAnthropic) -> None:
+    async def test_default_stream_cls(self, respx_mock: MockRouter, async_client: AsyncJuGloW) -> None:
         class Model(BaseModel):
             name: str
 
@@ -2074,12 +2074,12 @@ class TestAsyncAnthropic:
 
         respx_mock.get("/foo").mock(return_value=httpx.Response(200, text="my-custom-format"))
 
-        strict_client = AsyncAnthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        strict_client = AsyncJuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
         with pytest.raises(APIResponseValidationError):
             await strict_client.get("/foo", cast_to=Model)
 
-        non_strict_client = AsyncAnthropic(base_url=base_url, api_key=api_key, _strict_response_validation=False)
+        non_strict_client = AsyncJuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=False)
 
         response = await non_strict_client.get("/foo", cast_to=Model)
         assert isinstance(response, str)  # type: ignore[unreachable]
@@ -2110,17 +2110,17 @@ class TestAsyncAnthropic:
     )
     @mock.patch("time.time", mock.MagicMock(return_value=1696004797))
     async def test_parse_retry_after_header(
-        self, remaining_retries: int, retry_after: str, timeout: float, async_client: AsyncAnthropic
+        self, remaining_retries: int, retry_after: str, timeout: float, async_client: AsyncJuGloW
     ) -> None:
         headers = httpx.Headers({"retry-after": retry_after})
         options = FinalRequestOptions(method="get", url="/foo", max_retries=3)
         calculated = async_client._calculate_retry_timeout(remaining_retries, options, headers)
         assert calculated == pytest.approx(timeout, 0.5 * 0.875)  # pyright: ignore[reportUnknownMemberType]
 
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     async def test_retrying_timeout_errors_doesnt_leak(
-        self, respx_mock: MockRouter, async_client: AsyncAnthropic
+        self, respx_mock: MockRouter, async_client: AsyncJuGloW
     ) -> None:
         respx_mock.post("/v1/messages").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
@@ -2133,15 +2133,15 @@ class TestAsyncAnthropic:
                         "role": "user",
                     }
                 ],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             ).__aenter__()
 
         assert _get_open_connections(async_client) == 0
 
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     async def test_retrying_status_errors_doesnt_leak(
-        self, respx_mock: MockRouter, async_client: AsyncAnthropic
+        self, respx_mock: MockRouter, async_client: AsyncJuGloW
     ) -> None:
         respx_mock.post("/v1/messages").mock(return_value=httpx.Response(500))
 
@@ -2154,17 +2154,17 @@ class TestAsyncAnthropic:
                         "role": "user",
                     }
                 ],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             ).__aenter__()
         assert _get_open_connections(async_client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     @pytest.mark.parametrize("failure_mode", ["status", "exception"])
     async def test_retries_taken(
         self,
-        async_client: AsyncAnthropic,
+        async_client: AsyncJuGloW,
         failures_before_success: int,
         failure_mode: Literal["status", "exception"],
         respx_mock: MockRouter,
@@ -2192,17 +2192,17 @@ class TestAsyncAnthropic:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert response.retries_taken == failures_before_success
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     async def test_omit_retry_count_header(
-        self, async_client: AsyncAnthropic, failures_before_success: int, respx_mock: MockRouter
+        self, async_client: AsyncJuGloW, failures_before_success: int, respx_mock: MockRouter
     ) -> None:
         client = async_client.with_options(max_retries=4)
 
@@ -2225,17 +2225,17 @@ class TestAsyncAnthropic:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             extra_headers={"x-stainless-retry-count": Omit()},
         )
 
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     async def test_overwrite_retry_count_header(
-        self, async_client: AsyncAnthropic, failures_before_success: int, respx_mock: MockRouter
+        self, async_client: AsyncJuGloW, failures_before_success: int, respx_mock: MockRouter
     ) -> None:
         client = async_client.with_options(max_retries=4)
 
@@ -2258,17 +2258,17 @@ class TestAsyncAnthropic:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             extra_headers={"x-stainless-retry-count": "42"},
         )
 
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     async def test_retries_taken_new_response_class(
-        self, async_client: AsyncAnthropic, failures_before_success: int, respx_mock: MockRouter
+        self, async_client: AsyncJuGloW, failures_before_success: int, respx_mock: MockRouter
     ) -> None:
         client = async_client.with_options(max_retries=4)
 
@@ -2291,7 +2291,7 @@ class TestAsyncAnthropic:
                     "role": "user",
                 }
             ],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         ) as response:
             assert response.retries_taken == failures_before_success
             assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
@@ -2331,7 +2331,7 @@ class TestAsyncAnthropic:
         )
 
     @pytest.mark.respx(base_url=base_url)
-    async def test_follow_redirects(self, respx_mock: MockRouter, async_client: AsyncAnthropic) -> None:
+    async def test_follow_redirects(self, respx_mock: MockRouter, async_client: AsyncJuGloW) -> None:
         # Test that the default follow_redirects=True allows following redirects
         respx_mock.post("/redirect").mock(
             return_value=httpx.Response(302, headers={"Location": f"{base_url}/redirected"})
@@ -2343,7 +2343,7 @@ class TestAsyncAnthropic:
         assert response.json() == {"status": "ok"}
 
     @pytest.mark.respx(base_url=base_url)
-    async def test_follow_redirects_disabled(self, respx_mock: MockRouter, async_client: AsyncAnthropic) -> None:
+    async def test_follow_redirects_disabled(self, respx_mock: MockRouter, async_client: AsyncJuGloW) -> None:
         # Test that follow_redirects=False prevents following redirects
         respx_mock.post("/redirect").mock(
             return_value=httpx.Response(302, headers={"Location": f"{base_url}/redirected"})
@@ -2358,7 +2358,7 @@ class TestAsyncAnthropic:
         assert exc_info.value.response.headers["Location"] == f"{base_url}/redirected"
 
     @pytest.mark.respx(base_url=base_url)
-    async def test_status_error_type_field(self, respx_mock: MockRouter, async_client: AsyncAnthropic) -> None:
+    async def test_status_error_type_field(self, respx_mock: MockRouter, async_client: AsyncJuGloW) -> None:
         respx_mock.post("/v1/messages").mock(
             return_value=httpx.Response(
                 400,
@@ -2369,7 +2369,7 @@ class TestAsyncAnthropic:
             await async_client.messages.create(
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Hello"}],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             )
         assert exc_info.value.type == "invalid_request_error"
         assert exc_info.value.status_code == 400

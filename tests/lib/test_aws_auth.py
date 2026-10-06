@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import re
 from unittest.mock import patch
@@ -6,8 +6,8 @@ from unittest.mock import patch
 import httpx
 import pytest
 
-from anthropic.lib.aws._auth import get_auth_headers
-from anthropic.lib.aws._credentials import (
+from juglow.lib.aws._auth import get_auth_headers
+from juglow.lib.aws._credentials import (
     resolve_region,
     resolve_api_key,
     resolve_base_url,
@@ -84,7 +84,7 @@ class TestResolveAuthMode:
         )
 
     def test_env_api_key_returns_false(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "env-key")
+        monkeypatch.setenv("HAIJUN_AWS_API_KEY", "env-key")
         assert (
             resolve_auth_mode(
                 api_key=None,
@@ -96,7 +96,7 @@ class TestResolveAuthMode:
         )
 
     def test_no_args_no_env_defaults_to_sigv4(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.delenv("ANTHROPIC_AWS_API_KEY", raising=False)
+        monkeypatch.delenv("HAIJUN_AWS_API_KEY", raising=False)
         assert (
             resolve_auth_mode(
                 api_key=None,
@@ -108,7 +108,7 @@ class TestResolveAuthMode:
         )
 
     def test_explicit_creds_suppress_env_api_key(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "env-key")
+        monkeypatch.setenv("HAIJUN_AWS_API_KEY", "env-key")
         assert (
             resolve_auth_mode(
                 api_key=None,
@@ -120,7 +120,7 @@ class TestResolveAuthMode:
         )
 
     def test_profile_suppresses_env_api_key(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "env-key")
+        monkeypatch.setenv("HAIJUN_AWS_API_KEY", "env-key")
         assert (
             resolve_auth_mode(
                 api_key=None,
@@ -145,7 +145,7 @@ class TestResolveAuthMode:
 
     def test_custom_env_var(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("AWS_BEARER_TOKEN_BEDROCK", "mantle-key")
-        monkeypatch.delenv("ANTHROPIC_AWS_API_KEY", raising=False)
+        monkeypatch.delenv("HAIJUN_AWS_API_KEY", raising=False)
         assert (
             resolve_auth_mode(
                 api_key=None,
@@ -159,7 +159,7 @@ class TestResolveAuthMode:
 
     def test_custom_env_var_not_set_defaults_to_sigv4(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.delenv("AWS_BEARER_TOKEN_BEDROCK", raising=False)
-        monkeypatch.delenv("ANTHROPIC_AWS_API_KEY", raising=False)
+        monkeypatch.delenv("HAIJUN_AWS_API_KEY", raising=False)
         assert (
             resolve_auth_mode(
                 api_key=None,
@@ -174,14 +174,14 @@ class TestResolveAuthMode:
     def test_env_var_fallback_chain_first_wins(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """First env var in the chain takes priority."""
         monkeypatch.setenv("AWS_BEARER_TOKEN_BEDROCK", "mantle-key")
-        monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "aws-key")
+        monkeypatch.setenv("HAIJUN_AWS_API_KEY", "aws-key")
         assert (
             resolve_auth_mode(
                 api_key=None,
                 aws_access_key=None,
                 aws_secret_key=None,
                 aws_profile=None,
-                api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK", "ANTHROPIC_AWS_API_KEY"),
+                api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK", "HAIJUN_AWS_API_KEY"),
             )
             is False
         )
@@ -189,14 +189,14 @@ class TestResolveAuthMode:
     def test_env_var_fallback_chain_falls_through(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Falls back to second env var when first is not set."""
         monkeypatch.delenv("AWS_BEARER_TOKEN_BEDROCK", raising=False)
-        monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "aws-key")
+        monkeypatch.setenv("HAIJUN_AWS_API_KEY", "aws-key")
         assert (
             resolve_auth_mode(
                 api_key=None,
                 aws_access_key=None,
                 aws_secret_key=None,
                 aws_profile=None,
-                api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK", "ANTHROPIC_AWS_API_KEY"),
+                api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK", "HAIJUN_AWS_API_KEY"),
             )
             is False
         )
@@ -204,14 +204,14 @@ class TestResolveAuthMode:
     def test_env_var_fallback_chain_none_set(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Defaults to SigV4 when no env vars in the chain are set."""
         monkeypatch.delenv("AWS_BEARER_TOKEN_BEDROCK", raising=False)
-        monkeypatch.delenv("ANTHROPIC_AWS_API_KEY", raising=False)
+        monkeypatch.delenv("HAIJUN_AWS_API_KEY", raising=False)
         assert (
             resolve_auth_mode(
                 api_key=None,
                 aws_access_key=None,
                 aws_secret_key=None,
                 aws_profile=None,
-                api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK", "ANTHROPIC_AWS_API_KEY"),
+                api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK", "HAIJUN_AWS_API_KEY"),
             )
             is True
         )
@@ -228,19 +228,19 @@ class TestResolveApiKey:
         assert resolve_api_key(api_key=None, use_sigv4=True) is None
 
     def test_returns_env_when_not_sigv4(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "env-key")
+        monkeypatch.setenv("HAIJUN_AWS_API_KEY", "env-key")
         assert resolve_api_key(api_key=None, use_sigv4=False) == "env-key"
 
     def test_returns_none_when_not_sigv4_and_no_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.delenv("ANTHROPIC_AWS_API_KEY", raising=False)
+        monkeypatch.delenv("HAIJUN_AWS_API_KEY", raising=False)
         assert resolve_api_key(api_key=None, use_sigv4=False) is None
 
     def test_arg_takes_precedence_over_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "env-key")
+        monkeypatch.setenv("HAIJUN_AWS_API_KEY", "env-key")
         assert resolve_api_key(api_key="arg-key", use_sigv4=False) == "arg-key"
 
     def test_sigv4_ignores_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "env-key")
+        monkeypatch.setenv("HAIJUN_AWS_API_KEY", "env-key")
         assert resolve_api_key(api_key=None, use_sigv4=True) is None
 
     def test_custom_env_var(self, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -256,24 +256,24 @@ class TestResolveApiKey:
 
     def test_env_var_fallback_chain_first_wins(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("AWS_BEARER_TOKEN_BEDROCK", "mantle-key")
-        monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "aws-key")
+        monkeypatch.setenv("HAIJUN_AWS_API_KEY", "aws-key")
         assert (
             resolve_api_key(
                 api_key=None,
                 use_sigv4=False,
-                api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK", "ANTHROPIC_AWS_API_KEY"),
+                api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK", "HAIJUN_AWS_API_KEY"),
             )
             == "mantle-key"
         )
 
     def test_env_var_fallback_chain_falls_through(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.delenv("AWS_BEARER_TOKEN_BEDROCK", raising=False)
-        monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "aws-key")
+        monkeypatch.setenv("HAIJUN_AWS_API_KEY", "aws-key")
         assert (
             resolve_api_key(
                 api_key=None,
                 use_sigv4=False,
-                api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK", "ANTHROPIC_AWS_API_KEY"),
+                api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK", "HAIJUN_AWS_API_KEY"),
             )
             == "aws-key"
         )
@@ -318,56 +318,56 @@ class TestResolveWorkspaceId:
         assert resolve_workspace_id("ws-123") == "ws-123"
 
     def test_returns_env_when_no_arg(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_AWS_WORKSPACE_ID", "env-ws")
+        monkeypatch.setenv("HAIJUN_AWS_WORKSPACE_ID", "env-ws")
         assert resolve_workspace_id(None) == "env-ws"
 
     def test_returns_none_when_no_source(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.delenv("ANTHROPIC_AWS_WORKSPACE_ID", raising=False)
+        monkeypatch.delenv("HAIJUN_AWS_WORKSPACE_ID", raising=False)
         assert resolve_workspace_id(None) is None
 
     def test_arg_takes_precedence_over_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_AWS_WORKSPACE_ID", "env-ws")
+        monkeypatch.setenv("HAIJUN_AWS_WORKSPACE_ID", "env-ws")
         assert resolve_workspace_id("arg-ws") == "arg-ws"
 
     def test_custom_env_var(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_BEDROCK_MANTLE_WORKSPACE_ID", "mantle-ws")
+        monkeypatch.setenv("HAIJUN_BEDROCK_MANTLE_WORKSPACE_ID", "mantle-ws")
         assert (
             resolve_workspace_id(
                 None,
-                workspace_id_env_vars=("ANTHROPIC_BEDROCK_MANTLE_WORKSPACE_ID",),
+                workspace_id_env_vars=("HAIJUN_BEDROCK_MANTLE_WORKSPACE_ID",),
             )
             == "mantle-ws"
         )
 
     def test_env_var_fallback_chain_first_wins(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_BEDROCK_MANTLE_WORKSPACE_ID", "mantle-ws")
-        monkeypatch.setenv("ANTHROPIC_AWS_WORKSPACE_ID", "aws-ws")
+        monkeypatch.setenv("HAIJUN_BEDROCK_MANTLE_WORKSPACE_ID", "mantle-ws")
+        monkeypatch.setenv("HAIJUN_AWS_WORKSPACE_ID", "aws-ws")
         assert (
             resolve_workspace_id(
                 None,
-                workspace_id_env_vars=("ANTHROPIC_BEDROCK_MANTLE_WORKSPACE_ID", "ANTHROPIC_AWS_WORKSPACE_ID"),
+                workspace_id_env_vars=("HAIJUN_BEDROCK_MANTLE_WORKSPACE_ID", "HAIJUN_AWS_WORKSPACE_ID"),
             )
             == "mantle-ws"
         )
 
     def test_env_var_fallback_chain_falls_through(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.delenv("ANTHROPIC_BEDROCK_MANTLE_WORKSPACE_ID", raising=False)
-        monkeypatch.setenv("ANTHROPIC_AWS_WORKSPACE_ID", "aws-ws")
+        monkeypatch.delenv("HAIJUN_BEDROCK_MANTLE_WORKSPACE_ID", raising=False)
+        monkeypatch.setenv("HAIJUN_AWS_WORKSPACE_ID", "aws-ws")
         assert (
             resolve_workspace_id(
                 None,
-                workspace_id_env_vars=("ANTHROPIC_BEDROCK_MANTLE_WORKSPACE_ID", "ANTHROPIC_AWS_WORKSPACE_ID"),
+                workspace_id_env_vars=("HAIJUN_BEDROCK_MANTLE_WORKSPACE_ID", "HAIJUN_AWS_WORKSPACE_ID"),
             )
             == "aws-ws"
         )
 
     def test_env_var_fallback_chain_none_set(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.delenv("ANTHROPIC_BEDROCK_MANTLE_WORKSPACE_ID", raising=False)
-        monkeypatch.delenv("ANTHROPIC_AWS_WORKSPACE_ID", raising=False)
+        monkeypatch.delenv("HAIJUN_BEDROCK_MANTLE_WORKSPACE_ID", raising=False)
+        monkeypatch.delenv("HAIJUN_AWS_WORKSPACE_ID", raising=False)
         assert (
             resolve_workspace_id(
                 None,
-                workspace_id_env_vars=("ANTHROPIC_BEDROCK_MANTLE_WORKSPACE_ID", "ANTHROPIC_AWS_WORKSPACE_ID"),
+                workspace_id_env_vars=("HAIJUN_BEDROCK_MANTLE_WORKSPACE_ID", "HAIJUN_AWS_WORKSPACE_ID"),
             )
             is None
         )
@@ -381,55 +381,55 @@ class TestResolveBaseUrl:
         assert resolve_base_url("https://custom.example.com", region="us-east-1") == "https://custom.example.com"
 
     def test_returns_env_when_no_arg(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_AWS_BASE_URL", "https://env-gateway.example.com")
+        monkeypatch.setenv("HAIJUN_AWS_BASE_URL", "https://env-gateway.example.com")
         assert resolve_base_url(None, region="us-east-1") == "https://env-gateway.example.com"
 
     def test_derives_from_region(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.delenv("ANTHROPIC_AWS_BASE_URL", raising=False)
-        assert resolve_base_url(None, region="us-west-2") == "https://aws-external-anthropic.us-west-2.api.aws"
+        monkeypatch.delenv("HAIJUN_AWS_BASE_URL", raising=False)
+        assert resolve_base_url(None, region="us-west-2") == "https://aws-external-Juglow.us-west-2.api.aws"
 
     def test_returns_none_when_no_source(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.delenv("ANTHROPIC_AWS_BASE_URL", raising=False)
+        monkeypatch.delenv("HAIJUN_AWS_BASE_URL", raising=False)
         assert resolve_base_url(None, region=None) is None
 
     def test_arg_takes_precedence_over_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_AWS_BASE_URL", "https://env-gateway.example.com")
+        monkeypatch.setenv("HAIJUN_AWS_BASE_URL", "https://env-gateway.example.com")
         assert resolve_base_url("https://arg.example.com", region="us-east-1") == "https://arg.example.com"
 
     def test_env_takes_precedence_over_region(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_AWS_BASE_URL", "https://env-gateway.example.com")
+        monkeypatch.setenv("HAIJUN_AWS_BASE_URL", "https://env-gateway.example.com")
         assert resolve_base_url(None, region="us-east-1") == "https://env-gateway.example.com"
 
     def test_custom_url_template(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.delenv("ANTHROPIC_AWS_BASE_URL", raising=False)
+        monkeypatch.delenv("HAIJUN_AWS_BASE_URL", raising=False)
         assert (
             resolve_base_url(
                 None,
                 region="us-east-1",
-                url_template="https://bedrock-mantle.{region}.api.aws/anthropic",
+                url_template="https://bedrock-mantle.{region}.api.aws/juglow",
             )
-            == "https://bedrock-mantle.us-east-1.api.aws/anthropic"
+            == "https://bedrock-mantle.us-east-1.api.aws/juglow"
         )
 
     def test_custom_env_var(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_BEDROCK_MANTLE_BASE_URL", "https://mantle.example.com")
+        monkeypatch.setenv("HAIJUN_BEDROCK_MANTLE_BASE_URL", "https://mantle.example.com")
         assert (
             resolve_base_url(
                 None,
                 region="us-east-1",
-                base_url_env_vars=("ANTHROPIC_BEDROCK_MANTLE_BASE_URL",),
+                base_url_env_vars=("HAIJUN_BEDROCK_MANTLE_BASE_URL",),
             )
             == "https://mantle.example.com"
         )
 
     def test_env_var_fallback_chain(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.delenv("ANTHROPIC_BEDROCK_MANTLE_BASE_URL", raising=False)
-        monkeypatch.setenv("ANTHROPIC_AWS_BASE_URL", "https://aws-fallback.example.com")
+        monkeypatch.delenv("HAIJUN_BEDROCK_MANTLE_BASE_URL", raising=False)
+        monkeypatch.setenv("HAIJUN_AWS_BASE_URL", "https://aws-fallback.example.com")
         assert (
             resolve_base_url(
                 None,
                 region="us-east-1",
-                base_url_env_vars=("ANTHROPIC_BEDROCK_MANTLE_BASE_URL", "ANTHROPIC_AWS_BASE_URL"),
+                base_url_env_vars=("HAIJUN_BEDROCK_MANTLE_BASE_URL", "HAIJUN_AWS_BASE_URL"),
             )
             == "https://aws-fallback.example.com"
         )
@@ -448,16 +448,16 @@ class TestGetAuthHeaders:
             region="us-east-1",
             profile=None,
             data='{"hello": "world"}',
-            service_name="aws-external-anthropic",
+            service_name="aws-external-juglow",
         )
         assert "Authorization" in headers
-        assert "aws-external-anthropic" in headers["Authorization"]
+        assert "aws-external-juglow" in headers["Authorization"]
 
     def test_different_service_name(self) -> None:
         """Mantle uses a different service name for SigV4 signing."""
         headers = get_auth_headers(
             method="POST",
-            url="https://bedrock-mantle.us-east-1.api.aws/anthropic/v1/messages",
+            url="https://bedrock-mantle.us-east-1.api.aws/Juglow/v1/messages",
             headers=httpx.Headers({"content-type": "application/json"}),
             aws_access_key="AKIAIOSFODNN7EXAMPLE",
             aws_secret_key="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
@@ -469,7 +469,7 @@ class TestGetAuthHeaders:
         )
         assert "Authorization" in headers
         assert "bedrock-mantle" in headers["Authorization"]
-        assert "aws-external-anthropic" not in headers["Authorization"]
+        assert "aws-external-juglow" not in headers["Authorization"]
 
     def test_returns_authorization_and_date_headers(self) -> None:
         headers = get_auth_headers(
@@ -482,7 +482,7 @@ class TestGetAuthHeaders:
             region="us-east-1",
             profile=None,
             data='{"hello": "world"}',
-            service_name="aws-external-anthropic",
+            service_name="aws-external-juglow",
         )
         assert "Authorization" in headers
         assert headers["Authorization"].startswith("AWS4-HMAC-SHA256")
@@ -499,7 +499,7 @@ class TestGetAuthHeaders:
             region="us-east-1",
             profile=None,
             data='{"hello": "world"}',
-            service_name="aws-external-anthropic",
+            service_name="aws-external-juglow",
         )
         assert headers.get("X-Amz-Security-Token") == "FwoGZXIvYXdzEBYaDH7example"
 
@@ -515,7 +515,7 @@ class TestGetAuthHeaders:
             region="us-east-1",
             profile=None,
             data='{"hello": "world"}',
-            service_name="aws-external-anthropic",
+            service_name="aws-external-juglow",
         )
         # The signed headers in Authorization should not include "connection"
         auth = headers["Authorization"]
@@ -535,7 +535,7 @@ class TestGetAuthHeaders:
             region="us-east-1",
             profile=None,
             data=None,
-            service_name="aws-external-anthropic",
+            service_name="aws-external-juglow",
         )
         assert "Authorization" in headers
 
@@ -551,7 +551,7 @@ class TestGetAuthHeaders:
             region="us-east-1",
             profile=None,
             data=None,
-            service_name="aws-external-anthropic",
+            service_name="aws-external-juglow",
         )
         headers_without_query = get_auth_headers(
             method="GET",
@@ -563,7 +563,7 @@ class TestGetAuthHeaders:
             region="us-east-1",
             profile=None,
             data=None,
-            service_name="aws-external-anthropic",
+            service_name="aws-external-juglow",
         )
         # Different URLs should produce different signatures
         assert headers_with_query["Authorization"] != headers_without_query["Authorization"]
@@ -580,12 +580,12 @@ class TestGetAuthHeaders:
             region="us-east-1",
             profile=None,
             data="{}",
-            service_name="aws-external-anthropic",
+            service_name="aws-external-juglow",
         )
         assert "Authorization" in headers
 
     def test_raises_on_missing_credentials(self) -> None:
-        with patch("anthropic.lib.aws._auth._get_session") as mock_session:
+        with patch("juglow.lib.aws._auth._get_session") as mock_session:
             mock_session.return_value.get_credentials.return_value = None
             mock_session.return_value.region_name = "us-east-1"
             with pytest.raises(RuntimeError, match="Could not resolve AWS credentials"):
@@ -599,5 +599,5 @@ class TestGetAuthHeaders:
                     region="us-east-1",
                     profile=None,
                     data="{}",
-                    service_name="aws-external-anthropic",
+                    service_name="aws-external-juglow",
                 )

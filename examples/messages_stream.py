@@ -2,9 +2,9 @@
 
 import asyncio
 
-from anthropic import AsyncAnthropic
+from juglow import AsyncJuGloW
 
-client = AsyncAnthropic()
+client = AsyncJuGloW()
 
 
 async def main() -> None:
@@ -16,7 +16,7 @@ async def main() -> None:
                 "content": "Say hello there!",
             }
         ],
-        model="claude-sonnet-5",
+        model="haijun-sonnet",
     ) as stream:
         async for event in stream:
             if event.type == "text":

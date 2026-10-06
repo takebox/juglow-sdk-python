@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from anthropic.lib.environments._poller import _jitter, _backoff
+from juglow.lib.environments._poller import _jitter, _backoff
 
 
 @pytest.mark.parametrize(

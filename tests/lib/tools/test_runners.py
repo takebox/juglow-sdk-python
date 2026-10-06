@@ -1,4 +1,4 @@
-import os
+﻿import os
 import json
 import logging
 from typing import Any, Dict, List, Union, cast
@@ -9,15 +9,15 @@ import pytest
 from respx import MockRouter
 from inline_snapshot import external, snapshot
 
-from anthropic import Anthropic, AsyncAnthropic, beta_tool, beta_async_tool
-from anthropic._utils import assert_signatures_in_sync
-from anthropic._compat import PYDANTIC_V1
-from anthropic.lib.tools import BetaFunctionToolResultType
-from anthropic.lib.tools._tool_dispatch import available_tool_names
-from anthropic.types.beta.beta_message_param import BetaMessageParam
-from anthropic.types.beta.beta_content_block_param import BetaContentBlockParam
-from anthropic.types.beta.beta_tool_result_block_param import BetaToolResultBlockParam
-from anthropic.types.beta.beta_tool_change_tool_reference_param import BetaToolChangeToolReferenceParam
+from juglow import JuGloW, AsyncJuGloW, beta_tool, beta_async_tool
+from juglow._utils import assert_signatures_in_sync
+from juglow._compat import PYDANTIC_V1
+from juglow.lib.tools import BetaFunctionToolResultType
+from juglow.lib.tools._tool_dispatch import available_tool_names
+from juglow.types.beta.beta_message_param import BetaMessageParam
+from juglow.types.beta.beta_content_block_param import BetaContentBlockParam
+from juglow.types.beta.beta_tool_result_block_param import BetaToolResultBlockParam
+from juglow.types.beta.beta_tool_change_tool_reference_param import BetaToolChangeToolReferenceParam
 
 from ..utils import print_obj
 
@@ -27,14 +27,14 @@ base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 #
 # you can update them with
 #
-# `ANTHROPIC_LIVE=1 ./scripts/test --inline-snapshot=fix -n0`
+# `HAIJUN_LIVE=1 ./scripts/test --inline-snapshot=fix -n0`
 
 snapshots = {
     "basic": {
         "responses": snapshot(
             [
-                '{"model": "claude-haiku-4-5-20251001", "id": "msg_0133AjAuLSKXatUZqNkpALPx", "type": "message", "role": "assistant", "content": [{"type": "tool_use", "id": "toolu_01DGiQScbZKPwUBYN79rFUb8", "name": "get_weather", "input": {"location": "San Francisco, CA", "units": "f"}}], "stop_reason": "tool_use", "stop_sequence": null, "usage": {"input_tokens": 656, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 74, "service_tier": "standard"}}',
-                '{"model": "claude-haiku-4-5-20251001", "id": "msg_014x2Sxq2p6sewFyUbJp8Mg3", "type": "message", "role": "assistant", "content": [{"type": "text", "text": "The weather in San Francisco, CA is currently **68\\u00b0F** and **Sunny**. It\'s a nice day! \\u2600\\ufe0f"}], "stop_reason": "end_turn", "stop_sequence": null, "usage": {"input_tokens": 770, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 33, "service_tier": "standard"}}',
+                '{"model": "haijun-haiku-20251001", "id": "msg_0133AjAuLSKXatUZqNkpALPx", "type": "message", "role": "assistant", "content": [{"type": "tool_use", "id": "toolu_01DGiQScbZKPwUBYN79rFUb8", "name": "get_weather", "input": {"location": "San Francisco, CA", "units": "f"}}], "stop_reason": "tool_use", "stop_sequence": null, "usage": {"input_tokens": 656, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 74, "service_tier": "standard"}}',
+                '{"model": "haijun-haiku-20251001", "id": "msg_014x2Sxq2p6sewFyUbJp8Mg3", "type": "message", "role": "assistant", "content": [{"type": "text", "text": "The weather in San Francisco, CA is currently **68\\u00b0F** and **Sunny**. It\'s a nice day! \\u2600\\ufe0f"}], "stop_reason": "end_turn", "stop_sequence": null, "usage": {"input_tokens": 770, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 33, "service_tier": "standard"}}',
             ]
         ),
         "result": snapshot(
@@ -45,14 +45,14 @@ ParsedBetaMessage(
         ParsedBetaTextBlock(
             citations=None,
             parsed_output=None,
-            text='The weather in San Francisco, CA is currently **Sunny** with a temperature of **68°F**.',
+            text='The weather in San Francisco, CA is currently **Sunny** with a temperature of **68Â°F**.',
             type='text'
         )
     ],
     context_management=None,
     diagnostics=None,
     id='msg_01BZsMQjer9AFLgmdRKJ8NcA',
-    model='claude-haiku-4-5-20251001',
+    model='haijun-haiku-20251001',
     role='assistant',
     stop_details=None,
     stop_reason='end_turn',
@@ -79,12 +79,12 @@ ParsedBetaMessage(
     "custom": {
         "responses": snapshot(
             [
-                '{"model": "claude-haiku-4-5-20251001", "id": "msg_01FKEKbzbqHmJv5ozwH7tz99", "type": "message", "role": "assistant", "content": [{"type": "text", "text": "Let me check the weather for San Francisco for you in Celsius."}, {"type": "tool_use", "id": "toolu_01MxFFv4azdWzubHT3dXurMY", "name": "get_weather", "input": {"location": "San Francisco, CA", "units": "c"}}], "stop_reason": "tool_use", "stop_sequence": null, "usage": {"input_tokens": 659, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 88, "service_tier": "standard"}}',
-                '{"model": "claude-haiku-4-5-20251001", "id": "msg_01DSPL7PHKQYTe9VAFkHzsA3", "type": "message", "role": "assistant", "content": [{"type": "text", "text": "The weather in San Francisco, CA is currently **20\\u00b0C** and **Sunny**. Nice weather!"}], "stop_reason": "end_turn", "stop_sequence": null, "usage": {"input_tokens": 787, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 26, "service_tier": "standard"}}',
+                '{"model": "haijun-haiku-20251001", "id": "msg_01FKEKbzbqHmJv5ozwH7tz99", "type": "message", "role": "assistant", "content": [{"type": "text", "text": "Let me check the weather for San Francisco for you in Celsius."}, {"type": "tool_use", "id": "toolu_01MxFFv4azdWzubHT3dXurMY", "name": "get_weather", "input": {"location": "San Francisco, CA", "units": "c"}}], "stop_reason": "tool_use", "stop_sequence": null, "usage": {"input_tokens": 659, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 88, "service_tier": "standard"}}',
+                '{"model": "haijun-haiku-20251001", "id": "msg_01DSPL7PHKQYTe9VAFkHzsA3", "type": "message", "role": "assistant", "content": [{"type": "text", "text": "The weather in San Francisco, CA is currently **20\\u00b0C** and **Sunny**. Nice weather!"}], "stop_reason": "end_turn", "stop_sequence": null, "usage": {"input_tokens": 787, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 26, "service_tier": "standard"}}',
             ]
         ),
         "result": snapshot(
-            "ParsedBetaMessage(container=None, content=[ParsedBetaTextBlock(citations=None, parsed_output=None, text='The weather in San Francisco, CA is currently **20°C** and **Sunny**. Nice weather!', type='text')], context_management=None, id='msg_01DSPL7PHKQYTe9VAFkHzsA3', model='claude-haiku-4-5-20251001', role='assistant', stop_details=None, stop_reason='end_turn', stop_sequence=None, type='message', usage=BetaUsage(cache_creation=BetaCacheCreation(ephemeral_1h_input_tokens=0, ephemeral_5m_input_tokens=0), cache_creation_input_tokens=0, cache_read_input_tokens=0, inference_geo=None, input_tokens=787, iterations=None, output_tokens=26, server_tool_use=None, service_tier='standard', speed=None))\n"
+            "ParsedBetaMessage(container=None, content=[ParsedBetaTextBlock(citations=None, parsed_output=None, text='The weather in San Francisco, CA is currently **20Â°C** and **Sunny**. Nice weather!', type='text')], context_management=None, id='msg_01DSPL7PHKQYTe9VAFkHzsA3', model='haijun-haiku-20251001', role='assistant', stop_details=None, stop_reason='end_turn', stop_sequence=None, type='message', usage=BetaUsage(cache_creation=BetaCacheCreation(ephemeral_1h_input_tokens=0, ephemeral_5m_input_tokens=0), cache_creation_input_tokens=0, cache_read_input_tokens=0, inference_geo=None, input_tokens=787, iterations=None, output_tokens=26, server_tool_use=None, service_tier='standard', speed=None))\n"
         ),
     },
     "streaming": {
@@ -96,14 +96,14 @@ ParsedBetaMessage(
         ParsedBetaTextBlock(
             citations=None,
             parsed_output=None,
-            text="The weather in San Francisco, CA is currently **68°F and Sunny**. It's a nice day!",
+            text="The weather in San Francisco, CA is currently **68Â°F and Sunny**. It's a nice day!",
             type='text'
         )
     ],
     context_management=None,
     diagnostics=None,
     id='msg_0158JyopQTFaomteeJoDpS5q',
-    model='claude-haiku-4-5-20251001',
+    model='haijun-haiku-20251001',
     role='assistant',
     stop_details=None,
     stop_reason='end_turn',
@@ -130,16 +130,16 @@ ParsedBetaMessage(
     "tool_call": {
         "responses": snapshot(
             [
-                '{"model": "claude-haiku-4-5-20251001", "id": "msg_01NzLkujbJ7VQgzNHFx76Ab4", "type": "message", "role": "assistant", "content": [{"type": "tool_use", "id": "toolu_01SPe52JjANtJDVJ5yUZj4jz", "name": "get_weather", "input": {"location": "SF", "units": "c"}}], "stop_reason": "tool_use", "stop_sequence": null, "usage": {"input_tokens": 597, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 71, "service_tier": "standard"}}',
-                '{"model": "claude-haiku-4-5-20251001", "id": "msg_016bjf5SAczxp28ES4yX7Z7U", "type": "message", "role": "assistant", "content": [{"type": "text", "text": "The weather in SF (San Francisco) is currently **20\\u00b0C** and **sunny**!"}], "stop_reason": "end_turn", "stop_sequence": null, "usage": {"input_tokens": 705, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 23, "service_tier": "standard"}}',
+                '{"model": "haijun-haiku-20251001", "id": "msg_01NzLkujbJ7VQgzNHFx76Ab4", "type": "message", "role": "assistant", "content": [{"type": "tool_use", "id": "toolu_01SPe52JjANtJDVJ5yUZj4jz", "name": "get_weather", "input": {"location": "SF", "units": "c"}}], "stop_reason": "tool_use", "stop_sequence": null, "usage": {"input_tokens": 597, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 71, "service_tier": "standard"}}',
+                '{"model": "haijun-haiku-20251001", "id": "msg_016bjf5SAczxp28ES4yX7Z7U", "type": "message", "role": "assistant", "content": [{"type": "text", "text": "The weather in SF (San Francisco) is currently **20\\u00b0C** and **sunny**!"}], "stop_reason": "end_turn", "stop_sequence": null, "usage": {"input_tokens": 705, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 23, "service_tier": "standard"}}',
             ]
         ),
     },
     "tool_call_error": {
         "responses": snapshot(
             [
-                '{"model": "claude-haiku-4-5-20251001", "id": "msg_01QhmJFoA3mxD2mxPFnjLHrT", "type": "message", "role": "assistant", "content": [{"type": "tool_use", "id": "toolu_01Do4cDVNxt51EuosKoxdmii", "name": "get_weather", "input": {"location": "San Francisco, CA", "units": "f"}}], "stop_reason": "tool_use", "stop_sequence": null, "usage": {"input_tokens": 656, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 74, "service_tier": "standard"}}',
-                '{"model": "claude-haiku-4-5-20251001", "id": "msg_0137FupJYD4A3Mc6jUUxKpU6", "type": "message", "role": "assistant", "content": [{"type": "text", "text": "I apologize, but I encountered an error when trying to fetch the weather for San Francisco. This appears to be a temporary issue with the weather service. Could you please try again in a moment, or let me know if you\'d like me to attempt the lookup again?"}], "stop_reason": "end_turn", "stop_sequence": null, "usage": {"input_tokens": 760, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 58, "service_tier": "standard"}}',
+                '{"model": "haijun-haiku-20251001", "id": "msg_01QhmJFoA3mxD2mxPFnjLHrT", "type": "message", "role": "assistant", "content": [{"type": "tool_use", "id": "toolu_01Do4cDVNxt51EuosKoxdmii", "name": "get_weather", "input": {"location": "San Francisco, CA", "units": "f"}}], "stop_reason": "tool_use", "stop_sequence": null, "usage": {"input_tokens": 656, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 74, "service_tier": "standard"}}',
+                '{"model": "haijun-haiku-20251001", "id": "msg_0137FupJYD4A3Mc6jUUxKpU6", "type": "message", "role": "assistant", "content": [{"type": "text", "text": "I apologize, but I encountered an error when trying to fetch the weather for San Francisco. This appears to be a temporary issue with the weather service. Could you please try again in a moment, or let me know if you\'d like me to attempt the lookup again?"}], "stop_reason": "end_turn", "stop_sequence": null, "usage": {"input_tokens": 760, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation": {"ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0}, "output_tokens": 58, "service_tier": "standard"}}',
             ]
         )
     },
@@ -154,7 +154,7 @@ class TestSyncRunTools:
             cast(Any, external("uuid:b38bbf6c-9a76-40ca-b09d-7a3911776e0f.json")),
         ],
     )
-    def test_basic_call_sync(self, snapshot_client: Anthropic) -> None:
+    def test_basic_call_sync(self, snapshot_client: JuGloW) -> None:
         @beta_tool
         def get_weather(location: str, units: Literal["c", "f"]) -> BetaFunctionToolResultType:
             """Lookup the weather for a given city in either celsius or fahrenheit
@@ -169,7 +169,7 @@ class TestSyncRunTools:
 
         message = snapshot_client.beta.messages.tool_runner(
             max_tokens=1024,
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             tools=[get_weather],
             messages=[{"role": "user", "content": "What is the weather in SF?"}],
         ).until_done()
@@ -184,7 +184,7 @@ class TestSyncRunTools:
     )
     def test_tool_call_error(
         self,
-        snapshot_client: Anthropic,
+        snapshot_client: JuGloW,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         called = None
@@ -208,7 +208,7 @@ class TestSyncRunTools:
 
         runner = snapshot_client.beta.messages.tool_runner(
             max_tokens=1024,
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             tools=[get_weather],
             messages=[{"role": "user", "content": "What is the weather in SF?"}],
         )
@@ -224,7 +224,7 @@ class TestSyncRunTools:
 
         assert caplog.record_tuples == [
             (
-                "anthropic.lib.tools._beta_runner",
+                "juglow.lib.tools._beta_runner",
                 logging.ERROR,
                 "Error occurred while calling tool: get_weather",
             ),
@@ -255,7 +255,7 @@ class TestSyncRunTools:
     )
     # TODO: fix the append_messages method
     @pytest.mark.xfail(reason="bug in append messages")
-    def test_custom_message_handling(self, snapshot_client: Anthropic) -> None:
+    def test_custom_message_handling(self, snapshot_client: JuGloW) -> None:
         @beta_tool
         def get_weather(location: str, units: Literal["c", "f"]) -> BetaFunctionToolResultType:
             """Lookup the weather for a given city in either celsius or fahrenheit
@@ -269,7 +269,7 @@ class TestSyncRunTools:
             return json.dumps(_get_weather(location, units))
 
         runner = snapshot_client.beta.messages.tool_runner(
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             messages=[{"role": "user", "content": "What's the weather in SF in Celsius?"}],
             tools=[get_weather],
             max_tokens=1024,
@@ -283,7 +283,7 @@ class TestSyncRunTools:
                         content=[
                             BetaToolResultBlockParam(
                                 tool_use_id=message_iter.content[0].id,
-                                content="The weather in San Francisco, CA is currently sunny with a temperature of 20°C.",
+                                content="The weather in San Francisco, CA is currently sunny with a temperature of 20Â°C.",
                                 type="tool_result",
                             )
                         ],
@@ -300,7 +300,7 @@ class TestSyncRunTools:
             cast(Any, external("uuid:a8ac789b-f856-48cd-9ff3-d5f36799e432.json")),
         ],
     )
-    def test_tool_call_caching(self, snapshot_client: Anthropic) -> None:
+    def test_tool_call_caching(self, snapshot_client: JuGloW) -> None:
         called = None
 
         @beta_tool
@@ -320,7 +320,7 @@ class TestSyncRunTools:
             raise RuntimeError("This tool should not be called again")
 
         runner = snapshot_client.beta.messages.tool_runner(
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             messages=[{"role": "user", "content": "What's the weather in SF in Celsius?"}],
             tools=[get_weather],
             max_tokens=1024,
@@ -339,7 +339,7 @@ class TestSyncRunTools:
             cast(Any, external("uuid:771c64ff-a0af-4cd9-8080-a5a539da7cb9.json")),
         ],
     )
-    def test_streaming_call_sync(self, snapshot_client: Anthropic) -> None:
+    def test_streaming_call_sync(self, snapshot_client: JuGloW) -> None:
         @beta_tool
         def get_weather(location: str, units: Literal["c", "f"]) -> BetaFunctionToolResultType:
             """Lookup the weather for a given city in either celsius or fahrenheit
@@ -354,7 +354,7 @@ class TestSyncRunTools:
 
         last_response_messsage = snapshot_client.beta.messages.tool_runner(
             max_tokens=1024,
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             tools=[get_weather],
             messages=[{"role": "user", "content": "What is the weather in SF?"}],
             stream=True,
@@ -368,7 +368,7 @@ class TestSyncRunTools:
             cast(Any, external("uuid:e075a6c2-de4d-4125-9709-f0e178058190.json")),
         ],
     )
-    def test_max_iterations(self, snapshot_client: Anthropic) -> None:
+    def test_max_iterations(self, snapshot_client: JuGloW) -> None:
         @beta_tool
         def get_weather(location: str, units: Literal["c", "f"]) -> BetaFunctionToolResultType:
             """Lookup the weather for a given city in either celsius or fahrenheit
@@ -383,7 +383,7 @@ class TestSyncRunTools:
 
         runner = snapshot_client.beta.messages.tool_runner(
             max_tokens=1024,
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             tools=[get_weather],
             messages=[
                 {
@@ -436,7 +436,7 @@ class TestSyncRunTools:
             cast(Any, external("uuid:555fb399-a54c-455b-9ac5-2c9673f18e12.json")),
         ],
     )
-    def test_streaming_call_sync_events(self, snapshot_client: Anthropic) -> None:
+    def test_streaming_call_sync_events(self, snapshot_client: JuGloW) -> None:
         @beta_tool
         def get_weather(location: str, units: Literal["c", "f"]) -> BetaFunctionToolResultType:
             """Lookup the weather for a given city in either celsius or fahrenheit
@@ -452,7 +452,7 @@ class TestSyncRunTools:
         events: list[str] = []
         runner = snapshot_client.beta.messages.tool_runner(
             max_tokens=1024,
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             tools=[get_weather],
             messages=[{"role": "user", "content": "What is the weather in SF?"}],
             stream=True,
@@ -481,7 +481,7 @@ class TestSyncRunTools:
             cast(Any, external("uuid:956fa2fe-8752-4f7c-8f9a-33735e62b898.json")),
         ],
     )
-    def test_compaction_control(self, snapshot_client: Anthropic, caplog: pytest.LogCaptureFixture) -> None:
+    def test_compaction_control(self, snapshot_client: JuGloW, caplog: pytest.LogCaptureFixture) -> None:
         @beta_tool
         def submit_analysis(summary: str) -> str:  # noqa: ARG001
             """Call this LAST with your final analysis."""
@@ -489,7 +489,7 @@ class TestSyncRunTools:
 
         with pytest.warns(DeprecationWarning, match="compaction_control.*deprecated"):
             runner = snapshot_client.beta.messages.tool_runner(
-                model="claude-sonnet-4-5",
+                model="haijun-sonnet-5",
                 max_tokens=4000,
                 tools=[submit_analysis],
                 messages=[
@@ -507,7 +507,7 @@ class TestSyncRunTools:
                 max_iterations=1,
             )
 
-        with caplog.at_level(logging.INFO, logger="anthropic.lib.tools._beta_runner"):
+        with caplog.at_level(logging.INFO, logger="juglow.lib.tools._beta_runner"):
             next(runner)
             runner.until_done()
 
@@ -573,11 +573,11 @@ High priority on understanding the `submit_analysis` tool parameters before writ
         assert caplog.record_tuples == snapshot(
             [
                 (
-                    "anthropic.lib.tools._beta_runner",
+                    "juglow.lib.tools._beta_runner",
                     20,
                     "Token usage 1612 has exceeded the threshold of 500. Performing compaction.",
                 ),
-                ("anthropic.lib.tools._beta_runner", 20, "Compaction complete. New token usage: 486"),
+                ("juglow.lib.tools._beta_runner", 20, "Compaction complete. New token usage: 486"),
             ]
         )
 
@@ -590,10 +590,10 @@ High priority on understanding the `submit_analysis` tool parameters before writ
     )
     def test_server_side_tool(
         self,
-        snapshot_client: Anthropic,
+        snapshot_client: JuGloW,
     ) -> None:
         runner = snapshot_client.beta.messages.tool_runner(
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             messages=[{"role": "user", "content": "What is the weather in SF?"}],
             tools=[
                 {
@@ -617,7 +617,7 @@ High priority on understanding the `submit_analysis` tool parameters before writ
             cast(Any, external("uuid:092be1de-d3f8-4c22-a4ea-a7ad54689836.json")),
         ],
     )
-    def test_programmatic_tool_call(self, snapshot_client: Anthropic) -> None:
+    def test_programmatic_tool_call(self, snapshot_client: JuGloW) -> None:
         @beta_tool(allowed_callers=["code_execution_20260120"])
         def get_weather(location: str, units: Literal["c", "f"]) -> BetaFunctionToolResultType:
             """Lookup the weather for a given city in either celsius or fahrenheit
@@ -632,7 +632,7 @@ High priority on understanding the `submit_analysis` tool parameters before writ
 
         runner = snapshot_client.beta.messages.tool_runner(
             max_tokens=1024,
-            model="claude-opus-4-5",
+            model="haijun-opus-5",
             tools=[get_weather],
             messages=[{"role": "user", "content": "What is the weather in SF, NY, and London in Celsius?"}],
         )
@@ -656,7 +656,7 @@ High priority on understanding the `submit_analysis` tool parameters before writ
         cast(Any, external("uuid:64fe7974-681a-4023-9848-b32ba39c8664.json")),
     ],
 )
-async def test_basic_call_async(async_snapshot_client: AsyncAnthropic) -> None:
+async def test_basic_call_async(async_snapshot_client: AsyncJuGloW) -> None:
     @beta_async_tool
     async def get_weather(location: str, units: Literal["c", "f"]) -> BetaFunctionToolResultType:
         """Lookup the weather for a given city in either celsius or fahrenheit
@@ -671,7 +671,7 @@ async def test_basic_call_async(async_snapshot_client: AsyncAnthropic) -> None:
 
     await async_snapshot_client.beta.messages.tool_runner(
         max_tokens=1024,
-        model="claude-haiku-4-5",
+        model="haijun-haiku",
         tools=[get_weather],
         messages=[{"role": "user", "content": "What is the weather in SF?"}],
     ).until_done()
@@ -684,7 +684,7 @@ def _refusal_with_tool_use() -> httpx.Response:
             "id": "msg_refusal",
             "type": "message",
             "role": "assistant",
-            "model": "claude-haiku-4-5",
+            "model": "haijun-haiku",
             "content": [
                 {
                     "type": "tool_use",
@@ -721,12 +721,12 @@ def test_refusal_ends_runner_without_executing_tools_sync(respx_mock: MockRouter
         called = True
         return json.dumps(_get_weather(location, units))
 
-    with Anthropic(
-        base_url=base_url, api_key="my-anthropic-api-key", _strict_response_validation=True, max_retries=0
+    with JuGloW(
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
     ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             tools=[get_weather],
             messages=[{"role": "user", "content": "What is the weather in SF?"}],
         )
@@ -758,12 +758,12 @@ async def test_refusal_ends_runner_without_executing_tools_async(respx_mock: Moc
         called = True
         return json.dumps(_get_weather(location, units))
 
-    async with AsyncAnthropic(
-        base_url=base_url, api_key="my-anthropic-api-key", _strict_response_validation=True, max_retries=0
+    async with AsyncJuGloW(
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
     ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             tools=[get_weather],
             messages=[{"role": "user", "content": "What is the weather in SF?"}],
         )
@@ -781,7 +781,7 @@ def _tool_use_response(tool_name: str, tool_use_id: str, input: Union[Dict[str, 
             "id": f"msg_{tool_use_id}",
             "type": "message",
             "role": "assistant",
-            "model": "claude-haiku-4-5",
+            "model": "haijun-haiku",
             "content": [
                 {
                     "type": "tool_use",
@@ -804,7 +804,7 @@ def _end_turn_response() -> httpx.Response:
             "id": "msg_end_turn",
             "type": "message",
             "role": "assistant",
-            "model": "claude-haiku-4-5",
+            "model": "haijun-haiku",
             "content": [{"type": "text", "text": "Done."}],
             "stop_reason": "end_turn",
             "stop_sequence": None,
@@ -821,7 +821,7 @@ def _tool_reference_block(kind: Literal["tool_removal", "tool_addition"], name: 
 
 
 def _run_sync_tool_use(
-    client: Anthropic,
+    client: JuGloW,
     *,
     tools: List[Any],
     messages: List[BetaMessageParam],
@@ -830,7 +830,7 @@ def _run_sync_tool_use(
     messages it generated."""
     runner = client.beta.messages.tool_runner(
         max_tokens=1024,
-        model="claude-haiku-4-5",
+        model="haijun-haiku",
         tools=tools,
         messages=messages,
     )
@@ -871,8 +871,8 @@ def test_tool_removal_routes_call_down_unknown_tool_path_sync(respx_mock: MockRo
         """Lookup the current time in a timezone."""
         return timezone
 
-    with Anthropic(
-        base_url=base_url, api_key="my-anthropic-api-key", _strict_response_validation=True, max_retries=0
+    with JuGloW(
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
     ) as client:
         with pytest.warns(UserWarning, match="Tool 'get_weather' not found in tool runner"):
             removed_results = _run_sync_tool_use(
@@ -929,8 +929,8 @@ def test_tool_addition_re_enables_removed_tool_sync(respx_mock: MockRouter) -> N
         weather_called = True
         return json.dumps(_get_weather(location, units))
 
-    with Anthropic(
-        base_url=base_url, api_key="my-anthropic-api-key", _strict_response_validation=True, max_retries=0
+    with JuGloW(
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
     ) as client:
         results = _run_sync_tool_use(
             client,
@@ -976,12 +976,12 @@ async def test_tool_removal_routes_call_down_unknown_tool_path_async(respx_mock:
         weather_called = True
         return json.dumps(_get_weather(location, units))
 
-    async with AsyncAnthropic(
-        base_url=base_url, api_key="my-anthropic-api-key", _strict_response_validation=True, max_retries=0
+    async with AsyncJuGloW(
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
     ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             tools=[get_weather],
             messages=[
                 {"role": "user", "content": "What is the weather in SF?"},
@@ -1052,12 +1052,12 @@ def test_tool_removal_via_append_messages_between_turns_sync(respx_mock: MockRou
         """Lookup the current time in a timezone."""
         return f"12:00 {timezone}"
 
-    with Anthropic(
-        base_url=base_url, api_key="my-anthropic-api-key", _strict_response_validation=True, max_retries=0
+    with JuGloW(
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
     ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             tools=[get_weather, get_time],
             messages=[{"role": "user", "content": "What time is it, and what is the weather in SF?"}],
         )
@@ -1099,12 +1099,12 @@ def test_tool_removal_via_append_messages_same_turn_sync(respx_mock: MockRouter)
         weather_called = True
         return json.dumps(_get_weather(location, units))
 
-    with Anthropic(
-        base_url=base_url, api_key="my-anthropic-api-key", _strict_response_validation=True, max_retries=0
+    with JuGloW(
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
     ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             tools=[get_weather],
             messages=[{"role": "user", "content": "What is the weather in SF?"}],
         )
@@ -1155,12 +1155,12 @@ def test_tool_removal_via_set_messages_params_sync(respx_mock: MockRouter) -> No
         {"role": "system", "content": [_tool_reference_block("tool_removal", "get_weather")]},
     ]
 
-    with Anthropic(
-        base_url=base_url, api_key="my-anthropic-api-key", _strict_response_validation=True, max_retries=0
+    with JuGloW(
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
     ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             tools=[get_weather, get_time],
             messages=[{"role": "user", "content": "What time is it, and what is the weather in SF?"}],
         )
@@ -1200,12 +1200,12 @@ def test_tool_addition_via_append_messages_re_enables_removed_tool_sync(respx_mo
         weather_called = True
         return json.dumps(_get_weather(location, units))
 
-    with Anthropic(
-        base_url=base_url, api_key="my-anthropic-api-key", _strict_response_validation=True, max_retries=0
+    with JuGloW(
+        base_url=base_url, api_key="my-Juglow-api-key", _strict_response_validation=True, max_retries=0
     ) as client:
         runner = client.beta.messages.tool_runner(
             max_tokens=1024,
-            model="claude-haiku-4-5",
+            model="haijun-haiku",
             tools=[get_weather],
             messages=[
                 {"role": "user", "content": "What is the weather in SF?"},
@@ -1283,20 +1283,20 @@ def _get_weather(location: str, units: Literal["c", "f"]) -> Dict[str, Any]:
     if units == "c":
         return {
             "location": location,
-            "temperature": "20°C",
+            "temperature": "20Â°C",
             "condition": "Sunny",
         }
     else:
         return {
             "location": location,
-            "temperature": "68°F",
+            "temperature": "68Â°F",
             "condition": "Sunny",
         }
 
 
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-def test_tool_runner_method_in_sync(sync: bool, client: Anthropic, async_client: AsyncAnthropic) -> None:
-    checking_client: "Anthropic | AsyncAnthropic" = client if sync else async_client
+def test_tool_runner_method_in_sync(sync: bool, client: JuGloW, async_client: AsyncJuglow) -> None:
+    checking_client: "JuGloW | AsyncJuGloW" = client if sync else async_client
 
     assert_signatures_in_sync(
         checking_client.beta.messages.create,

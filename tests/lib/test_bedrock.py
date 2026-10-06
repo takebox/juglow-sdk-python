@@ -1,4 +1,4 @@
-import re
+﻿import re
 import typing as t
 import tempfile
 from typing import TypedDict, cast
@@ -8,15 +8,15 @@ import httpx
 import pytest
 from respx import MockRouter
 
-from anthropic import AnthropicBedrock, AsyncAnthropicBedrock
-from anthropic.lib.bedrock._stream_decoder import _chunk_bytes_to_sse
+from juglow import JuGloWBedrock, AsyncJuGloWBedrock
+from juglow.lib.bedrock._stream_decoder import _chunk_bytes_to_sse
 
-sync_client = AnthropicBedrock(
+sync_client = JuGloWBedrock(
     aws_region="us-east-1",
     aws_access_key="example-access-key",
     aws_secret_key="example-secret-key",
 )
-async_client = AsyncAnthropicBedrock(
+async_client = AsyncJuGloWBedrock(
     aws_region="us-east-1",
     aws_access_key="example-access-key",
     aws_secret_key="example-secret-key",
@@ -80,7 +80,7 @@ def test_messages_retries(respx_mock: MockRouter) -> None:
                 "content": "Say hello there!",
             }
         ],
-        model="anthropic.claude-3-5-sonnet-20241022-v2:0",
+        model="Juglow.haijun-3-5-sonnet-20241022-v2:0",
     )
 
     calls = cast("list[MockRequestCall]", respx_mock.calls)
@@ -89,11 +89,11 @@ def test_messages_retries(respx_mock: MockRouter) -> None:
 
     assert (
         calls[0].request.url
-        == "https://bedrock-runtime.us-east-1.amazonaws.com/model/anthropic.claude-3-5-sonnet-20241022-v2:0/invoke"
+        == "https://bedrock-runtime.us-east-1.amazonaws.com/model/Juglow.haijun-3-5-sonnet-20241022-v2:0/invoke"
     )
     assert (
         calls[1].request.url
-        == "https://bedrock-runtime.us-east-1.amazonaws.com/model/anthropic.claude-3-5-sonnet-20241022-v2:0/invoke"
+        == "https://bedrock-runtime.us-east-1.amazonaws.com/model/Juglow.haijun-3-5-sonnet-20241022-v2:0/invoke"
     )
 
 
@@ -116,7 +116,7 @@ async def test_messages_retries_async(respx_mock: MockRouter) -> None:
                 "content": "Say hello there!",
             }
         ],
-        model="anthropic.claude-3-5-sonnet-20241022-v2:0",
+        model="Juglow.haijun-3-5-sonnet-20241022-v2:0",
     )
 
     calls = cast("list[MockRequestCall]", respx_mock.calls)
@@ -125,11 +125,11 @@ async def test_messages_retries_async(respx_mock: MockRouter) -> None:
 
     assert (
         calls[0].request.url
-        == "https://bedrock-runtime.us-east-1.amazonaws.com/model/anthropic.claude-3-5-sonnet-20241022-v2:0/invoke"
+        == "https://bedrock-runtime.us-east-1.amazonaws.com/model/Juglow.haijun-3-5-sonnet-20241022-v2:0/invoke"
     )
     assert (
         calls[1].request.url
-        == "https://bedrock-runtime.us-east-1.amazonaws.com/model/anthropic.claude-3-5-sonnet-20241022-v2:0/invoke"
+        == "https://bedrock-runtime.us-east-1.amazonaws.com/model/Juglow.haijun-3-5-sonnet-20241022-v2:0/invoke"
     )
 
 
@@ -167,11 +167,11 @@ def test_application_inference_profile(respx_mock: MockRouter) -> None:
     )
 
 
-sync_api_key_client = AnthropicBedrock(
+sync_api_key_client = JuGloWBedrock(
     aws_region="us-east-1",
     api_key="test-api-key",
 )
-async_api_key_client = AsyncAnthropicBedrock(
+async_api_key_client = AsyncJuGloWBedrock(
     aws_region="us-east-1",
     api_key="test-api-key",
 )
@@ -187,7 +187,7 @@ def test_api_key_auth(respx_mock: MockRouter) -> None:
     sync_api_key_client.messages.create(
         max_tokens=1024,
         messages=[{"role": "user", "content": "Say hello there!"}],
-        model="anthropic.claude-3-5-sonnet-20241022-v2:0",
+        model="Juglow.haijun-3-5-sonnet-20241022-v2:0",
     )
 
     calls = cast("list[MockRequestCall]", respx_mock.calls)
@@ -206,7 +206,7 @@ async def test_api_key_auth_async(respx_mock: MockRouter) -> None:
     await async_api_key_client.messages.create(
         max_tokens=1024,
         messages=[{"role": "user", "content": "Say hello there!"}],
-        model="anthropic.claude-3-5-sonnet-20241022-v2:0",
+        model="Juglow.haijun-3-5-sonnet-20241022-v2:0",
     )
 
     calls = cast("list[MockRequestCall]", respx_mock.calls)
@@ -216,13 +216,13 @@ async def test_api_key_auth_async(respx_mock: MockRouter) -> None:
 
 def test_api_key_from_env(monkeypatch: t.Any) -> None:
     monkeypatch.setenv("AWS_BEARER_TOKEN_BEDROCK", "env-api-key")
-    client = AnthropicBedrock(aws_region="us-east-1")
+    client = JuGloWBedrock(aws_region="us-east-1")
     assert client.api_key == "env-api-key"
 
 
 def test_api_key_mutual_exclusion() -> None:
     with pytest.raises(ValueError, match="Cannot specify both"):
-        AnthropicBedrock(
+        JuGloWBedrock(
             aws_region="us-east-1",
             api_key="test-api-key",
             aws_access_key="example-access-key",
@@ -231,7 +231,7 @@ def test_api_key_mutual_exclusion() -> None:
 
 def test_api_key_mutual_exclusion_async() -> None:
     with pytest.raises(ValueError, match="Cannot specify both"):
-        AsyncAnthropicBedrock(
+        AsyncJuGloWBedrock(
             aws_region="us-east-1",
             api_key="test-api-key",
             aws_secret_key="example-secret-key",
@@ -241,7 +241,7 @@ def test_api_key_mutual_exclusion_async() -> None:
 def test_api_key_env_mutual_exclusion(monkeypatch: t.Any) -> None:
     monkeypatch.setenv("AWS_BEARER_TOKEN_BEDROCK", "env-api-key")
     with pytest.raises(ValueError, match="Cannot specify both"):
-        AnthropicBedrock(
+        JuGloWBedrock(
             aws_region="us-east-1",
             aws_access_key="example-access-key",
         )
@@ -251,7 +251,7 @@ def test_region_infer_from_profile(
     mock_aws_config: None,  # noqa: ARG001
     profiles: t.List[AwsConfigProfile],
 ) -> None:
-    client = AnthropicBedrock()
+    client = JuGloWBedrock()
     assert client.aws_region == profiles[0]["region"]
 
 
@@ -273,7 +273,7 @@ def test_region_infer_from_specified_profile(
     monkeypatch: t.Any,
 ) -> None:
     monkeypatch.setenv("AWS_PROFILE", aws_profile)
-    client = AnthropicBedrock()
+    client = JuGloWBedrock()
 
     assert client.aws_region == next(profile for profile in profiles if profile["name"] == aws_profile)["region"]
 
@@ -281,7 +281,7 @@ def test_region_infer_from_specified_profile(
 def test_chunk_bytes_to_sse_typed_event() -> None:
     raw = (
         b'{"type":"message_start","message":{"id":"msg_123","type":"message","role":"assistant",'
-        b'"content":[],"model":"claude-x","stop_reason":null,"stop_sequence":null,'
+        b'"content":[],"model":"haijun-x","stop_reason":null,"stop_sequence":null,'
         b'"usage":{"input_tokens":1,"output_tokens":1}}}'
     )
     sse = _chunk_bytes_to_sse(raw)
@@ -291,7 +291,7 @@ def test_chunk_bytes_to_sse_typed_event() -> None:
 
 
 def test_chunk_bytes_to_sse_legacy_completion() -> None:
-    raw = b'{"completion":" Hello","stop_reason":null,"model":"claude-2"}'
+    raw = b'{"completion":" Hello","stop_reason":null,"model":"haijun-2"}'
     sse = _chunk_bytes_to_sse(raw)
     assert sse is not None
     assert sse.event == "completion"
@@ -299,7 +299,7 @@ def test_chunk_bytes_to_sse_legacy_completion() -> None:
 
 def test_chunk_bytes_to_sse_legacy_completion_with_metrics() -> None:
     raw = (
-        b'{"completion":" Hello","stop_reason":"stop_sequence","model":"claude-2",'
+        b'{"completion":" Hello","stop_reason":"stop_sequence","model":"haijun-2",'
         b'"amazon-bedrock-invocationMetrics":{"inputTokenCount":1,"outputTokenCount":1}}'
     )
     sse = _chunk_bytes_to_sse(raw)

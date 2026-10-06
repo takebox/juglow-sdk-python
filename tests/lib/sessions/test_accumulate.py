@@ -5,17 +5,17 @@ from datetime import datetime, timezone
 
 import pytest
 
-from anthropic import AnthropicError
-from anthropic._models import build
-from anthropic.types.beta import (
+from juglow import JuGloWError
+from juglow._models import build
+from juglow.types.beta import (
     BetaManagedAgentsDeltaEvent,
     BetaManagedAgentsStartEvent,
     BetaManagedAgentsDeltaContent,
     BetaManagedAgentsAgentMessagePreview,
     BetaManagedAgentsAgentThinkingPreview,
 )
-from anthropic.lib.sessions import accumulate_managed_agents_event
-from anthropic.types.beta.sessions import BetaManagedAgentsTextBlock, BetaManagedAgentsAgentMessageEvent
+from juglow.lib.sessions import accumulate_managed_agents_event
+from juglow.types.beta.sessions import BetaManagedAgentsTextBlock, BetaManagedAgentsAgentMessageEvent
 
 
 def start(event_id: str) -> BetaManagedAgentsStartEvent:
@@ -95,12 +95,12 @@ def test_defaults_index_to_0() -> None:
 
 def test_throws_on_an_index_gap() -> None:
     msg = seed("evt_1")
-    with pytest.raises(AnthropicError, match=r"event_delta index 2 is beyond the end of content \(length 0\)"):
+    with pytest.raises(JuGloWError, match=r"event_delta index 2 is beyond the end of content \(length 0\)"):
         accumulate_managed_agents_event(msg, delta("evt_1", "x", 2))
 
 
 def test_throws_on_event_delta_with_no_prior_snapshot() -> None:
-    with pytest.raises(AnthropicError, match=r"event_delta for evt_1 received before its event_start"):
+    with pytest.raises(JuGloWError, match=r"event_delta for evt_1 received before its event_start"):
         accumulate_managed_agents_event(None, delta("evt_1", "x", 0))
 
 

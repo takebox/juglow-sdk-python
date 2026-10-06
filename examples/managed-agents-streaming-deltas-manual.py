@@ -9,11 +9,11 @@ from __future__ import annotations
 
 import sys
 
-from anthropic import Anthropic
-from anthropic.lib.sessions import accumulate_managed_agents_event
-from anthropic.types.beta.sessions import BetaManagedAgentsAgentMessageEvent
+from juglow import JuGloW
+from juglow.lib.sessions import accumulate_managed_agents_event
+from juglow.types.beta.sessions import BetaManagedAgentsAgentMessageEvent
 
-client = Anthropic()
+client = JuGloW()
 
 
 def message_text(event: BetaManagedAgentsAgentMessageEvent) -> str:
@@ -29,7 +29,7 @@ def main() -> None:
 
     agent = client.beta.agents.create(
         name="streaming-deltas-manual-example",
-        model="claude-sonnet-4-6",
+        model="haijun-sonnet",
     )
     print("Created agent:", agent.id)
 

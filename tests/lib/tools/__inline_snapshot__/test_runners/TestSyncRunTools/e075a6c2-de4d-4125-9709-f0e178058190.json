@@ -1,16 +1,16 @@
-[
+﻿[
   {
     "request": {
       "method": "POST",
-      "url": "https://api.anthropic.com/v1/messages?beta=true",
+      "url": "https://platform.juglow.my.id/v1/messages?beta=true",
       "headers": {
-        "host": "api.anthropic.com",
+        "host": "platform.juglow.my.id",
         "accept-encoding": "gzip, deflate",
         "connection": "keep-alive",
         "x-stainless-timeout": "600",
         "accept": "application/json",
         "content-type": "application/json",
-        "user-agent": "Anthropic/Python 0.82.0",
+        "user-agent": "JuGloW/Python 0.82.0",
         "x-stainless-lang": "python",
         "x-stainless-package-version": "0.82.0",
         "x-stainless-os": "MacOS",
@@ -18,9 +18,9 @@
         "x-stainless-runtime": "CPython",
         "x-stainless-runtime-version": "3.9.18",
         "x-stainless-async": "false",
-        "anthropic-version": "2023-06-01",
+        "juglow-version": "2023-06-01",
         "x-stainless-helper": "BetaToolRunner",
-        "anthropic-beta": "structured-outputs-2025-12-15",
+        "juglow-beta": "structured-outputs-2025-12-15",
         "x-stainless-retry-count": "0",
         "x-stainless-read-timeout": "600",
         "content-length": "779"
@@ -33,7 +33,7 @@
             "content": "What's the weather in San Francisco, New York, London, Tokyo and Paris?If you need to use tools, call only one tool at a time. Wait for the tool'sresponse before making another call. Never call multiple tools at once."
           }
         ],
-        "model": "claude-haiku-4-5",
+        "model": "haijun-haiku",
         "tools": [
           {
             "name": "get_weather",
@@ -78,7 +78,7 @@
         "content-security-policy": "default-src 'none'; frame-ancestors 'none'"
       },
       "body": {
-        "model": "claude-haiku-4-5-20251001",
+        "model": "haijun-haiku-20251001",
         "id": "msg_01UBZt9MX63Tk3v1gKvgxk3A",
         "type": "message",
         "role": "assistant",
@@ -120,15 +120,15 @@
   {
     "request": {
       "method": "POST",
-      "url": "https://api.anthropic.com/v1/messages?beta=true",
+      "url": "https://platform.juglow.my.id/v1/messages?beta=true",
       "headers": {
-        "host": "api.anthropic.com",
+        "host": "platform.juglow.my.id",
         "accept-encoding": "gzip, deflate",
         "connection": "keep-alive",
         "x-stainless-timeout": "600",
         "accept": "application/json",
         "content-type": "application/json",
-        "user-agent": "Anthropic/Python 0.82.0",
+        "user-agent": "JuGloW/Python 0.82.0",
         "x-stainless-lang": "python",
         "x-stainless-package-version": "0.82.0",
         "x-stainless-os": "MacOS",
@@ -136,9 +136,9 @@
         "x-stainless-runtime": "CPython",
         "x-stainless-runtime-version": "3.9.18",
         "x-stainless-async": "false",
-        "anthropic-version": "2023-06-01",
+        "juglow-version": "2023-06-01",
         "x-stainless-helper": "BetaToolRunner",
-        "anthropic-beta": "structured-outputs-2025-12-15",
+        "juglow-beta": "structured-outputs-2025-12-15",
         "x-stainless-retry-count": "0",
         "x-stainless-read-timeout": "600",
         "content-length": "1290"
@@ -182,7 +182,7 @@
             ]
           }
         ],
-        "model": "claude-haiku-4-5",
+        "model": "haijun-haiku",
         "tools": [
           {
             "name": "get_weather",
@@ -227,7 +227,7 @@
         "cf-cache-status": "DYNAMIC"
       },
       "body": {
-        "model": "claude-haiku-4-5-20251001",
+        "model": "haijun-haiku-20251001",
         "id": "msg_01BAceCxj9VxXR9GhBedwTm2",
         "type": "message",
         "role": "assistant",

@@ -1,6 +1,6 @@
-from anthropic import Anthropic
+from juglow import JuGloW
 
-client = Anthropic()
+client = JuGloW()
 
 response = client.messages.create(
     max_tokens=1024,
@@ -10,7 +10,7 @@ response = client.messages.create(
             "content": "Hello!",
         }
     ],
-    model="claude-sonnet-5",
+    model="haijun-sonnet",
 )
 print(response)
 
@@ -30,6 +30,6 @@ response2 = client.messages.create(
             "content": "How are you?",
         },
     ],
-    model="claude-sonnet-5",
+    model="haijun-sonnet",
 )
 print(response2)

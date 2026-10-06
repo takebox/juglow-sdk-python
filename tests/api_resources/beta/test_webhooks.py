@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import pytest
 import standardwebhooks
 
-from anthropic import Anthropic
+from juglow import JuGloW
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -26,7 +26,7 @@ class TestWebhooks:
             (None, "whsec_c2VjcmV0Cg=="),
         ],
     )
-    def test_method_unwrap(self, client: Anthropic, client_opt: str | None, method_opt: str | bytes | None) -> None:
+    def test_method_unwrap(self, client: JuGloW, client_opt: str | None, method_opt: str | bytes | None) -> None:
         hook = standardwebhooks.Webhook(b"secret\n")
 
         client = client.with_options(webhook_key=client_opt)
@@ -72,7 +72,7 @@ class TestAsyncWebhooks:
         ],
     )
     def test_method_unwrap(
-        self, async_client: Anthropic, client_opt: str | None, method_opt: str | bytes | None
+        self, async_client: JuGloW, client_opt: str | None, method_opt: str | bytes | None
     ) -> None:
         hook = standardwebhooks.Webhook(b"secret\n")
 

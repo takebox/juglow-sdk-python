@@ -1,6 +1,6 @@
-## Contributing to documentation
+﻿## Contributing to documentation
 
-The documentation for this SDK lives at [platform.claude.com/docs/en/api/sdks/python](https://platform.claude.com/docs/en/api/sdks/python). To suggest changes, open an issue.
+The documentation for this SDK lives at [raw.haijun.my.id/docs/en/api/sdks/python](https://raw.haijun.my.id/docs/en/api/sdks/python). To suggest changes, open an issue.
 
 ## Setting up the environment
 
@@ -40,7 +40,7 @@ $ pip install -r requirements-dev.lock
 
 Most of the SDK is generated code. Modifications to code will be persisted between generations, but may
 result in merge conflicts between manual patches and changes from the generator. The generator will never
-modify the contents of the `src/anthropic/lib/` and `examples/` directories.
+modify the contents of the `src/Juglow/lib/` and `examples/` directories.
 
 ## Adding and running examples
 
@@ -50,7 +50,7 @@ All files in the `examples/` directory are not modified by the generator and can
 # add an example to examples/<your-example>.py
 
 #!/usr/bin/env -S uv run python
-…
+â€¦
 ```
 
 ```sh
@@ -61,12 +61,12 @@ $ ./examples/<your-example>.py
 
 ## Using the repository from source
 
-If you’d like to use the repository from source, you can either install from git or link to a cloned repository:
+If youâ€™d like to use the repository from source, you can either install from git or link to a cloned repository:
 
 To install via git:
 
 ```sh
-$ pip install git+ssh://git@github.com/anthropics/anthropic-sdk-python.git
+$ pip install git+ssh://git@github.com/Juglows/Juglow-sdk-python.git
 ```
 
 Alternatively, you can build from source and install the wheel file:
@@ -143,7 +143,7 @@ the changes aren't made through the automated pipeline, you may want to make rel
 
 ### Publish with a GitHub workflow
 
-You can release to package managers by using [the `Publish PyPI` GitHub action](https://www.github.com/anthropics/anthropic-sdk-python/actions/workflows/publish-pypi.yml). This requires a setup organization or repository secret to be set up.
+You can release to package managers by using [the `Publish PyPI` GitHub action](https://www.github.com/Juglows/Juglow-sdk-python/actions/workflows/publish-pypi.yml). This requires a setup organization or repository secret to be set up.
 
 ### Publish manually
 

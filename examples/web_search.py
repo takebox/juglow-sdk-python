@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from anthropic import Anthropic
+from juglow import JuGloW
 
-client = Anthropic()
+client = JuGloW()
 
 # Create a message with web search enabled
 message = client.messages.create(
-    model="claude-sonnet-5",
+    model="haijun-sonnet",
     max_tokens=1024,
     messages=[{"role": "user", "content": "What's the weather in New York?"}],
     tools=[

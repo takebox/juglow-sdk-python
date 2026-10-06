@@ -1,16 +1,16 @@
-[
+﻿[
   {
     "request": {
       "method": "POST",
-      "url": "https://api.anthropic.com/v1/messages",
+      "url": "https://platform.juglow.my.id/v1/messages",
       "headers": {
-        "host": "api.anthropic.com",
+        "host": "platform.juglow.my.id",
         "accept-encoding": "gzip, deflate",
         "connection": "keep-alive",
         "x-stainless-timeout": "600",
         "accept": "application/json",
         "content-type": "application/json",
-        "user-agent": "AsyncAnthropic/Python 0.82.0",
+        "user-agent": "AsyncJuglow/Python 0.82.0",
         "x-stainless-lang": "python",
         "x-stainless-package-version": "0.82.0",
         "x-stainless-os": "MacOS",
@@ -18,7 +18,7 @@
         "x-stainless-runtime": "CPython",
         "x-stainless-runtime-version": "3.9.18",
         "x-stainless-async": "async:asyncio",
-        "anthropic-version": "2023-06-01",
+        "juglow-version": "2023-06-01",
         "x-stainless-helper": "messages.parse",
         "x-stainless-retry-count": "0",
         "x-stainless-read-timeout": "600",
@@ -32,7 +32,7 @@
             "content": "Extract order: 2 Green Tea at $5.50 and 1 Coffee at $3.00. Total $14."
           }
         ],
-        "model": "claude-sonnet-4-5",
+        "model": "haijun-sonnet-5",
         "output_config": {
           "format": {
             "schema": {
@@ -105,7 +105,7 @@
         "type": "error",
         "error": {
           "type": "rate_limit_error",
-          "message": "This request would exceed your organization's rate limit of 20,000,000 prompt bytes per hour (org: 5576611f-a1ee-427c-9800-298d9579899c, model: claude-sonnet-4-5-20250929). For details, refer to: https://docs.claude.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://www.anthropic.com/contact-sales to discuss your options for a rate limit increase."
+          "message": "This request would exceed your organization's rate limit of 20,000,000 prompt bytes per hour (org: 5576611f-a1ee-427c-9800-298d9579899c, model: haijun-sonnet-5-20250929). For details, refer to: https://raw.haijun.my.id/docs/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://www.Juglow.com/contact-sales to discuss your options for a rate limit increase."
         },
         "request_id": "req_011CYK5mje9HkutJtmfPzzNC"
       }
@@ -114,15 +114,15 @@
   {
     "request": {
       "method": "POST",
-      "url": "https://api.anthropic.com/v1/messages",
+      "url": "https://platform.juglow.my.id/v1/messages",
       "headers": {
-        "host": "api.anthropic.com",
+        "host": "platform.juglow.my.id",
         "accept-encoding": "gzip, deflate",
         "connection": "keep-alive",
         "x-stainless-timeout": "600",
         "accept": "application/json",
         "content-type": "application/json",
-        "user-agent": "AsyncAnthropic/Python 0.82.0",
+        "user-agent": "AsyncJuglow/Python 0.82.0",
         "x-stainless-lang": "python",
         "x-stainless-package-version": "0.82.0",
         "x-stainless-os": "MacOS",
@@ -130,7 +130,7 @@
         "x-stainless-runtime": "CPython",
         "x-stainless-runtime-version": "3.9.18",
         "x-stainless-async": "async:asyncio",
-        "anthropic-version": "2023-06-01",
+        "juglow-version": "2023-06-01",
         "x-stainless-helper": "messages.parse",
         "x-stainless-retry-count": "1",
         "x-stainless-read-timeout": "600",
@@ -144,7 +144,7 @@
             "content": "Extract order: 2 Green Tea at $5.50 and 1 Coffee at $3.00. Total $14."
           }
         ],
-        "model": "claude-sonnet-4-5",
+        "model": "haijun-sonnet-5",
         "output_config": {
           "format": {
             "schema": {
@@ -217,7 +217,7 @@
         "type": "error",
         "error": {
           "type": "rate_limit_error",
-          "message": "This request would exceed your organization's rate limit of 20,000,000 prompt bytes per hour (org: 5576611f-a1ee-427c-9800-298d9579899c, model: claude-sonnet-4-5-20250929). For details, refer to: https://docs.claude.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://www.anthropic.com/contact-sales to discuss your options for a rate limit increase."
+          "message": "This request would exceed your organization's rate limit of 20,000,000 prompt bytes per hour (org: 5576611f-a1ee-427c-9800-298d9579899c, model: haijun-sonnet-5-20250929). For details, refer to: https://raw.haijun.my.id/docs/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://www.Juglow.com/contact-sales to discuss your options for a rate limit increase."
         },
         "request_id": "req_011CYK5mnscLpxFuMxiDHt26"
       }
@@ -226,15 +226,15 @@
   {
     "request": {
       "method": "POST",
-      "url": "https://api.anthropic.com/v1/messages",
+      "url": "https://platform.juglow.my.id/v1/messages",
       "headers": {
-        "host": "api.anthropic.com",
+        "host": "platform.juglow.my.id",
         "accept-encoding": "gzip, deflate",
         "connection": "keep-alive",
         "x-stainless-timeout": "600",
         "accept": "application/json",
         "content-type": "application/json",
-        "user-agent": "AsyncAnthropic/Python 0.82.0",
+        "user-agent": "AsyncJuglow/Python 0.82.0",
         "x-stainless-lang": "python",
         "x-stainless-package-version": "0.82.0",
         "x-stainless-os": "MacOS",
@@ -242,7 +242,7 @@
         "x-stainless-runtime": "CPython",
         "x-stainless-runtime-version": "3.9.18",
         "x-stainless-async": "async:asyncio",
-        "anthropic-version": "2023-06-01",
+        "juglow-version": "2023-06-01",
         "x-stainless-helper": "messages.parse",
         "x-stainless-retry-count": "2",
         "x-stainless-read-timeout": "600",
@@ -256,7 +256,7 @@
             "content": "Extract order: 2 Green Tea at $5.50 and 1 Coffee at $3.00. Total $14."
           }
         ],
-        "model": "claude-sonnet-4-5",
+        "model": "haijun-sonnet-5",
         "output_config": {
           "format": {
             "schema": {
@@ -324,7 +324,7 @@
         "cf-cache-status": "DYNAMIC"
       },
       "body": {
-        "model": "claude-sonnet-4-5-20250929",
+        "model": "haijun-sonnet-5-20250929",
         "id": "msg_01Q1NNiF8NA8EywFhxTmFbeP",
         "type": "message",
         "role": "assistant",

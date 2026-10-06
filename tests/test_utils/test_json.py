@@ -5,8 +5,8 @@ from typing import Union
 
 import pydantic
 
-from anthropic import _compat
-from anthropic._utils._json import openapi_dumps
+from juglow import _compat
+from juglow._utils._json import openapi_dumps
 
 
 class TestOpenapiDumps:

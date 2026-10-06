@@ -3,7 +3,7 @@
 To define a tool, you can use the `@beta_tool` decorator on any python function like so:
 
 ```python
-from anthropic import beta_tool
+from juglow import beta_tool
 
 @beta_tool
 def sum(left: int, right: int) -> str:
@@ -54,7 +54,7 @@ message = client.beta.messages.create(
     tools=[get_weather.to_dict()],
     # ...
     max_tokens=1024,
-    model="claude-sonnet-4-5-20250929",
+    model="haijun-sonnet-5-20250929",
     messages=[{"role": "user", "content": "What is 2 + 2?"}],
 )
 ```
@@ -68,7 +68,7 @@ We provide a `client.beta.messages.tool_runner()` method that can automatically 
 ```py
 runner = client.beta.messages.tool_runner(
     max_tokens=1024,
-    model="claude-sonnet-4-5-20250929",
+    model="haijun-sonnet-5-20250929",
     tools=[sum],
     messages=[{"role": "user", "content": "What is 9 + 10?"}],
 )
@@ -81,8 +81,8 @@ for message in runner:
 To report an error from a tool back to the model, raise a `ToolError`. Unlike a plain exception, `ToolError` accepts content blocks, allowing you to include images or other structured content in the error response:
 
 ```py
-from anthropic import beta_tool
-from anthropic.lib.tools import ToolError
+from juglow import beta_tool
+from juglow.lib.tools import ToolError
 
 @beta_tool
 def take_screenshot(url: str) -> str:

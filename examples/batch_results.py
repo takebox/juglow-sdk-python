@@ -3,9 +3,9 @@ import time
 
 import rich
 
-from anthropic import Anthropic
+from juglow import JuGloW
 
-client = Anthropic()
+client = JuGloW()
 
 try:
     batch_id = sys.argv[1]

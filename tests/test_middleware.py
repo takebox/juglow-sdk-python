@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import os
 import re
@@ -12,35 +12,35 @@ import httpx
 import pytest
 from respx import MockRouter
 
-from anthropic import (
+from juglow import (
     Stream,
     CallNext,
-    Anthropic,
+    JuGloW,
     APIRequest,
     Middleware,
     APIResponse,
     AsyncCallNext,
-    AsyncAnthropic,
+    AsyncJuGloW,
     RetryableError,
-    AnthropicVertex,
+    JuGloWVertex,
     BadRequestError,
-    AnthropicBedrock,
+    JuGloWBedrock,
     AsyncAPIResponse,
     APIConnectionError,
-    AsyncAnthropicVertex,
-    AsyncAnthropicBedrock,
-    AnthropicBedrockMantle,
-    AsyncAnthropicBedrockMantle,
+    AsyncJuGloWVertex,
+    AsyncJuGloWBedrock,
+    JuGloWBedrockMantle,
+    AsyncJuGloWBedrockMantle,
 )
-from anthropic._models import FinalRequestOptions
-from anthropic.lib.aws import AnthropicAWS, AsyncAnthropicAWS
-from anthropic._response import BinaryAPIResponse, AsyncBinaryAPIResponse, StreamedBinaryAPIResponse
-from anthropic.lib.foundry import AnthropicFoundry, AsyncAnthropicFoundry
-from anthropic.types.message import Message
-from anthropic._legacy_response import LegacyAPIResponse
+from juglow._models import FinalRequestOptions
+from juglow.lib.aws import JuGloWAWS, AsyncJuGloWAWS
+from juglow._response import BinaryAPIResponse, AsyncBinaryAPIResponse, StreamedBinaryAPIResponse
+from juglow.lib.foundry import JuGloWFoundry, AsyncJuGloWFoundry
+from juglow.types.message import Message
+from juglow._legacy_response import LegacyAPIResponse
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
-api_key = "my-anthropic-api-key"
+api_key = "my-Juglow-api-key"
 
 
 class MockRequestCall(Protocol):
@@ -51,15 +51,15 @@ def _low_retry_timeout(*_args: Any, **_kwargs: Any) -> float:
     return 0.1
 
 
-def make_sync_client(**kwargs: Any) -> Anthropic:
-    return Anthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True, **kwargs)
+def make_sync_client(**kwargs: Any) -> JuGloW:
+    return JuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True, **kwargs)
 
 
-def make_async_client(**kwargs: Any) -> AsyncAnthropic:
-    return AsyncAnthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True, **kwargs)
+def make_async_client(**kwargs: Any) -> AsyncJuGloW:
+    return AsyncJuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True, **kwargs)
 
 
-def message_body(*, model: str = "claude-opus-4-6") -> dict[str, Any]:
+def message_body(*, model: str = "haijun-opus") -> dict[str, Any]:
     return {
         "id": "msg_013Zva2CMHLNnXjNJJKqJ2EF",
         "type": "message",
@@ -359,7 +359,7 @@ class RetryOnInternalServerError(Middleware):
         return result
 
 
-def short_circuit_message(*, model: str = "claude-opus-4-6") -> Message:
+def short_circuit_message(*, model: str = "haijun-opus") -> Message:
     return Message.construct(**message_body(model=model))
 
 
@@ -379,7 +379,7 @@ class TestAPIRequest:
         options = FinalRequestOptions.construct(
             method="post",
             url="/v1/messages",
-            json_data={"model": "claude-opus-4-6", "max_tokens": 16},
+            json_data={"model": "haijun-opus", "max_tokens": 16},
             headers={"x-foo": "bar"},
             params={"beta": "true"},
             max_retries=3,
@@ -389,7 +389,7 @@ class TestAPIRequest:
 
         assert request.method == "post"
         assert request.url == "/v1/messages"
-        assert request.json == {"model": "claude-opus-4-6", "max_tokens": 16}
+        assert request.json == {"model": "haijun-opus", "max_tokens": 16}
         assert request.headers == {"x-foo": "bar"}
         assert request.query_params == {"beta": "true"}
         assert request.timeout == 10.0
@@ -408,16 +408,16 @@ class TestAPIRequest:
         options = FinalRequestOptions.construct(
             method="post",
             url="/v1/messages",
-            json_data={"model": "claude-opus-4-6", "max_tokens": 16},
+            json_data={"model": "haijun-opus", "max_tokens": 16},
             max_retries=3,
         )
         request = APIRequest(options=options, cast_to=Message)
 
-        copied = request.copy(body={"model": "claude-sonnet-4-5"}, headers={"x-trace-id": "123"})
+        copied = request.copy(body={"model": "haijun-sonnet-5"}, headers={"x-trace-id": "123"})
 
         assert copied is not request
         assert copied.options is not request.options
-        assert copied.json == {"model": "claude-sonnet-4-5"}
+        assert copied.json == {"model": "haijun-sonnet-5"}
         assert copied.headers == {"x-trace-id": "123"}
         assert copied.method == "post"
         assert copied.url == "/v1/messages"
@@ -425,7 +425,7 @@ class TestAPIRequest:
         assert copied.stream is False
 
         # the original request is untouched
-        assert request.json == {"model": "claude-opus-4-6", "max_tokens": 16}
+        assert request.json == {"model": "haijun-opus", "max_tokens": 16}
         assert request.headers == {}
 
     def test_retries_taken_defaults_to_zero_and_copy_preserves_it(self) -> None:
@@ -437,7 +437,7 @@ class TestAPIRequest:
         assert attempt.copy(headers={"x-trace-id": "123"}).retries_taken == 2
 
     def test_copy_deep_copies_body(self) -> None:
-        body: dict[str, Any] = {"model": "claude-opus-4-6", "messages": [{"role": "user", "content": "hi"}]}
+        body: dict[str, Any] = {"model": "haijun-opus", "messages": [{"role": "user", "content": "hi"}]}
         options = FinalRequestOptions.construct(method="post", url="/v1/messages", json_data=body)
         request = APIRequest(options=options, cast_to=Message)
 
@@ -446,7 +446,7 @@ class TestAPIRequest:
         assert isinstance(copied_body, dict)
         cast("dict[str, Any]", copied_body)["messages"][0]["content"] = "changed"
 
-        assert request.json == {"model": "claude-opus-4-6", "messages": [{"role": "user", "content": "hi"}]}
+        assert request.json == {"model": "haijun-opus", "messages": [{"role": "user", "content": "hi"}]}
 
     def test_copy_does_not_deep_copy_file_objects(self, tmp_path: Path) -> None:
         # file/IO objects cannot be deep-copied; `copy()` must carry them over by reference
@@ -480,7 +480,7 @@ class TestAPIRequest:
             method="post",
             url="/v1/messages",
             headers={"x-foo": "bar"},
-            json_data={"model": "claude-opus-4-6"},
+            json_data={"model": "haijun-opus"},
         )
         request = APIRequest(options=options, cast_to=Message)
 
@@ -539,7 +539,7 @@ class TestMiddlewareValidation:
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
@@ -564,7 +564,7 @@ class TestMiddlewareValidation:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
@@ -598,7 +598,7 @@ class TestSyncMiddleware:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
@@ -611,7 +611,7 @@ class TestSyncMiddleware:
         assert request.cast_to is Message
         assert request.stream is False
         body = middleware_request_body(request)
-        assert body["model"] == "claude-opus-4-6"
+        assert body["model"] == "haijun-opus"
         assert body["max_tokens"] == 1024
 
         # the middleware itself saw the `APIResponse` wrapper; the value the caller
@@ -633,7 +633,7 @@ class TestSyncMiddleware:
         client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert events == ["outer:enter", "inner:enter", "inner:exit", "outer:exit"]
@@ -642,19 +642,19 @@ class TestSyncMiddleware:
     def test_request_mutation_changes_outgoing_request(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/v1/messages").mock(return_value=httpx.Response(200, json=message_body()))
 
-        client = make_sync_client(middleware=[MutateBody(model="claude-sonnet-4-5", max_tokens=4096)])
+        client = make_sync_client(middleware=[MutateBody(model="haijun-sonnet-5", max_tokens=4096)])
 
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
         calls = cast("list[MockRequestCall]", respx_mock.calls)
         assert len(calls) == 1
         sent = request_body(calls[0])
-        assert sent["model"] == "claude-sonnet-4-5"
+        assert sent["model"] == "haijun-sonnet-5"
         assert sent["max_tokens"] == 4096
         assert sent["messages"] == [{"role": "user", "content": "Hello"}]
 
@@ -663,25 +663,25 @@ class TestSyncMiddleware:
         respx_mock.post("/v1/messages").mock(
             side_effect=[
                 httpx.Response(529, json=error_body(type="overloaded_error", message="Overloaded")),
-                httpx.Response(200, json=message_body(model="claude-sonnet-4-5")),
+                httpx.Response(200, json=message_body(model="haijun-sonnet-5")),
             ]
         )
 
-        client = make_sync_client(middleware=[ModelFallback("claude-sonnet-4-5")], max_retries=0)
+        client = make_sync_client(middleware=[ModelFallback("haijun-sonnet-5")], max_retries=0)
 
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
-        assert message.model == "claude-sonnet-4-5"
+        assert message.model == "haijun-sonnet-5"
 
         calls = cast("list[MockRequestCall]", respx_mock.calls)
         assert len(calls) == 2
-        assert request_body(calls[0])["model"] == "claude-opus-4-6"
-        assert request_body(calls[1])["model"] == "claude-sonnet-4-5"
+        assert request_body(calls[0])["model"] == "haijun-opus"
+        assert request_body(calls[1])["model"] == "haijun-sonnet-5"
 
     @pytest.mark.respx(base_url=base_url)
     def test_retry_with_modified_params_on_request_too_large(self, respx_mock: MockRouter) -> None:
@@ -697,7 +697,7 @@ class TestSyncMiddleware:
         message = client.messages.create(
             max_tokens=4096,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
@@ -710,14 +710,14 @@ class TestSyncMiddleware:
     def test_short_circuit_skips_http_request(self, respx_mock: MockRouter) -> None:
         route = respx_mock.post("/v1/messages").mock(return_value=httpx.Response(200, json=message_body()))
 
-        cached = short_circuit_message(model="claude-cached")
+        cached = short_circuit_message(model="haijun-cached")
         middleware = ShortCircuit(cached)
         client = make_sync_client(middleware=[middleware])
 
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert message is cached
@@ -736,14 +736,14 @@ class TestSyncMiddleware:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
         calls = cast("list[MockRequestCall]", respx_mock.calls)
         assert calls[0].request.headers["x-trace-id"] == "abc-123"
 
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_middleware_runs_per_attempt(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/v1/messages").mock(
@@ -760,7 +760,7 @@ class TestSyncMiddleware:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
@@ -771,7 +771,7 @@ class TestSyncMiddleware:
         assert recorder.errors == []
         assert len(respx_mock.calls) == 3
 
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url, assert_all_called=False)
     def test_middleware_error_is_not_retried(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/v1/messages").mock(return_value=httpx.Response(200, json=message_body()))
@@ -783,14 +783,14 @@ class TestSyncMiddleware:
             client.messages.create(
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Hello"}],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             )
 
         # the middleware's own error propagates immediately, without re-running the chain
         assert recorder.attempts == [0]
         assert len(respx_mock.calls) == 0
 
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url, assert_all_called=False)
     def test_retryable_error_is_retried_then_propagates(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/v1/messages").mock(return_value=httpx.Response(200, json=message_body()))
@@ -807,13 +807,13 @@ class TestSyncMiddleware:
             client.messages.create(
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Hello"}],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             )
 
         assert attempts == [0, 1, 2]
         assert len(respx_mock.calls) == 0
 
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_error_with_retryable_cause_is_retried(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/v1/messages").mock(
@@ -835,13 +835,13 @@ class TestSyncMiddleware:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
         assert len(respx_mock.calls) == 2
 
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_returned_error_response_raises_typed_error_for_caller(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/v1/messages").mock(
@@ -855,7 +855,7 @@ class TestSyncMiddleware:
             client.messages.create(
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Hello"}],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             )
 
         # middleware saw the error response rather than an exception; the SDK
@@ -864,7 +864,7 @@ class TestSyncMiddleware:
         assert recorder.errors == []
         assert len(respx_mock.calls) == 1
 
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_request_modifications_do_not_persist_across_attempts(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/v1/messages").mock(
@@ -884,7 +884,7 @@ class TestSyncMiddleware:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
@@ -904,7 +904,7 @@ class TestSyncMiddleware:
         stream = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             stream=True,
         )
 
@@ -925,19 +925,19 @@ class TestSyncMiddleware:
             ]
         )
 
-        client = make_sync_client(middleware=[ModelFallback("claude-sonnet-4-5")], max_retries=0)
+        client = make_sync_client(middleware=[ModelFallback("haijun-sonnet-5")], max_retries=0)
 
         stream = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
             stream=True,
         )
 
         assert isinstance(stream, Stream)
         calls = cast("list[MockRequestCall]", respx_mock.calls)
         assert len(calls) == 2
-        assert request_body(calls[1])["model"] == "claude-sonnet-4-5"
+        assert request_body(calls[1])["model"] == "haijun-sonnet-5"
         stream.close()
 
     @pytest.mark.respx(base_url=base_url)
@@ -952,7 +952,7 @@ class TestSyncMiddleware:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
@@ -972,7 +972,7 @@ class TestSyncMiddleware:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         # the value parsed inside the middleware is the same object the caller receives
@@ -990,7 +990,7 @@ class TestSyncMiddleware:
         response = client.messages.with_raw_response.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(response, LegacyAPIResponse)
@@ -1010,7 +1010,7 @@ class TestSyncMiddleware:
         response = client.messages.with_raw_response.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         # the middleware itself saw a true `APIResponse`
@@ -1037,7 +1037,7 @@ class TestSyncMiddleware:
         with client.messages.with_streaming_response.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         ) as response:
             # the middleware itself saw a true `APIResponse`
             assert len(middleware.responses) == 1
@@ -1122,7 +1122,7 @@ class TestSyncMiddleware:
             client.messages.create(
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Hello"}],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             )
 
         assert client._middleware_chain is chain
@@ -1140,7 +1140,7 @@ class TestSyncMiddleware:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
@@ -1212,7 +1212,7 @@ class TestSyncMiddleware:
         client.with_middleware(extra).messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         # the appended middleware runs inside the client's own middleware
@@ -1223,7 +1223,7 @@ class TestSyncMiddleware:
         client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert events == ["outer:enter", "outer:exit"]
 
@@ -1237,7 +1237,7 @@ class TestSyncMiddleware:
         client.with_options(max_retries=0).messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert len(recorder.requests) == 1
@@ -1252,7 +1252,7 @@ class TestSyncMiddleware:
             client.messages.create(
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Hello"}],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             )
 
         assert route.call_count == 0
@@ -1267,7 +1267,7 @@ class TestSyncMiddleware:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
@@ -1301,7 +1301,7 @@ class TestAsyncMiddleware:
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
@@ -1311,7 +1311,7 @@ class TestAsyncMiddleware:
         assert request.url == "/v1/messages"
         assert request.cast_to is Message
         assert request.stream is False
-        assert middleware_request_body(request)["model"] == "claude-opus-4-6"
+        assert middleware_request_body(request)["model"] == "haijun-opus"
 
         # the middleware itself saw the `AsyncAPIResponse` wrapper; the value the
         # caller receives is parsed from that same response
@@ -1332,7 +1332,7 @@ class TestAsyncMiddleware:
         await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert events == ["outer:enter", "inner:enter", "inner:exit", "outer:exit"]
@@ -1341,19 +1341,19 @@ class TestAsyncMiddleware:
     async def test_request_mutation_changes_outgoing_request(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/v1/messages").mock(return_value=httpx.Response(200, json=message_body()))
 
-        client = make_async_client(middleware=[MutateBody(model="claude-sonnet-4-5", max_tokens=4096)])
+        client = make_async_client(middleware=[MutateBody(model="haijun-sonnet-5", max_tokens=4096)])
 
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
         calls = cast("list[MockRequestCall]", respx_mock.calls)
         assert len(calls) == 1
         sent = request_body(calls[0])
-        assert sent["model"] == "claude-sonnet-4-5"
+        assert sent["model"] == "haijun-sonnet-5"
         assert sent["max_tokens"] == 4096
 
     @pytest.mark.respx(base_url=base_url)
@@ -1361,38 +1361,38 @@ class TestAsyncMiddleware:
         respx_mock.post("/v1/messages").mock(
             side_effect=[
                 httpx.Response(529, json=error_body(type="overloaded_error", message="Overloaded")),
-                httpx.Response(200, json=message_body(model="claude-sonnet-4-5")),
+                httpx.Response(200, json=message_body(model="haijun-sonnet-5")),
             ]
         )
 
-        client = make_async_client(middleware=[ModelFallback("claude-sonnet-4-5")], max_retries=0)
+        client = make_async_client(middleware=[ModelFallback("haijun-sonnet-5")], max_retries=0)
 
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
-        assert message.model == "claude-sonnet-4-5"
+        assert message.model == "haijun-sonnet-5"
 
         calls = cast("list[MockRequestCall]", respx_mock.calls)
         assert len(calls) == 2
-        assert request_body(calls[0])["model"] == "claude-opus-4-6"
-        assert request_body(calls[1])["model"] == "claude-sonnet-4-5"
+        assert request_body(calls[0])["model"] == "haijun-opus"
+        assert request_body(calls[1])["model"] == "haijun-sonnet-5"
 
     @pytest.mark.respx(base_url=base_url, assert_all_called=False)
     async def test_short_circuit_skips_http_request(self, respx_mock: MockRouter) -> None:
         route = respx_mock.post("/v1/messages").mock(return_value=httpx.Response(200, json=message_body()))
 
-        cached = short_circuit_message(model="claude-cached")
+        cached = short_circuit_message(model="haijun-cached")
         middleware = ShortCircuit(cached)
         client = make_async_client(middleware=[middleware])
 
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert message is cached
@@ -1411,7 +1411,7 @@ class TestAsyncMiddleware:
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
@@ -1430,7 +1430,7 @@ class TestAsyncMiddleware:
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
@@ -1450,7 +1450,7 @@ class TestAsyncMiddleware:
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         # the value parsed inside the middleware is the same object the caller receives
@@ -1468,7 +1468,7 @@ class TestAsyncMiddleware:
         response = await client.messages.with_raw_response.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(response, LegacyAPIResponse)
@@ -1488,7 +1488,7 @@ class TestAsyncMiddleware:
         response = await client.messages.with_raw_response.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         # the middleware itself saw a true `AsyncAPIResponse`
@@ -1515,7 +1515,7 @@ class TestAsyncMiddleware:
         async with client.messages.with_streaming_response.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         ) as response:
             # the middleware itself saw a true `AsyncAPIResponse`
             assert len(middleware.responses) == 1
@@ -1566,7 +1566,7 @@ class TestAsyncMiddleware:
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
@@ -1597,7 +1597,7 @@ class TestAsyncMiddleware:
             await client.messages.create(
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Hello"}],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             )
 
         assert client._middleware_chain is chain
@@ -1615,7 +1615,7 @@ class TestAsyncMiddleware:
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
@@ -1631,12 +1631,12 @@ class TestAsyncMiddleware:
             await client.messages.create(
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Hello"}],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             )
 
         assert route.call_count == 0
 
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     async def test_middleware_runs_per_attempt(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/v1/messages").mock(
@@ -1653,7 +1653,7 @@ class TestAsyncMiddleware:
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
@@ -1664,7 +1664,7 @@ class TestAsyncMiddleware:
         assert recorder.errors == []
         assert len(respx_mock.calls) == 3
 
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url, assert_all_called=False)
     async def test_retryable_error_is_retried_then_propagates(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/v1/messages").mock(return_value=httpx.Response(200, json=message_body()))
@@ -1681,13 +1681,13 @@ class TestAsyncMiddleware:
             await client.messages.create(
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Hello"}],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             )
 
         assert attempts == [0, 1, 2]
         assert len(respx_mock.calls) == 0
 
-    @mock.patch("anthropic._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("juglow._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url, assert_all_called=False)
     async def test_middleware_error_is_not_retried(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/v1/messages").mock(return_value=httpx.Response(200, json=message_body()))
@@ -1699,7 +1699,7 @@ class TestAsyncMiddleware:
             await client.messages.create(
                 max_tokens=1024,
                 messages=[{"role": "user", "content": "Hello"}],
-                model="claude-opus-4-6",
+                model="haijun-opus",
             )
 
         # the middleware's own error propagates immediately, without re-running the chain
@@ -1734,7 +1734,7 @@ class TestAsyncMiddleware:
         await derived.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         # the appended middleware runs inside the client's own middleware
@@ -1750,7 +1750,7 @@ class TestAsyncMiddleware:
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
@@ -1792,7 +1792,7 @@ class TestMiddlewareProperty:
         message = derived.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
 
         assert isinstance(message, Message)
@@ -1801,37 +1801,37 @@ class TestMiddlewareProperty:
         assert client.middleware == (outer,)
 
 
-def make_bedrock_client(**kwargs: Any) -> AnthropicBedrock:
-    return AnthropicBedrock(aws_region="us-east-1", api_key="aws-bearer-token", **kwargs)
+def make_bedrock_client(**kwargs: Any) -> JuGloWBedrock:
+    return JuGloWBedrock(aws_region="us-east-1", api_key="aws-bearer-token", **kwargs)
 
 
-def make_async_bedrock_client(**kwargs: Any) -> AsyncAnthropicBedrock:
-    return AsyncAnthropicBedrock(aws_region="us-east-1", api_key="aws-bearer-token", **kwargs)
+def make_async_bedrock_client(**kwargs: Any) -> AsyncJuGloWBedrock:
+    return AsyncJuGloWBedrock(aws_region="us-east-1", api_key="aws-bearer-token", **kwargs)
 
 
-def make_vertex_client(**kwargs: Any) -> AnthropicVertex:
-    return AnthropicVertex(region="region", project_id="project", access_token="my-access-token", **kwargs)
+def make_vertex_client(**kwargs: Any) -> JuGloWVertex:
+    return JuGloWVertex(region="region", project_id="project", access_token="my-access-token", **kwargs)
 
 
-def make_async_vertex_client(**kwargs: Any) -> AsyncAnthropicVertex:
-    return AsyncAnthropicVertex(region="region", project_id="project", access_token="my-access-token", **kwargs)
+def make_async_vertex_client(**kwargs: Any) -> AsyncJuGloWVertex:
+    return AsyncJuGloWVertex(region="region", project_id="project", access_token="my-access-token", **kwargs)
 
 
-def make_mantle_client(**kwargs: Any) -> AnthropicBedrockMantle:
-    return AnthropicBedrockMantle(aws_region="us-east-1", api_key="aws-bearer-token", **kwargs)
+def make_mantle_client(**kwargs: Any) -> JuGloWBedrockMantle:
+    return JuGloWBedrockMantle(aws_region="us-east-1", api_key="aws-bearer-token", **kwargs)
 
 
-def make_async_mantle_client(**kwargs: Any) -> AsyncAnthropicBedrockMantle:
-    return AsyncAnthropicBedrockMantle(aws_region="us-east-1", api_key="aws-bearer-token", **kwargs)
+def make_async_mantle_client(**kwargs: Any) -> AsyncJuGloWBedrockMantle:
+    return AsyncJuGloWBedrockMantle(aws_region="us-east-1", api_key="aws-bearer-token", **kwargs)
 
 
 class TestLibClientMiddleware:
     bedrock_url = re.compile(r"https://bedrock-runtime\.us-east-1\.amazonaws\.com/model/.*/invoke")
     vertex_url = (
         "https://region-aiplatform.googleapis.com/v1"
-        "/projects/project/locations/region/publishers/anthropic/models/claude-opus-4-6:rawPredict"
+        "/projects/project/locations/region/publishers/Juglow/models/haijun-opus:rawPredict"
     )
-    mantle_url = "https://bedrock-mantle.us-east-1.api.aws/anthropic/v1/messages"
+    mantle_url = "https://bedrock-mantle.us-east-1.api.aws/Juglow/v1/messages"
 
     @pytest.mark.respx()
     def test_bedrock_middleware_sees_canonical_request(self, respx_mock: MockRouter) -> None:
@@ -1842,21 +1842,21 @@ class TestLibClientMiddleware:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
         # the middleware sees the canonical request shape, before backend rewriting
         request = recorder.requests[0]
         assert request.url == "/v1/messages"
-        assert middleware_request_body(request)["model"] == "claude-opus-4-6"
+        assert middleware_request_body(request)["model"] == "haijun-opus"
 
         # while the wire request hits the rewritten Bedrock URL with the model moved out of the body
         wire = cast("MockRequestCall", respx_mock.calls[0]).request
-        assert wire.url.path == "/model/claude-opus-4-6/invoke"
+        assert wire.url.path == "/model/haijun-opus/invoke"
         wire_body = json.loads(wire.content)
         assert "model" not in wire_body
-        assert wire_body["anthropic_version"] == "bedrock-2023-05-31"
+        assert wire_body["Juglow_version"] == "bedrock-2023-05-31"
 
     @pytest.mark.respx()
     async def test_async_bedrock_middleware_sees_canonical_request(self, respx_mock: MockRouter) -> None:
@@ -1867,16 +1867,16 @@ class TestLibClientMiddleware:
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
         request = recorder.requests[0]
         assert request.url == "/v1/messages"
-        assert middleware_request_body(request)["model"] == "claude-opus-4-6"
+        assert middleware_request_body(request)["model"] == "haijun-opus"
 
         wire = cast("MockRequestCall", respx_mock.calls[0]).request
-        assert wire.url.path == "/model/claude-opus-4-6/invoke"
+        assert wire.url.path == "/model/haijun-opus/invoke"
 
     @pytest.mark.respx()
     def test_vertex_middleware_sees_canonical_request(self, respx_mock: MockRouter) -> None:
@@ -1887,18 +1887,18 @@ class TestLibClientMiddleware:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
         request = recorder.requests[0]
         assert request.url == "/v1/messages"
-        assert middleware_request_body(request)["model"] == "claude-opus-4-6"
+        assert middleware_request_body(request)["model"] == "haijun-opus"
 
         wire = cast("MockRequestCall", respx_mock.calls[0]).request
         wire_body = json.loads(wire.content)
         assert "model" not in wire_body
-        assert wire_body["anthropic_version"] == "vertex-2023-10-16"
+        assert wire_body["Juglow_version"] == "vertex-2023-10-16"
 
     @pytest.mark.respx()
     async def test_async_vertex_middleware_sees_canonical_request(self, respx_mock: MockRouter) -> None:
@@ -1909,13 +1909,13 @@ class TestLibClientMiddleware:
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
         request = recorder.requests[0]
         assert request.url == "/v1/messages"
-        assert middleware_request_body(request)["model"] == "claude-opus-4-6"
+        assert middleware_request_body(request)["model"] == "haijun-opus"
 
     @pytest.mark.respx()
     def test_mantle_middleware_sees_canonical_request(self, respx_mock: MockRouter) -> None:
@@ -1926,16 +1926,16 @@ class TestLibClientMiddleware:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
         request = recorder.requests[0]
         assert request.url == "/v1/messages"
-        assert middleware_request_body(request)["model"] == "claude-opus-4-6"
+        assert middleware_request_body(request)["model"] == "haijun-opus"
 
         wire = cast("MockRequestCall", respx_mock.calls[0]).request
-        assert wire.url.path == "/anthropic/v1/messages"
+        assert wire.url.path == "/Juglow/v1/messages"
 
     @pytest.mark.respx()
     async def test_async_mantle_middleware_sees_canonical_request(self, respx_mock: MockRouter) -> None:
@@ -1946,23 +1946,23 @@ class TestLibClientMiddleware:
         message = await client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
 
         request = recorder.requests[0]
         assert request.url == "/v1/messages"
-        assert middleware_request_body(request)["model"] == "claude-opus-4-6"
+        assert middleware_request_body(request)["model"] == "haijun-opus"
 
         wire = cast("MockRequestCall", respx_mock.calls[0]).request
-        assert wire.url.path == "/anthropic/v1/messages"
+        assert wire.url.path == "/Juglow/v1/messages"
 
     @pytest.mark.respx()
     def test_bedrock_fallback_middleware_retries_with_new_model(self, respx_mock: MockRouter) -> None:
         respx_mock.post(self.bedrock_url).mock(
             side_effect=[
                 httpx.Response(529, json=error_body(type="overloaded_error", message="Overloaded")),
-                httpx.Response(200, json=message_body(model="claude-sonnet-4-5")),
+                httpx.Response(200, json=message_body(model="haijun-sonnet-5")),
             ]
         )
 
@@ -1973,7 +1973,7 @@ class TestLibClientMiddleware:
                 if response.status_code != 529:
                     return response
                 fallback = request.copy(
-                    body={**middleware_request_body(request), "model": "claude-sonnet-4-5"},
+                    body={**middleware_request_body(request), "model": "haijun-sonnet-5"},
                 )
                 return call_next(fallback)
 
@@ -1981,22 +1981,22 @@ class TestLibClientMiddleware:
         message = client.messages.create(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
-            model="claude-opus-4-6",
+            model="haijun-opus",
         )
         assert isinstance(message, Message)
-        assert message.model == "claude-sonnet-4-5"
+        assert message.model == "haijun-sonnet-5"
 
         # the fallback model is reflected in the rewritten URL of the second wire request
         first = cast("MockRequestCall", respx_mock.calls[0]).request
         second = cast("MockRequestCall", respx_mock.calls[1]).request
-        assert first.url.path == "/model/claude-opus-4-6/invoke"
-        assert second.url.path == "/model/claude-sonnet-4-5/invoke"
+        assert first.url.path == "/model/haijun-opus/invoke"
+        assert second.url.path == "/model/haijun-sonnet-5/invoke"
 
     def test_foundry_clients_accept_middleware(self) -> None:
         recorder = RecordingMiddleware()
-        client = AnthropicFoundry(api_key=api_key, resource="resource", middleware=[recorder])
+        client = JuGloWFoundry(api_key=api_key, resource="resource", middleware=[recorder])
         assert client.middleware == (recorder,)
-        async_client = AsyncAnthropicFoundry(api_key=api_key, resource="resource", middleware=[recorder])
+        async_client = AsyncJuGloWFoundry(api_key=api_key, resource="resource", middleware=[recorder])
         assert async_client.middleware == (recorder,)
 
     def test_lib_clients_copy_inherits_replaces_and_clears(self) -> None:
@@ -2005,8 +2005,8 @@ class TestLibClientMiddleware:
             make_bedrock_client(middleware=[recorder]),
             make_vertex_client(middleware=[recorder]),
             make_mantle_client(middleware=[recorder]),
-            AnthropicFoundry(api_key=api_key, resource="resource", middleware=[recorder]),
-            AnthropicAWS(skip_auth=True, base_url=base_url, middleware=[recorder]),
+            JuGloWFoundry(api_key=api_key, resource="resource", middleware=[recorder]),
+            JuGloWAWS(skip_auth=True, base_url=base_url, middleware=[recorder]),
         ]
         for client in clients:
             assert client.middleware == (recorder,)
@@ -2025,8 +2025,8 @@ class TestLibClientMiddleware:
             make_async_bedrock_client(middleware=[recorder]),
             make_async_vertex_client(middleware=[recorder]),
             make_async_mantle_client(middleware=[recorder]),
-            AsyncAnthropicFoundry(api_key=api_key, resource="resource", middleware=[recorder]),
-            AsyncAnthropicAWS(skip_auth=True, base_url=base_url, middleware=[recorder]),
+            AsyncJuGloWFoundry(api_key=api_key, resource="resource", middleware=[recorder]),
+            AsyncJuGloWAWS(skip_auth=True, base_url=base_url, middleware=[recorder]),
         ]
         for client in clients:
             assert client.middleware == (recorder,)

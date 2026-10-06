@@ -1,4 +1,4 @@
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+﻿# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from __future__ import annotations
 
@@ -7,10 +7,10 @@ from typing import Any, Optional, cast
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic.pagination import SyncPageCursor, AsyncPageCursor
-from anthropic.types.beta.environments import (
+from juglow.pagination import SyncPageCursor, AsyncPageCursor
+from juglow.types.beta.environments import (
     BetaSelfHostedWork,
     BetaSelfHostedWorkQueueStats,
     BetaSelfHostedWorkHeartbeatResponse,
@@ -23,7 +23,7 @@ class TestWork:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    def test_method_retrieve(self, client: Anthropic) -> None:
+    def test_method_retrieve(self, client: JuGloW) -> None:
         work = client.beta.environments.work.retrieve(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -31,7 +31,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    def test_method_retrieve_with_all_params(self, client: Anthropic) -> None:
+    def test_method_retrieve_with_all_params(self, client: JuGloW) -> None:
         work = client.beta.environments.work.retrieve(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -40,7 +40,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    def test_raw_response_retrieve(self, client: Anthropic) -> None:
+    def test_raw_response_retrieve(self, client: JuGloW) -> None:
         response = client.beta.environments.work.with_raw_response.retrieve(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -52,7 +52,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    def test_streaming_response_retrieve(self, client: Anthropic) -> None:
+    def test_streaming_response_retrieve(self, client: JuGloW) -> None:
         with client.beta.environments.work.with_streaming_response.retrieve(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -66,7 +66,7 @@ class TestWork:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_retrieve(self, client: Anthropic) -> None:
+    def test_path_params_retrieve(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             client.beta.environments.work.with_raw_response.retrieve(
                 work_id="work_id",
@@ -80,7 +80,7 @@ class TestWork:
             )
 
     @parametrize
-    def test_method_update(self, client: Anthropic) -> None:
+    def test_method_update(self, client: JuGloW) -> None:
         work = client.beta.environments.work.update(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -89,7 +89,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    def test_method_update_with_all_params(self, client: Anthropic) -> None:
+    def test_method_update_with_all_params(self, client: JuGloW) -> None:
         work = client.beta.environments.work.update(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -99,7 +99,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    def test_raw_response_update(self, client: Anthropic) -> None:
+    def test_raw_response_update(self, client: JuGloW) -> None:
         response = client.beta.environments.work.with_raw_response.update(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -112,7 +112,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    def test_streaming_response_update(self, client: Anthropic) -> None:
+    def test_streaming_response_update(self, client: JuGloW) -> None:
         with client.beta.environments.work.with_streaming_response.update(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -127,7 +127,7 @@ class TestWork:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_update(self, client: Anthropic) -> None:
+    def test_path_params_update(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             client.beta.environments.work.with_raw_response.update(
                 work_id="work_id",
@@ -144,7 +144,7 @@ class TestWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list(self, client: Anthropic) -> None:
+    def test_method_list(self, client: JuGloW) -> None:
         work = client.beta.environments.work.list(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -152,7 +152,7 @@ class TestWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list_with_all_params(self, client: Anthropic) -> None:
+    def test_method_list_with_all_params(self, client: JuGloW) -> None:
         work = client.beta.environments.work.list(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             limit=1,
@@ -163,7 +163,7 @@ class TestWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_raw_response_list(self, client: Anthropic) -> None:
+    def test_raw_response_list(self, client: JuGloW) -> None:
         response = client.beta.environments.work.with_raw_response.list(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -175,7 +175,7 @@ class TestWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_streaming_response_list(self, client: Anthropic) -> None:
+    def test_streaming_response_list(self, client: JuGloW) -> None:
         with client.beta.environments.work.with_streaming_response.list(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -189,14 +189,14 @@ class TestWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_path_params_list(self, client: Anthropic) -> None:
+    def test_path_params_list(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             client.beta.environments.work.with_raw_response.list(
                 environment_id="",
             )
 
     @parametrize
-    def test_method_ack(self, client: Anthropic) -> None:
+    def test_method_ack(self, client: JuGloW) -> None:
         work = client.beta.environments.work.ack(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -204,7 +204,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    def test_method_ack_with_all_params(self, client: Anthropic) -> None:
+    def test_method_ack_with_all_params(self, client: JuGloW) -> None:
         work = client.beta.environments.work.ack(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -213,7 +213,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    def test_raw_response_ack(self, client: Anthropic) -> None:
+    def test_raw_response_ack(self, client: JuGloW) -> None:
         response = client.beta.environments.work.with_raw_response.ack(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -225,7 +225,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    def test_streaming_response_ack(self, client: Anthropic) -> None:
+    def test_streaming_response_ack(self, client: JuGloW) -> None:
         with client.beta.environments.work.with_streaming_response.ack(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -239,7 +239,7 @@ class TestWork:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_ack(self, client: Anthropic) -> None:
+    def test_path_params_ack(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             client.beta.environments.work.with_raw_response.ack(
                 work_id="work_id",
@@ -253,7 +253,7 @@ class TestWork:
             )
 
     @parametrize
-    def test_method_heartbeat(self, client: Anthropic) -> None:
+    def test_method_heartbeat(self, client: JuGloW) -> None:
         work = client.beta.environments.work.heartbeat(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -261,7 +261,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWorkHeartbeatResponse, work, path=["response"])
 
     @parametrize
-    def test_method_heartbeat_with_all_params(self, client: Anthropic) -> None:
+    def test_method_heartbeat_with_all_params(self, client: JuGloW) -> None:
         work = client.beta.environments.work.heartbeat(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -272,7 +272,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWorkHeartbeatResponse, work, path=["response"])
 
     @parametrize
-    def test_raw_response_heartbeat(self, client: Anthropic) -> None:
+    def test_raw_response_heartbeat(self, client: JuGloW) -> None:
         response = client.beta.environments.work.with_raw_response.heartbeat(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -284,7 +284,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWorkHeartbeatResponse, work, path=["response"])
 
     @parametrize
-    def test_streaming_response_heartbeat(self, client: Anthropic) -> None:
+    def test_streaming_response_heartbeat(self, client: JuGloW) -> None:
         with client.beta.environments.work.with_streaming_response.heartbeat(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -298,7 +298,7 @@ class TestWork:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_heartbeat(self, client: Anthropic) -> None:
+    def test_path_params_heartbeat(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             client.beta.environments.work.with_raw_response.heartbeat(
                 work_id="work_id",
@@ -312,25 +312,25 @@ class TestWork:
             )
 
     @parametrize
-    def test_method_poll(self, client: Anthropic) -> None:
+    def test_method_poll(self, client: JuGloW) -> None:
         work = client.beta.environments.work.poll(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
         assert_matches_type(Optional[BetaSelfHostedWork], work, path=["response"])
 
     @parametrize
-    def test_method_poll_with_all_params(self, client: Anthropic) -> None:
+    def test_method_poll_with_all_params(self, client: JuGloW) -> None:
         work = client.beta.environments.work.poll(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             block_ms=1,
             reclaim_older_than_ms=1,
             betas=["message-batches-2024-09-24"],
-            anthropic_worker_id="Anthropic-Worker-ID",
+            Juglow_worker_id="JuGloW-Worker-ID",
         )
         assert_matches_type(Optional[BetaSelfHostedWork], work, path=["response"])
 
     @parametrize
-    def test_raw_response_poll(self, client: Anthropic) -> None:
+    def test_raw_response_poll(self, client: JuGloW) -> None:
         response = client.beta.environments.work.with_raw_response.poll(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -341,7 +341,7 @@ class TestWork:
         assert_matches_type(Optional[BetaSelfHostedWork], work, path=["response"])
 
     @parametrize
-    def test_streaming_response_poll(self, client: Anthropic) -> None:
+    def test_streaming_response_poll(self, client: JuGloW) -> None:
         with client.beta.environments.work.with_streaming_response.poll(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -354,7 +354,7 @@ class TestWork:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_poll(self, client: Anthropic) -> None:
+    def test_path_params_poll(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             client.beta.environments.work.with_raw_response.poll(
                 environment_id="",
@@ -362,7 +362,7 @@ class TestWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_stats(self, client: Anthropic) -> None:
+    def test_method_stats(self, client: JuGloW) -> None:
         work = client.beta.environments.work.stats(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -370,7 +370,7 @@ class TestWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_stats_with_all_params(self, client: Anthropic) -> None:
+    def test_method_stats_with_all_params(self, client: JuGloW) -> None:
         work = client.beta.environments.work.stats(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             betas=["message-batches-2024-09-24"],
@@ -379,7 +379,7 @@ class TestWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_raw_response_stats(self, client: Anthropic) -> None:
+    def test_raw_response_stats(self, client: JuGloW) -> None:
         response = client.beta.environments.work.with_raw_response.stats(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -391,7 +391,7 @@ class TestWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_streaming_response_stats(self, client: Anthropic) -> None:
+    def test_streaming_response_stats(self, client: JuGloW) -> None:
         with client.beta.environments.work.with_streaming_response.stats(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -405,14 +405,14 @@ class TestWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_path_params_stats(self, client: Anthropic) -> None:
+    def test_path_params_stats(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             client.beta.environments.work.with_raw_response.stats(
                 environment_id="",
             )
 
     @parametrize
-    def test_method_stop(self, client: Anthropic) -> None:
+    def test_method_stop(self, client: JuGloW) -> None:
         work = client.beta.environments.work.stop(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -420,7 +420,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    def test_method_stop_with_all_params(self, client: Anthropic) -> None:
+    def test_method_stop_with_all_params(self, client: JuGloW) -> None:
         work = client.beta.environments.work.stop(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -430,7 +430,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    def test_raw_response_stop(self, client: Anthropic) -> None:
+    def test_raw_response_stop(self, client: JuGloW) -> None:
         response = client.beta.environments.work.with_raw_response.stop(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -442,7 +442,7 @@ class TestWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    def test_streaming_response_stop(self, client: Anthropic) -> None:
+    def test_streaming_response_stop(self, client: JuGloW) -> None:
         with client.beta.environments.work.with_streaming_response.stop(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -456,7 +456,7 @@ class TestWork:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_stop(self, client: Anthropic) -> None:
+    def test_path_params_stop(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             client.beta.environments.work.with_raw_response.stop(
                 work_id="work_id",
@@ -476,7 +476,7 @@ class TestAsyncWork:
     )
 
     @parametrize
-    async def test_method_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.retrieve(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -484,7 +484,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    async def test_method_retrieve_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve_with_all_params(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.retrieve(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -493,7 +493,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    async def test_raw_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.work.with_raw_response.retrieve(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -505,7 +505,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    async def test_streaming_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.work.with_streaming_response.retrieve(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -519,7 +519,7 @@ class TestAsyncWork:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_retrieve(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             await async_client.beta.environments.work.with_raw_response.retrieve(
                 work_id="work_id",
@@ -533,7 +533,7 @@ class TestAsyncWork:
             )
 
     @parametrize
-    async def test_method_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.update(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -542,7 +542,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    async def test_method_update_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_update_with_all_params(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.update(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -552,7 +552,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    async def test_raw_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_update(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.work.with_raw_response.update(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -565,7 +565,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    async def test_streaming_response_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_update(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.work.with_streaming_response.update(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -580,7 +580,7 @@ class TestAsyncWork:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_update(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_update(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             await async_client.beta.environments.work.with_raw_response.update(
                 work_id="work_id",
@@ -597,7 +597,7 @@ class TestAsyncWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.list(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -605,7 +605,7 @@ class TestAsyncWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list_with_all_params(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.list(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             limit=1,
@@ -616,7 +616,7 @@ class TestAsyncWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_raw_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_list(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.work.with_raw_response.list(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -628,7 +628,7 @@ class TestAsyncWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_streaming_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_list(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.work.with_streaming_response.list(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -642,14 +642,14 @@ class TestAsyncWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_path_params_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_list(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             await async_client.beta.environments.work.with_raw_response.list(
                 environment_id="",
             )
 
     @parametrize
-    async def test_method_ack(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_ack(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.ack(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -657,7 +657,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    async def test_method_ack_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_ack_with_all_params(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.ack(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -666,7 +666,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    async def test_raw_response_ack(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_ack(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.work.with_raw_response.ack(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -678,7 +678,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    async def test_streaming_response_ack(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_ack(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.work.with_streaming_response.ack(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -692,7 +692,7 @@ class TestAsyncWork:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_ack(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_ack(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             await async_client.beta.environments.work.with_raw_response.ack(
                 work_id="work_id",
@@ -706,7 +706,7 @@ class TestAsyncWork:
             )
 
     @parametrize
-    async def test_method_heartbeat(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_heartbeat(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.heartbeat(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -714,7 +714,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWorkHeartbeatResponse, work, path=["response"])
 
     @parametrize
-    async def test_method_heartbeat_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_heartbeat_with_all_params(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.heartbeat(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -725,7 +725,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWorkHeartbeatResponse, work, path=["response"])
 
     @parametrize
-    async def test_raw_response_heartbeat(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_heartbeat(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.work.with_raw_response.heartbeat(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -737,7 +737,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWorkHeartbeatResponse, work, path=["response"])
 
     @parametrize
-    async def test_streaming_response_heartbeat(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_heartbeat(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.work.with_streaming_response.heartbeat(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -751,7 +751,7 @@ class TestAsyncWork:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_heartbeat(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_heartbeat(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             await async_client.beta.environments.work.with_raw_response.heartbeat(
                 work_id="work_id",
@@ -765,25 +765,25 @@ class TestAsyncWork:
             )
 
     @parametrize
-    async def test_method_poll(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_poll(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.poll(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
         assert_matches_type(Optional[BetaSelfHostedWork], work, path=["response"])
 
     @parametrize
-    async def test_method_poll_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_poll_with_all_params(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.poll(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             block_ms=1,
             reclaim_older_than_ms=1,
             betas=["message-batches-2024-09-24"],
-            anthropic_worker_id="Anthropic-Worker-ID",
+            Juglow_worker_id="JuGloW-Worker-ID",
         )
         assert_matches_type(Optional[BetaSelfHostedWork], work, path=["response"])
 
     @parametrize
-    async def test_raw_response_poll(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_poll(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.work.with_raw_response.poll(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -794,7 +794,7 @@ class TestAsyncWork:
         assert_matches_type(Optional[BetaSelfHostedWork], work, path=["response"])
 
     @parametrize
-    async def test_streaming_response_poll(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_poll(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.work.with_streaming_response.poll(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -807,7 +807,7 @@ class TestAsyncWork:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_poll(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_poll(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             await async_client.beta.environments.work.with_raw_response.poll(
                 environment_id="",
@@ -815,7 +815,7 @@ class TestAsyncWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_stats(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_stats(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.stats(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -823,7 +823,7 @@ class TestAsyncWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_stats_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_stats_with_all_params(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.stats(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
             betas=["message-batches-2024-09-24"],
@@ -832,7 +832,7 @@ class TestAsyncWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_raw_response_stats(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_stats(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.work.with_raw_response.stats(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         )
@@ -844,7 +844,7 @@ class TestAsyncWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_streaming_response_stats(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_stats(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.work.with_streaming_response.stats(
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
         ) as response:
@@ -858,14 +858,14 @@ class TestAsyncWork:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_path_params_stats(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_stats(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             await async_client.beta.environments.work.with_raw_response.stats(
                 environment_id="",
             )
 
     @parametrize
-    async def test_method_stop(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_stop(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.stop(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -873,7 +873,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    async def test_method_stop_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_stop_with_all_params(self, async_client: AsyncJuGloW) -> None:
         work = await async_client.beta.environments.work.stop(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -883,7 +883,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    async def test_raw_response_stop(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_stop(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.environments.work.with_raw_response.stop(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -895,7 +895,7 @@ class TestAsyncWork:
         assert_matches_type(BetaSelfHostedWork, work, path=["response"])
 
     @parametrize
-    async def test_streaming_response_stop(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_stop(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.environments.work.with_streaming_response.stop(
             work_id="work_id",
             environment_id="env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -909,7 +909,7 @@ class TestAsyncWork:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_stop(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_stop(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `environment_id` but received ''"):
             await async_client.beta.environments.work.with_raw_response.stop(
                 work_id="work_id",

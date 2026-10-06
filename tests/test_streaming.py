@@ -1,20 +1,20 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from typing import TypeVar, Iterator, AsyncIterator
 
 import httpx
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
-from anthropic._streaming import Stream, AsyncStream, ServerSentEvent
-from anthropic._exceptions import APIStatusError
+from juglow import JuGloW, AsyncJuGloW
+from juglow._streaming import Stream, AsyncStream, ServerSentEvent
+from juglow._exceptions import APIStatusError
 
 _T = TypeVar("_T")
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_basic(sync: bool, client: Anthropic, async_client: AsyncAnthropic) -> None:
+async def test_basic(sync: bool, client: JuGloW, async_client: AsyncJuglow) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: completion\n"
         yield b'data: {"foo":true}\n'
@@ -31,7 +31,7 @@ async def test_basic(sync: bool, client: Anthropic, async_client: AsyncAnthropic
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_data_missing_event(sync: bool, client: Anthropic, async_client: AsyncAnthropic) -> None:
+async def test_data_missing_event(sync: bool, client: JuGloW, async_client: AsyncJuglow) -> None:
     def body() -> Iterator[bytes]:
         yield b'data: {"foo":true}\n'
         yield b"\n"
@@ -47,7 +47,7 @@ async def test_data_missing_event(sync: bool, client: Anthropic, async_client: A
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_event_missing_data(sync: bool, client: Anthropic, async_client: AsyncAnthropic) -> None:
+async def test_event_missing_data(sync: bool, client: JuGloW, async_client: AsyncJuglow) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: ping\n"
         yield b"\n"
@@ -63,7 +63,7 @@ async def test_event_missing_data(sync: bool, client: Anthropic, async_client: A
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_multiple_events(sync: bool, client: Anthropic, async_client: AsyncAnthropic) -> None:
+async def test_multiple_events(sync: bool, client: JuGloW, async_client: AsyncJuglow) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: ping\n"
         yield b"\n"
@@ -85,7 +85,7 @@ async def test_multiple_events(sync: bool, client: Anthropic, async_client: Asyn
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_multiple_events_with_data(sync: bool, client: Anthropic, async_client: AsyncAnthropic) -> None:
+async def test_multiple_events_with_data(sync: bool, client: JuGloW, async_client: AsyncJuglow) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: ping\n"
         yield b'data: {"foo":true}\n'
@@ -109,7 +109,7 @@ async def test_multiple_events_with_data(sync: bool, client: Anthropic, async_cl
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_multiple_data_lines_with_empty_line(sync: bool, client: Anthropic, async_client: AsyncAnthropic) -> None:
+async def test_multiple_data_lines_with_empty_line(sync: bool, client: JuGloW, async_client: AsyncJuglow) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: ping\n"
         yield b"data: {\n"
@@ -131,7 +131,7 @@ async def test_multiple_data_lines_with_empty_line(sync: bool, client: Anthropic
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_data_json_escaped_double_new_line(sync: bool, client: Anthropic, async_client: AsyncAnthropic) -> None:
+async def test_data_json_escaped_double_new_line(sync: bool, client: JuGloW, async_client: AsyncJuglow) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: ping\n"
         yield b'data: {"foo": "my long\\n\\ncontent"}'
@@ -148,7 +148,7 @@ async def test_data_json_escaped_double_new_line(sync: bool, client: Anthropic, 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_multiple_data_lines(sync: bool, client: Anthropic, async_client: AsyncAnthropic) -> None:
+async def test_multiple_data_lines(sync: bool, client: JuGloW, async_client: AsyncJuglow) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: ping\n"
         yield b"data: {\n"
@@ -168,8 +168,8 @@ async def test_multiple_data_lines(sync: bool, client: Anthropic, async_client: 
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
 async def test_special_new_line_character(
     sync: bool,
-    client: Anthropic,
-    async_client: AsyncAnthropic,
+    client: JuGloW,
+    async_client: AsyncJuGloW,
 ) -> None:
     def body() -> Iterator[bytes]:
         yield b'data: {"content":" culpa"}\n'
@@ -187,7 +187,7 @@ async def test_special_new_line_character(
 
     sse = await iter_next(iterator)
     assert sse.event is None
-    assert sse.json() == {"content": "  "}
+    assert sse.json() == {"content": " â€¨"}
 
     sse = await iter_next(iterator)
     assert sse.event is None
@@ -199,12 +199,12 @@ async def test_special_new_line_character(
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
 async def test_multi_byte_character_multiple_chunks(
     sync: bool,
-    client: Anthropic,
-    async_client: AsyncAnthropic,
+    client: JuGloW,
+    async_client: AsyncJuGloW,
 ) -> None:
     def body() -> Iterator[bytes]:
         yield b'data: {"content":"'
-        # bytes taken from the string 'известни' and arbitrarily split
+        # bytes taken from the string 'Ð¸Ð·Ð²ÐµÑÑ‚Ð½Ð¸' and arbitrarily split
         # so that some multi-byte characters span multiple chunks
         yield b"\xd0"
         yield b"\xb8\xd0\xb7\xd0"
@@ -216,14 +216,14 @@ async def test_multi_byte_character_multiple_chunks(
 
     sse = await iter_next(iterator)
     assert sse.event is None
-    assert sse.json() == {"content": "известни"}
+    assert sse.json() == {"content": "Ð¸Ð·Ð²ÐµÑÑ‚Ð½Ð¸"}
 
 
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
 async def test_error_type(
     sync: bool,
-    client: Anthropic,
-    async_client: AsyncAnthropic,
+    client: JuGloW,
+    async_client: AsyncJuGloW,
 ) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: error\n"
@@ -238,7 +238,7 @@ async def test_error_type(
     assert "Overloaded" in str(exc_info.value)
 
 
-def test_isinstance_check(client: Anthropic, async_client: AsyncAnthropic) -> None:
+def test_isinstance_check(client: JuGloW, async_client: AsyncJuglow) -> None:
     async_stream = AsyncStream(cast_to=object, client=async_client, response=httpx.Response(200, content=b"foo"))
     assert isinstance(async_stream, AsyncStream)
 
@@ -267,8 +267,8 @@ def make_event_iterator(
     content: Iterator[bytes],
     *,
     sync: bool,
-    client: Anthropic,
-    async_client: AsyncAnthropic,
+    client: JuGloW,
+    async_client: AsyncJuGloW,
 ) -> Iterator[ServerSentEvent] | AsyncIterator[ServerSentEvent]:
     if sync:
         return Stream(cast_to=object, client=client, response=httpx.Response(200, content=content))._iter_events()
@@ -285,8 +285,8 @@ def make_stream_iterator(
     content: Iterator[bytes],
     *,
     sync: bool,
-    client: Anthropic,
-    async_client: AsyncAnthropic,
+    client: JuGloW,
+    async_client: AsyncJuGloW,
 ) -> AsyncIterator[object] | Iterator[object]:
     if sync:
         return Stream(

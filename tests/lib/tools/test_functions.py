@@ -7,10 +7,10 @@ from collections.abc import Callable, Iterator, Awaitable, AsyncIterator
 import pytest
 from pydantic import BaseModel
 
-from anthropic import beta_tool
-from anthropic._compat import PYDANTIC_V1
-from anthropic.lib.tools._beta_functions import BaseFunctionTool
-from anthropic.types.beta.beta_tool_param import InputSchema
+from juglow import beta_tool
+from juglow._compat import PYDANTIC_V1
+from juglow.lib.tools._beta_functions import BaseFunctionTool
+from juglow.types.beta.beta_tool_param import InputSchema
 
 
 @pytest.mark.skipif(PYDANTIC_V1, reason="only applicable in pydantic v2")
@@ -462,7 +462,7 @@ class TestContextManagerTool:
     def test_sync_context_manager_tool(self) -> None:
         import anyio
 
-        from anthropic.lib.tools._beta_functions import aclose_runnable_tool
+        from juglow.lib.tools._beta_functions import aclose_runnable_tool
 
         seen: list[str] = []
 
@@ -497,7 +497,7 @@ class TestContextManagerTool:
         assert seen == ["enter", "exit"]
 
     async def test_async_context_manager_tool_lazy_enter_and_cleanup(self) -> None:
-        from anthropic.lib.tools._beta_functions import beta_async_tool, aclose_runnable_tool
+        from juglow.lib.tools._beta_functions import beta_async_tool, aclose_runnable_tool
 
         seen: list[str] = []
         schema: InputSchema = {
@@ -535,7 +535,7 @@ class TestContextManagerTool:
         assert seen == ["enter", "exit"]
 
     def test_wrong_decorator_raises(self) -> None:
-        from anthropic.lib.tools._beta_functions import beta_async_tool
+        from juglow.lib.tools._beta_functions import beta_async_tool
 
         @asynccontextmanager
         async def an_async_cm() -> AsyncIterator[Callable[[], str]]:
@@ -552,7 +552,7 @@ class TestContextManagerTool:
             beta_async_tool(name="bad2")(cast(Any, a_sync_cm))
 
     def test_async_context_manager_requires_input_schema(self) -> None:
-        from anthropic.lib.tools._beta_functions import beta_async_tool
+        from juglow.lib.tools._beta_functions import beta_async_tool
 
         @asynccontextmanager
         async def noschema_cm() -> AsyncIterator[Callable[[int], Awaitable[str]]]:

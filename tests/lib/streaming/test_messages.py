@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import os
 from typing import Any, Set, TypeVar, cast
@@ -7,28 +7,28 @@ import httpx
 import pytest
 from respx import MockRouter
 
-from anthropic import Stream, Anthropic, AsyncStream, AsyncAnthropic
-from anthropic._utils import assert_signatures_in_sync
-from anthropic._compat import PYDANTIC_V1
-from anthropic.lib.streaming import ParsedMessageStreamEvent
-from anthropic.types.message import Message
-from anthropic.resources.messages import DEPRECATED_MODELS
-from anthropic.lib.streaming._messages import TRACKS_TOOL_INPUT
+from juglow import Stream, JuGloW, AsyncStream, AsyncJuglow
+from juglow._utils import assert_signatures_in_sync
+from juglow._compat import PYDANTIC_V1
+from juglow.lib.streaming import ParsedMessageStreamEvent
+from juglow.types.message import Message
+from juglow.resources.messages import DEPRECATED_MODELS
+from juglow.lib.streaming._messages import TRACKS_TOOL_INPUT
 
 from .helpers import get_response, to_async_iter
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
-api_key = "my-anthropic-api-key"
+api_key = "my-Juglow-api-key"
 
-sync_client = Anthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
-async_client = AsyncAnthropic(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+sync_client = JuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+async_client = AsyncJuGloW(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
 _T = TypeVar("_T")
 
 
 def assert_basic_response(events: list[ParsedMessageStreamEvent[None]], message: Message) -> None:
     assert message.id == "msg_4QpJur2dWWDjF6C758FbBw5vm12BaVipnK"
-    assert message.model == "claude-3-opus-latest"
+    assert message.model == "haijun-3-opus-latest"
     assert message.role == "assistant"
     assert message.stop_reason == "end_turn"
     assert message.stop_sequence is None
@@ -55,7 +55,7 @@ def assert_basic_response(events: list[ParsedMessageStreamEvent[None]], message:
 
 def assert_tool_use_response(events: list[ParsedMessageStreamEvent[None]], message: Message) -> None:
     assert message.id == "msg_019Q1hrJbZG26Fb9BQhrkHEr"
-    assert message.model == "claude-sonnet-4-20250514"
+    assert message.model == "haijun-sonnet-20250514"
     assert message.role == "assistant"
     assert message.stop_reason == "tool_use"
     assert message.stop_sequence is None
@@ -128,7 +128,7 @@ class TestSyncMessages:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-3-opus-latest",
+            model="haijun-3-opus-latest",
         ) as stream:
             with pytest.warns(DeprecationWarning):
                 assert isinstance(cast(Any, stream), Stream)
@@ -149,7 +149,7 @@ class TestSyncMessages:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-3-opus-latest",
+            model="haijun-3-opus-latest",
         ) as stream:
             assert not stream.response.is_closed
 
@@ -186,7 +186,7 @@ class TestSyncMessages:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
         ) as stream:
             with pytest.warns(DeprecationWarning):
                 assert isinstance(cast(Any, stream), Stream)
@@ -202,7 +202,7 @@ class TestSyncMessages:
         with sync_client.messages.stream(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Say hello there!"}],
-            model="claude-opus-4-7",
+            model="haijun-opus-7",
         ) as stream:
             assert_refusal_response(stream.get_final_message())
 
@@ -223,7 +223,7 @@ class TestAsyncMessages:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-3-opus-latest",
+            model="haijun-3-opus-latest",
         ) as stream:
             with pytest.warns(DeprecationWarning):
                 assert isinstance(cast(Any, stream), AsyncStream)
@@ -245,7 +245,7 @@ class TestAsyncMessages:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-3-opus-latest",
+            model="haijun-3-opus-latest",
         ) as stream:
             assert not stream.response.is_closed
 
@@ -284,7 +284,7 @@ class TestAsyncMessages:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
         ) as stream:
             with pytest.warns(DeprecationWarning):
                 assert isinstance(cast(Any, stream), AsyncStream)
@@ -301,14 +301,14 @@ class TestAsyncMessages:
         async with async_client.messages.stream(
             max_tokens=1024,
             messages=[{"role": "user", "content": "Say hello there!"}],
-            model="claude-opus-4-7",
+            model="haijun-opus-7",
         ) as stream:
             assert_refusal_response(await stream.get_final_message())
 
 
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
 def test_stream_method_definition_in_sync(sync: bool) -> None:
-    client: Anthropic | AsyncAnthropic = sync_client if sync else async_client
+    client: JuGloW | AsyncJuglow = sync_client if sync else async_client
     assert_signatures_in_sync(
         client.messages.create,
         client.messages.stream,
@@ -324,7 +324,7 @@ def test_tracks_tool_input_type_alias_is_up_to_date() -> None:
 
     from pydantic import BaseModel
 
-    from anthropic.types.content_block import ContentBlock
+    from juglow.types.content_block import ContentBlock
 
     # Get the content block union type
     content_block_union = get_args(ContentBlock)[0]

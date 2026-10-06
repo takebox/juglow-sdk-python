@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import os
 import json
@@ -12,15 +12,15 @@ import httpx
 import pytest
 from respx import MockRouter
 
-import anthropic
-from anthropic import (
+import juglow
+from juglow import (
     EnvToken,
-    Anthropic,
+    JuGloW,
     TokenCache,
     AccessToken,
     StaticToken,
-    AnthropicError,
-    AsyncAnthropic,
+    JuGloWError,
+    AsyncJuGloW,
     InMemoryConfig,
     CredentialsFile,
     IdentityTokenFile,
@@ -29,30 +29,30 @@ from anthropic import (
     default_credentials,
     exchange_federation_assertion,
 )
-from anthropic._version import __version__
-from anthropic._base_client import FinalRequestOptions
-from anthropic.lib.credentials._constants import (
+from juglow._version import __version__
+from juglow._base_client import FinalRequestOptions
+from juglow.lib.credentials._constants import (
     TOKEN_ENDPOINT,
     GRANT_TYPE_JWT_BEARER,
     OAUTH_API_BETA_HEADER,
     FEDERATION_BETA_HEADER,
 )
 
-BASE_URL = "https://api.anthropic.com"
+BASE_URL = "https://platform.juglow.my.id"
 TOKEN_URL = f"{BASE_URL}{TOKEN_ENDPOINT}"
 
 _ALL_ENV = [
-    "ANTHROPIC_API_KEY",
-    "ANTHROPIC_AUTH_TOKEN",
-    "ANTHROPIC_CONFIG_DIR",
-    "ANTHROPIC_PROFILE",
-    "ANTHROPIC_IDENTITY_TOKEN",
-    "ANTHROPIC_IDENTITY_TOKEN_FILE",
-    "ANTHROPIC_FEDERATION_RULE_ID",
-    "ANTHROPIC_ORGANIZATION_ID",
-    "ANTHROPIC_SERVICE_ACCOUNT_ID",
-    "ANTHROPIC_WORKSPACE_ID",
-    "ANTHROPIC_SCOPE",
+    "HAIJUN_API_KEY",
+    "HAIJUN_AUTH_TOKEN",
+    "HAIJUN_CONFIG_DIR",
+    "HAIJUN_PROFILE",
+    "HAIJUN_IDENTITY_TOKEN",
+    "HAIJUN_IDENTITY_TOKEN_FILE",
+    "HAIJUN_FEDERATION_RULE_ID",
+    "HAIJUN_ORGANIZATION_ID",
+    "HAIJUN_SERVICE_ACCOUNT_ID",
+    "HAIJUN_WORKSPACE_ID",
+    "HAIJUN_SCOPE",
 ]
 
 
@@ -70,14 +70,14 @@ def clean_env(monkeypatch: pytest.MonkeyPatch) -> pytest.MonkeyPatch:
 @pytest.fixture
 def no_default_creds_file(monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
     """Point the config directory at an empty location so a real
-    ~/.config/anthropic/ on the dev machine doesn't leak into tests.
+    ~/.config/Juglow/ on the dev machine doesn't leak into tests.
 
-    Patches ``_config_dir`` directly rather than setting ``ANTHROPIC_CONFIG_DIR``
+    Patches ``_config_dir`` directly rather than setting ``HAIJUN_CONFIG_DIR``
     so that ``clean_env`` (which deletes that env var) can't clobber the isolation.
     """
     empty = tmp_path / "empty-config-dir"
     empty.mkdir()
-    monkeypatch.setattr("anthropic.lib.credentials._constants._config_dir", lambda: empty)
+    monkeypatch.setattr("juglow.lib.credentials._constants._config_dir", lambda: empty)
 
 
 # Field names that live at the top level of the new nested config shape
@@ -91,7 +91,7 @@ def _migrate_legacy_config(flat: Dict[str, Any]) -> Dict[str, Any]:
     Many tests in this file predate the schema migration and pass legacy
     flat configs like ``{"type": "workload_identity", "federation_rule_id": ...}``.
     Rather than churn every caller, this helper translates at the test-helper
-    layer — tests that want to assert against the new shape directly can
+    layer â€” tests that want to assert against the new shape directly can
     pass a config dict that already contains an ``"authentication"`` key.
     """
     result: Dict[str, Any] = {}
@@ -105,8 +105,8 @@ def _migrate_legacy_config(flat: Dict[str, Any]) -> Dict[str, Any]:
             auth[key] = value
 
     # "external" used to mean "token already in credentials file, no
-    # refresh" — the new schema expresses this as user_oauth without a
-    # client_id (the key "external → user_oauth" both preserves the daemon
+    # refresh" â€” the new schema expresses this as user_oauth without a
+    # client_id (the key "external â†’ user_oauth" both preserves the daemon
     # semantics and keeps auth-only fields like credentials_path intact).
     # "workload_identity" / "authorized_user" were renamed.
     auth["type"] = {
@@ -176,12 +176,12 @@ class TestStaticToken:
 
 class TestEnvToken:
     def test_reads_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_AUTH_TOKEN", "env-token")
+        monkeypatch.setenv("HAIJUN_AUTH_TOKEN", "env-token")
         assert EnvToken()().token == "env-token"
 
     def test_raises_when_missing(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.delenv("ANTHROPIC_AUTH_TOKEN", raising=False)
-        with pytest.raises(AnthropicError, match="ANTHROPIC_AUTH_TOKEN"):
+        monkeypatch.delenv("HAIJUN_AUTH_TOKEN", raising=False)
+        with pytest.raises(JuGloWError, match="HAIJUN_AUTH_TOKEN"):
             EnvToken()()
 
 
@@ -198,28 +198,28 @@ class TestIdentityTokenFile:
     def test_reads_env_var_path(self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
         f = tmp_path / "token"
         f.write_text("from-env")
-        monkeypatch.setenv("ANTHROPIC_IDENTITY_TOKEN_FILE", str(f))
+        monkeypatch.setenv("HAIJUN_IDENTITY_TOKEN_FILE", str(f))
         assert IdentityTokenFile()() == "from-env"
 
     def test_raises_when_no_path(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.delenv("ANTHROPIC_IDENTITY_TOKEN_FILE", raising=False)
-        with pytest.raises(AnthropicError, match="ANTHROPIC_IDENTITY_TOKEN_FILE"):
+        monkeypatch.delenv("HAIJUN_IDENTITY_TOKEN_FILE", raising=False)
+        with pytest.raises(JuGloWError, match="HAIJUN_IDENTITY_TOKEN_FILE"):
             IdentityTokenFile()
 
     def test_raises_when_file_missing(self, tmp_path: pathlib.Path) -> None:
-        with pytest.raises(AnthropicError, match="not found"):
+        with pytest.raises(JuGloWError, match="not found"):
             IdentityTokenFile(tmp_path / "nope")()
 
 
 class TestCredentialsFile:
-    """All tests use ``ANTHROPIC_CONFIG_DIR`` to point at a tmp directory laid
+    """All tests use ``HAIJUN_CONFIG_DIR`` to point at a tmp directory laid
     out as ``configs/<profile>.json`` + ``credentials/<profile>.json``."""
 
     @pytest.fixture(autouse=True)
     def _isolate(self, monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
         for var in _ALL_ENV:
             monkeypatch.delenv(var, raising=False)
-        monkeypatch.setenv("ANTHROPIC_CONFIG_DIR", str(tmp_path))
+        monkeypatch.setenv("HAIJUN_CONFIG_DIR", str(tmp_path))
 
     # -- "type": "external" ------------------------------------------------
 
@@ -250,7 +250,7 @@ class TestCredentialsFile:
 
     def test_external_missing_credentials_file(self, tmp_path: pathlib.Path) -> None:
         _write_profile(tmp_path, "default", {"type": "external"})  # no credentials file
-        with pytest.raises(AnthropicError, match="Credentials file not found"):
+        with pytest.raises(JuGloWError, match="Credentials file not found"):
             CredentialsFile()()
 
     def test_credentials_file_wrong_type_raises(self, tmp_path: pathlib.Path) -> None:
@@ -261,7 +261,7 @@ class TestCredentialsFile:
             credentials={"type": "something_else", "access_token": "x"},
         )
         with pytest.raises(
-            AnthropicError,
+            JuGloWError,
             match="credentials file has type 'something_else'; expected 'oauth_token' for authentication.type 'user_oauth'",
         ):
             CredentialsFile()()
@@ -305,7 +305,7 @@ class TestCredentialsFile:
         jwt_path = tmp_path / "jwt"
         jwt_path.write_text("ext-jwt-from-file")
 
-        # workload_identity needs no credentials file — config is sufficient.
+        # workload_identity needs no credentials file â€” config is sufficient.
         _write_profile(
             tmp_path,
             "default",
@@ -352,7 +352,7 @@ class TestCredentialsFile:
     @pytest.mark.respx()
     def test_bind_base_url_precedence(self, respx_mock: MockRouter, tmp_path: pathlib.Path) -> None:
         """``bind_base_url`` slots between the config file's own ``base_url``
-        field and the hard-coded default: config → bound → default."""
+        field and the hard-coded default: config â†’ bound â†’ default."""
         jwt_path = tmp_path / "jwt"
         jwt_path.write_text("j")
         bound = "https://bound.example"
@@ -368,13 +368,13 @@ class TestCredentialsFile:
                 cfg["base_url"] = with_base_url
             _write_profile(tmp_path, profile, config=cfg)
 
-        # config omits base_url, no bind → DEFAULT_BASE_URL
+        # config omits base_url, no bind â†’ DEFAULT_BASE_URL
         write("p0", with_base_url=None)
         respx_mock.post(TOKEN_URL).mock(return_value=httpx.Response(200, json={"access_token": "t", "expires_in": 60}))
         CredentialsFile("p0")()
         assert str(cast("list[MockRequestCall]", respx_mock.calls)[-1].request.url) == TOKEN_URL
 
-        # config omits base_url + bound → bound
+        # config omits base_url + bound â†’ bound
         write("p1", with_base_url=None)
         respx_mock.post(f"{bound}{TOKEN_ENDPOINT}").mock(
             return_value=httpx.Response(200, json={"access_token": "t", "expires_in": 60})
@@ -384,7 +384,7 @@ class TestCredentialsFile:
         creds()
         assert str(cast("list[MockRequestCall]", respx_mock.calls)[-1].request.url) == f"{bound}{TOKEN_ENDPOINT}"
 
-        # config has base_url + bound → config wins
+        # config has base_url + bound â†’ config wins
         write("p2", with_base_url="https://from-config.example")
         respx_mock.post(f"https://from-config.example{TOKEN_ENDPOINT}").mock(
             return_value=httpx.Response(200, json={"access_token": "t", "expires_in": 60})
@@ -398,22 +398,22 @@ class TestCredentialsFile:
         )
 
         # re-entrancy: bind_base_url called *after* _load_config() re-resolves
-        # in place — the last bind wins when the config file doesn't pin a host.
+        # in place â€” the last bind wins when the config file doesn't pin a host.
         write("p3", with_base_url=None)
         creds = CredentialsFile("p3")
         creds.extra_headers()  # forces _load_config()
         creds.bind_base_url("https://first.example")
         creds.bind_base_url("https://second.example")
         assert creds._base_url == "https://second.example"  # type: ignore[attr-defined]
-        # eager scheme validation — http:// rejected at bind time, before load
-        with pytest.raises(AnthropicError, match="https"):
+        # eager scheme validation â€” http:// rejected at bind time, before load
+        with pytest.raises(JuGloWError, match="https"):
             CredentialsFile("p3").bind_base_url("http://evil.example")
 
     @pytest.mark.respx(base_url=BASE_URL)
     def test_workload_identity_disk_cache_stale_reexchange(
         self, respx_mock: MockRouter, tmp_path: pathlib.Path
     ) -> None:
-        """A stale on-disk credentials file is ignored — fresh exchange happens
+        """A stale on-disk credentials file is ignored â€” fresh exchange happens
         and the file is rewritten."""
         jwt_path = tmp_path / "jwt"
         jwt_path.write_text("ext-jwt")
@@ -495,7 +495,7 @@ class TestCredentialsFile:
         provider()
         delegate = provider._workload_delegate  # pyright: ignore[reportPrivateUsage]
         assert delegate is not None
-        # The delegate must NOT own its httpx.Client — that would mean we have
+        # The delegate must NOT own its httpx.Client â€” that would mean we have
         # two pools to track and close().
         assert delegate._owns_http_client is False  # pyright: ignore[reportPrivateUsage]
         # Both objects share the same client instance.
@@ -513,7 +513,7 @@ class TestCredentialsFile:
                 "identity_token": {"source": "url", "url": "https://example.com/token"},
             },
         )
-        with pytest.raises(AnthropicError, match="identity_token source 'url' is not supported"):
+        with pytest.raises(JuGloWError, match="identity_token source 'url' is not supported"):
             CredentialsFile()()
 
     def test_workload_identity_token_omitted_uses_env(
@@ -521,7 +521,7 @@ class TestCredentialsFile:
     ) -> None:
         jwt_path = tmp_path / "jwt"
         jwt_path.write_text("via-env-chain")
-        monkeypatch.setenv("ANTHROPIC_IDENTITY_TOKEN_FILE", str(jwt_path))
+        monkeypatch.setenv("HAIJUN_IDENTITY_TOKEN_FILE", str(jwt_path))
 
         _write_profile(
             tmp_path, "default", {"type": "workload_identity", "federation_rule_id": "f", "organization_id": "o"}
@@ -540,7 +540,7 @@ class TestCredentialsFile:
 
     @pytest.mark.respx(base_url=BASE_URL)
     def test_authorized_user_refresh_and_writeback(self, respx_mock: MockRouter, tmp_path: pathlib.Path) -> None:
-        """Refresh writes back to credentials/ only — configs/ stays untouched."""
+        """Refresh writes back to credentials/ only â€” configs/ stays untouched."""
         _write_profile(
             tmp_path,
             "default",
@@ -566,7 +566,7 @@ class TestCredentialsFile:
         body = json.loads(cast("list[MockRequestCall]", refresh_route.calls)[0].request.content)
         assert body == {"grant_type": "refresh_token", "refresh_token": "refresh-old", "client_id": "cid"}
 
-        # Credentials file was rewritten — expires_at is unix int seconds
+        # Credentials file was rewritten â€” expires_at is unix int seconds
         creds_file = tmp_path / "credentials" / "default.json"
         rewritten = json.loads(creds_file.read_text())
         assert rewritten["version"] == "1.0"
@@ -617,7 +617,7 @@ class TestCredentialsFile:
         """user_oauth without a client_id is the ``external`` pattern: the
         credentials file is externally rotated, the SDK re-reads it on every
         call, no refresh grant is attempted. The spec merged this use case
-        into user_oauth — a client_id is the opt-in signal for refresh."""
+        into user_oauth â€” a client_id is the opt-in signal for refresh."""
         _write_profile(
             tmp_path,
             "default",
@@ -651,14 +651,14 @@ class TestCredentialsFile:
         )
         CredentialsFile()()
         req = cast("list[MockRequestCall]", refresh_route.calls)[0].request
-        beta_flags = {f.strip() for f in req.headers["anthropic-beta"].split(",")}
+        beta_flags = {f.strip() for f in req.headers["juglow-beta"].split(",")}
         assert OAUTH_API_BETA_HEADER in beta_flags
         assert FEDERATION_BETA_HEADER not in beta_flags
-        assert req.headers["User-Agent"] == f"anthropic-python/{__version__}"
+        assert req.headers["User-Agent"] == f"Juglow-python/{__version__}"
 
     def test_user_oauth_with_client_id_missing_refresh_token(self, tmp_path: pathlib.Path) -> None:
         """A user_oauth profile that has a client_id (refresh mode) but no
-        refresh_token in the credentials file can't actually refresh — raise
+        refresh_token in the credentials file can't actually refresh â€” raise
         a clear error rather than 401-looping."""
         _write_profile(
             tmp_path,
@@ -673,26 +673,26 @@ class TestCredentialsFile:
 
     def test_unknown_type(self, tmp_path: pathlib.Path) -> None:
         _write_profile(tmp_path, "default", {"type": "mystery"})
-        with pytest.raises(AnthropicError, match="Unknown authentication.type"):
+        with pytest.raises(JuGloWError, match="Unknown authentication.type"):
             CredentialsFile()()
 
     def test_missing_config_file(self, tmp_path: pathlib.Path) -> None:
         # configs/ dir exists but profile file doesn't
         (tmp_path / "configs").mkdir()
-        with pytest.raises(AnthropicError, match="Config file not found"):
+        with pytest.raises(JuGloWError, match="Config file not found"):
             CredentialsFile("nonexistent")()
 
     def test_default_credentials_explicit_env_propagates_error(
         self, tmp_path: pathlib.Path, clean_env: pytest.MonkeyPatch
     ) -> None:
-        """When ANTHROPIC_PROFILE or ANTHROPIC_CONFIG_DIR is set explicitly, a
-        broken config file surfaces immediately — not swallowed into a 'no auth
+        """When HAIJUN_PROFILE or HAIJUN_CONFIG_DIR is set explicitly, a
+        broken config file surfaces immediately â€” not swallowed into a 'no auth
         configured' misdirection."""
-        clean_env.setenv("ANTHROPIC_CONFIG_DIR", str(tmp_path))
-        clean_env.setenv("ANTHROPIC_PROFILE", "broken")
+        clean_env.setenv("HAIJUN_CONFIG_DIR", str(tmp_path))
+        clean_env.setenv("HAIJUN_PROFILE", "broken")
         (tmp_path / "configs").mkdir()
         (tmp_path / "configs" / "broken.json").write_text("this is not JSON")
-        with pytest.raises(AnthropicError, match="not valid JSON"):
+        with pytest.raises(JuGloWError, match="not valid JSON"):
             default_credentials()
 
     # -- security: HTTPS enforcement --------------------------------------
@@ -706,7 +706,7 @@ class TestCredentialsFile:
             {"type": "external", "base_url": "http://evil.example.com"},
             {"access_token": "x"},
         )
-        with pytest.raises(AnthropicError, match="must use https"):
+        with pytest.raises(JuGloWError, match="must use https"):
             CredentialsFile()()
 
     def test_config_base_url_localhost_http_allowed(self, tmp_path: pathlib.Path) -> None:
@@ -720,28 +720,28 @@ class TestCredentialsFile:
         assert CredentialsFile()().token == "x"
 
     def test_workload_identity_http_rejected(self) -> None:
-        from anthropic.lib.credentials import WorkloadIdentityCredentials
+        from juglow.lib.credentials import WorkloadIdentityCredentials
 
         creds = WorkloadIdentityCredentials(
             identity_token_provider=lambda: "j",
             federation_rule_id="fdrl_x",
             organization_id="00000000-0000-0000-0000-000000000000",
         )
-        with pytest.raises(AnthropicError, match="must use https"):
+        with pytest.raises(JuGloWError, match="must use https"):
             creds.bind_base_url("http://evil.example.com")
 
     # -- security: profile-name validation --------------------------------
 
     def test_profile_name_path_traversal_rejected(self) -> None:
-        with pytest.raises(AnthropicError, match="path separators"):
+        with pytest.raises(JuGloWError, match="path separators"):
             CredentialsFile(profile="evil/shadow")()
 
     def test_profile_name_leading_dot_rejected(self) -> None:
-        with pytest.raises(AnthropicError, match="must not start with a dot"):
+        with pytest.raises(JuGloWError, match="must not start with a dot"):
             CredentialsFile(profile=".hidden")()
 
     def test_profile_name_empty_rejected(self) -> None:
-        with pytest.raises(AnthropicError, match="must not be empty"):
+        with pytest.raises(JuGloWError, match="must not be empty"):
             CredentialsFile(profile="")()
 
     # -- security: credentials file permissions ---------------------------
@@ -751,7 +751,7 @@ class TestCredentialsFile:
             pytest.skip("POSIX mode bits only")
         _write_profile(tmp_path, "default", {"type": "external"}, {"access_token": "x"})
         (tmp_path / "credentials" / "default.json").chmod(0o644)
-        with pytest.raises(AnthropicError, match="world-readable"):
+        with pytest.raises(JuGloWError, match="world-readable"):
             CredentialsFile()()
 
     def test_credentials_file_group_readable_warns(
@@ -766,7 +766,7 @@ class TestCredentialsFile:
             {"access_token": "x", "expires_at": int(time.time()) + 3600},
         )
         (tmp_path / "credentials" / "default.json").chmod(0o640)
-        with caplog.at_level("WARNING", logger="anthropic.lib.credentials._providers"):
+        with caplog.at_level("WARNING", logger="juglow.lib.credentials._providers"):
             CredentialsFile()()
         assert any("group-readable" in rec.message for rec in caplog.records)
 
@@ -780,13 +780,13 @@ class TestCredentialsFile:
         target.chmod(0o600)
         real.unlink()
         real.symlink_to(target)
-        with pytest.raises(AnthropicError, match="symlink"):
+        with pytest.raises(JuGloWError, match="symlink"):
             CredentialsFile()()
 
     # -- security: redacted error bodies ----------------------------------
 
     def test_workload_identity_error_body_redacted(self) -> None:
-        from anthropic.lib.credentials._workload import _redact_body
+        from juglow.lib.credentials._workload import _redact_body
 
         # Long string truncated.
         long = "sensitive_" * 100
@@ -808,7 +808,7 @@ class TestCredentialsFile:
     def test_bad_config_json(self, tmp_path: pathlib.Path) -> None:
         (tmp_path / "configs").mkdir()
         (tmp_path / "configs" / "default.json").write_text("{not json")
-        with pytest.raises(AnthropicError, match="not valid JSON"):
+        with pytest.raises(JuGloWError, match="not valid JSON"):
             CredentialsFile()()
 
     # -- profiles & paths --------------------------------------------------
@@ -821,7 +821,7 @@ class TestCredentialsFile:
 
     def test_profile_from_env(self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
         _write_profile(tmp_path, "from-env", {"type": "external"}, {"access_token": "env-tok"})
-        monkeypatch.setenv("ANTHROPIC_PROFILE", "from-env")
+        monkeypatch.setenv("HAIJUN_PROFILE", "from-env")
         assert CredentialsFile()().token == "env-tok"
 
     def test_profile_from_active_config(self, tmp_path: pathlib.Path) -> None:
@@ -833,7 +833,7 @@ class TestCredentialsFile:
         _write_profile(tmp_path, "from-env", {"type": "external"}, {"access_token": "env-tok"})
         _write_profile(tmp_path, "from-file", {"type": "external"}, {"access_token": "file-tok"})
         (tmp_path / "active_config").write_text("from-file")
-        monkeypatch.setenv("ANTHROPIC_PROFILE", "from-env")
+        monkeypatch.setenv("HAIJUN_PROFILE", "from-env")
         assert CredentialsFile()().token == "env-tok"
 
     def test_credentials_path_override(self, tmp_path: pathlib.Path) -> None:
@@ -865,7 +865,7 @@ class TestCredentialsFile:
         token_route = respx_mock.post("/v1/oauth/token").mock(
             return_value=httpx.Response(200, json={"access_token": "tok", "expires_in": 3600})
         )
-        CredentialsFile()()  # no base_url ctor arg → config wins
+        CredentialsFile()()  # no base_url ctor arg â†’ config wins
         assert str(cast("list[MockRequestCall]", token_route.calls)[0].request.url).startswith(
             "https://from-config.example.com/"
         )
@@ -875,7 +875,7 @@ class TestCredentialsFile:
     def test_chain_and_class_agree_on_profile(self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """default_credentials() and CredentialsFile() resolve to the same profile."""
         _write_profile(tmp_path, "agreed", {"type": "external"}, {"access_token": "x"})
-        monkeypatch.setenv("ANTHROPIC_PROFILE", "agreed")
+        monkeypatch.setenv("HAIJUN_PROFILE", "agreed")
 
         result = default_credentials()
         assert result is not None
@@ -921,10 +921,10 @@ class TestWorkloadIdentityCredentials:
         # jwt-bearer exchange must carry BOTH: oauth-2025-04-20 unlocks the
         # token endpoint, oidc-federation-2026-04-01 routes to the federation
         # handler.
-        beta_flags = {f.strip() for f in req.headers["anthropic-beta"].split(",")}
+        beta_flags = {f.strip() for f in req.headers["juglow-beta"].split(",")}
         assert OAUTH_API_BETA_HEADER in beta_flags
         assert FEDERATION_BETA_HEADER in beta_flags
-        assert req.headers["User-Agent"] == f"anthropic-python/{__version__}"
+        assert req.headers["User-Agent"] == f"Juglow-python/{__version__}"
         body = json.loads(req.content)
         assert body["grant_type"] == GRANT_TYPE_JWT_BEARER
         assert body["assertion"] == "ext.jwt.value"
@@ -977,7 +977,7 @@ class TestWorkloadIdentityCredentials:
     @pytest.mark.respx()
     def test_scope_is_display_only(self, respx_mock: MockRouter) -> None:
         """``scope`` is stored on the provider for parity but never sent on the
-        wire — the server derives effective scope from the federation rule."""
+        wire â€” the server derives effective scope from the federation rule."""
         respx_mock.post(TOKEN_URL).mock(return_value=httpx.Response(200, json={"access_token": "t", "expires_in": 60}))
         creds = WorkloadIdentityCredentials(
             identity_token_provider=lambda: "j",
@@ -1010,17 +1010,17 @@ class TestWorkloadIdentityCredentials:
 
     @pytest.mark.respx()
     def test_bind_base_url(self, respx_mock: MockRouter) -> None:
-        """``bind_base_url`` sets the token-exchange URL; unbound → ``DEFAULT_BASE_URL``."""
+        """``bind_base_url`` sets the token-exchange URL; unbound â†’ ``DEFAULT_BASE_URL``."""
         bound = "https://bound.example"
 
-        # No bind → DEFAULT_BASE_URL
+        # No bind â†’ DEFAULT_BASE_URL
         respx_mock.post(TOKEN_URL).mock(return_value=httpx.Response(200, json={"access_token": "t", "expires_in": 60}))
         WorkloadIdentityCredentials(
             identity_token_provider=lambda: "j", federation_rule_id="fdrl_x", organization_id="org"
         )()
         assert str(cast("list[MockRequestCall]", respx_mock.calls)[-1].request.url) == TOKEN_URL
 
-        # bound → bound
+        # bound â†’ bound
         respx_mock.post(f"{bound}{TOKEN_ENDPOINT}").mock(
             return_value=httpx.Response(200, json={"access_token": "t", "expires_in": 60})
         )
@@ -1035,11 +1035,11 @@ class TestWorkloadIdentityCredentials:
         creds = WorkloadIdentityCredentials(
             identity_token_provider=lambda: "j", federation_rule_id="fdrl_x", organization_id="org"
         )
-        with pytest.raises(AnthropicError, match="must use https"):
+        with pytest.raises(JuGloWError, match="must use https"):
             creds.bind_base_url("http://evil.example")
 
     def test_exchange_federation_assertion_http_rejected(self) -> None:
-        with pytest.raises(AnthropicError, match="must use https"):
+        with pytest.raises(JuGloWError, match="must use https"):
             exchange_federation_assertion(
                 assertion="j",
                 federation_rule_id="fdrl_x",
@@ -1123,7 +1123,7 @@ class TestWorkloadIdentityCredentials:
             creds()
         message = str(exc_info.value)
         assert "Ensure your federation rule matches your identity token" in message
-        assert "ANTHROPIC_WORKSPACE_ID" in message
+        assert "HAIJUN_WORKSPACE_ID" in message
         assert "scoped to multiple workspaces" in message
         assert "workspace_id" in message
         assert "View your authentication events" in message
@@ -1144,7 +1144,7 @@ class TestWorkloadIdentityCredentials:
         message = str(exc_info.value)
         assert "Ensure your federation rule matches your identity token" in message
         assert "View your authentication events" in message
-        assert "ANTHROPIC_WORKSPACE_ID" not in message
+        assert "HAIJUN_WORKSPACE_ID" not in message
         assert "scoped to multiple workspaces" not in message
 
     @pytest.mark.respx()
@@ -1160,7 +1160,7 @@ class TestWorkloadIdentityCredentials:
             creds()
         message = str(exc_info.value)
         assert "Ensure your federation rule" not in message
-        assert "ANTHROPIC_WORKSPACE_ID" not in message
+        assert "HAIJUN_WORKSPACE_ID" not in message
         assert "View your authentication events" not in message
 
     def test_oversized_assertion_rejected(self) -> None:
@@ -1216,18 +1216,18 @@ class TestWorkloadIdentityCredentials:
 
 
 class TestProfileEnvFill:
-    """PY-01: profile fields left empty are filled from ANTHROPIC_* env vars,
+    """PY-01: profile fields left empty are filled from HAIJUN_* env vars,
     matching Go's ``fillMissingFromEnv`` precedence (file wins, env fills gaps)."""
 
     @pytest.fixture(autouse=True)
     def _isolate(self, monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
         for var in _ALL_ENV:
             monkeypatch.delenv(var, raising=False)
-        monkeypatch.setenv("ANTHROPIC_CONFIG_DIR", str(tmp_path))
+        monkeypatch.setenv("HAIJUN_CONFIG_DIR", str(tmp_path))
 
     def test_env_fills_missing_organization_id(self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_ORGANIZATION_ID", "org_from_env")
-        monkeypatch.setenv("ANTHROPIC_IDENTITY_TOKEN_FILE", str(tmp_path / "tok"))
+        monkeypatch.setenv("HAIJUN_ORGANIZATION_ID", "org_from_env")
+        monkeypatch.setenv("HAIJUN_IDENTITY_TOKEN_FILE", str(tmp_path / "tok"))
         (tmp_path / "tok").write_text("jwt")
         # Profile omits organization_id; env supplies it.
         _write_profile(
@@ -1246,9 +1246,9 @@ class TestProfileEnvFill:
         assert delegate._organization_id == "org_from_env"  # pyright: ignore[reportPrivateUsage]
 
     def test_profile_value_wins_over_env(self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_ORGANIZATION_ID", "org_from_env")
-        monkeypatch.setenv("ANTHROPIC_WORKSPACE_ID", "wrkspc_env")
-        monkeypatch.setenv("ANTHROPIC_IDENTITY_TOKEN_FILE", str(tmp_path / "tok"))
+        monkeypatch.setenv("HAIJUN_ORGANIZATION_ID", "org_from_env")
+        monkeypatch.setenv("HAIJUN_WORKSPACE_ID", "wrkspc_env")
+        monkeypatch.setenv("HAIJUN_IDENTITY_TOKEN_FILE", str(tmp_path / "tok"))
         (tmp_path / "tok").write_text("jwt")
         _write_profile(
             tmp_path,
@@ -1268,9 +1268,9 @@ class TestProfileEnvFill:
         assert delegate._workspace_id == "wrkspc_file"  # pyright: ignore[reportPrivateUsage]
 
     def test_env_fills_missing_workspace_id(self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_ORGANIZATION_ID", "org_x")
-        monkeypatch.setenv("ANTHROPIC_WORKSPACE_ID", "wrkspc_from_env")
-        monkeypatch.setenv("ANTHROPIC_IDENTITY_TOKEN_FILE", str(tmp_path / "tok"))
+        monkeypatch.setenv("HAIJUN_ORGANIZATION_ID", "org_x")
+        monkeypatch.setenv("HAIJUN_WORKSPACE_ID", "wrkspc_from_env")
+        monkeypatch.setenv("HAIJUN_IDENTITY_TOKEN_FILE", str(tmp_path / "tok"))
         (tmp_path / "tok").write_text("jwt")
         _write_profile(
             tmp_path,
@@ -1287,12 +1287,12 @@ class TestProfileEnvFill:
         assert delegate._workspace_id == "wrkspc_from_env"  # pyright: ignore[reportPrivateUsage]
 
     def test_env_workspace_id_fills_user_oauth(self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        """``ANTHROPIC_WORKSPACE_ID`` fills ``workspace_id`` uniformly across
-        profile types — not just federation. This pins the precedence model:
+        """``HAIJUN_WORKSPACE_ID`` fills ``workspace_id`` uniformly across
+        profile types â€” not just federation. This pins the precedence model:
         ctor override > env var > profile, regardless of ``auth.type``. For
-        ``user_oauth`` the filled value surfaces as the ``anthropic-workspace-id``
+        ``user_oauth`` the filled value surfaces as the ``Juglow-workspace-id``
         request header (federation routes it into the exchange body instead)."""
-        monkeypatch.setenv("ANTHROPIC_WORKSPACE_ID", "wrkspc_env")
+        monkeypatch.setenv("HAIJUN_WORKSPACE_ID", "wrkspc_env")
         creds_path = tmp_path / "creds.json"
         creds_path.write_text(json.dumps({"type": "oauth_token", "access_token": "tok", "expires_at": None}))
         _write_profile(
@@ -1307,7 +1307,7 @@ class TestProfileEnvFill:
             },
         )
         provider = CredentialsFile()
-        assert provider.extra_headers() == {"anthropic-workspace-id": "wrkspc_env"}
+        assert provider.extra_headers() == {"Juglow-workspace-id": "wrkspc_env"}
 
 
 class TestIdentityTokenValidation:
@@ -1318,7 +1318,7 @@ class TestIdentityTokenValidation:
     def _isolate(self, monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
         for var in _ALL_ENV:
             monkeypatch.delenv(var, raising=False)
-        monkeypatch.setenv("ANTHROPIC_CONFIG_DIR", str(tmp_path))
+        monkeypatch.setenv("HAIJUN_CONFIG_DIR", str(tmp_path))
 
     def test_empty_path_raises(self, tmp_path: pathlib.Path) -> None:
         _write_profile(
@@ -1334,7 +1334,7 @@ class TestIdentityTokenValidation:
             },
         )
         provider = CredentialsFile()
-        with pytest.raises(AnthropicError, match="non-empty path"):
+        with pytest.raises(JuGloWError, match="non-empty path"):
             provider._build_workload_delegate(provider._auth_block())  # pyright: ignore[reportPrivateUsage]
 
 
@@ -1508,7 +1508,7 @@ class TestTokenCache:
 
     def test_concurrent_mandatory_refresh_single_flight(self) -> None:
         """N concurrent callers in the mandatory (expired) window trigger
-        exactly one provider call — waiters block on the leader's event."""
+        exactly one provider call â€” waiters block on the leader's event."""
         import threading as _threading
 
         provider_calls: List[int] = []
@@ -1541,7 +1541,7 @@ class TestTokenCache:
 
     def test_advisory_caller_skips_when_refresh_in_flight(self) -> None:
         """A caller in the advisory window does NOT start a second refresh and
-        does NOT wait on a running one — it just returns the cached token."""
+        does NOT wait on a running one â€” it just returns the cached token."""
         import threading as _threading
 
         clock = FakeClock(1000)
@@ -1568,7 +1568,7 @@ class TestTokenCache:
         assert refresh_started.wait(timeout=2)
 
         # A second caller in the advisory window should see the in-flight
-        # refresh and return the cached token immediately — without waiting.
+        # refresh and return the cached token immediately â€” without waiting.
         t0 = time.monotonic()
         observed = cache.get_token()
         elapsed = time.monotonic() - t0
@@ -1601,7 +1601,7 @@ class TestTokenCache:
 
     def test_zero_arg_provider_backward_compat(self) -> None:
         """Providers from before the force_refresh kwarg was added (the old
-        ``Callable[[], AccessToken]`` shape) must still work — the kwarg-
+        ``Callable[[], AccessToken]`` shape) must still work â€” the kwarg-
         binding TypeError is caught and the provider is re-invoked
         positionally."""
         calls: List[int] = []
@@ -1619,7 +1619,7 @@ class TestTokenCache:
 
     def test_next_force_preserved_on_provider_failure(self) -> None:
         """If invalidate() set the force flag and the provider then raises,
-        the flag must NOT be consumed — a subsequent retry must still see
+        the flag must NOT be consumed â€” a subsequent retry must still see
         force_refresh=True. Otherwise the retry serves the stale disk token
         PY-02 was added to bypass."""
         force_seen: List[bool] = []
@@ -1643,9 +1643,9 @@ class TestTokenCache:
     def test_advisory_refresh_backoff_after_failure(self) -> None:
         """PY-07: after an advisory refresh failure, subsequent advisory
         callers within ADVISORY_REFRESH_BACKOFF_SECONDS reuse the cached
-        token instead of re-attempting the provider — preventing an
+        token instead of re-attempting the provider â€” preventing an
         outage during the advisory window from being hammered at request rate."""
-        from anthropic.lib.credentials._workload import WorkloadIdentityError as _WIE
+        from juglow.lib.credentials._workload import WorkloadIdentityError as _WIE
 
         clock = FakeClock(1000)
         provider_calls: List[int] = []
@@ -1684,22 +1684,22 @@ class TestTokenCache:
 @pytest.mark.usefixtures("no_default_creds_file")
 class TestDefaultCredentials:
     def test_api_key_returns_none(self, clean_env: pytest.MonkeyPatch) -> None:
-        clean_env.setenv("ANTHROPIC_API_KEY", "sk-ant-api-key")
+        clean_env.setenv("HAIJUN_API_KEY", "sk-ant-api-key")
         assert default_credentials() is None
 
     def test_auth_token_returns_static(self, clean_env: pytest.MonkeyPatch) -> None:
-        clean_env.setenv("ANTHROPIC_AUTH_TOKEN", "bearer-tok")
+        clean_env.setenv("HAIJUN_AUTH_TOKEN", "bearer-tok")
         result = default_credentials()
         assert result is not None
         assert isinstance(result.provider, StaticToken)
         assert result.provider().token == "bearer-tok"
 
     def test_config_dir_env_triggers_tier1(self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
-        """ANTHROPIC_CONFIG_DIR set → tier 1 fires even if dir is empty (explicit opt-in)."""
+        """HAIJUN_CONFIG_DIR set â†’ tier 1 fires even if dir is empty (explicit opt-in)."""
         # Re-point _config_dir at tmp_path (the no_default_creds_file fixture
         # already patched it to an empty dir; override that here).
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
-        clean_env.setenv("ANTHROPIC_CONFIG_DIR", str(tmp_path))
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setenv("HAIJUN_CONFIG_DIR", str(tmp_path))
         _write_profile(tmp_path, "default", {"type": "external"}, {"access_token": "from-file"})
         result = default_credentials()
         assert result is not None
@@ -1707,9 +1707,9 @@ class TestDefaultCredentials:
         assert result.provider().token == "from-file"
 
     def test_profile_env_triggers_tier1(self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
-        """ANTHROPIC_PROFILE set → tier 1 fires."""
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
-        clean_env.setenv("ANTHROPIC_PROFILE", "work")
+        """HAIJUN_PROFILE set â†’ tier 1 fires."""
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setenv("HAIJUN_PROFILE", "work")
         _write_profile(tmp_path, "work", {"type": "external"}, {"access_token": "from-work"})
         result = default_credentials()
         assert result is not None
@@ -1719,8 +1719,8 @@ class TestDefaultCredentials:
     def test_default_dir_with_configs_triggers_tier1(
         self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        """No env vars but configs/ has files → tier 1 fires via _has_any_config()."""
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        """No env vars but configs/ has files â†’ tier 1 fires via _has_any_config()."""
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(tmp_path, "default", {"type": "external"}, {"access_token": "from-default"})
         result = default_credentials()
         assert result is not None
@@ -1729,36 +1729,36 @@ class TestDefaultCredentials:
     def test_workload_identity_tier(self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
         f = tmp_path / "jwt"
         f.write_text("ext-jwt")
-        clean_env.setenv("ANTHROPIC_IDENTITY_TOKEN_FILE", str(f))
-        clean_env.setenv("ANTHROPIC_FEDERATION_RULE_ID", "fdrl_01abc")
-        clean_env.setenv("ANTHROPIC_ORGANIZATION_ID", "org-uuid")
+        clean_env.setenv("HAIJUN_IDENTITY_TOKEN_FILE", str(f))
+        clean_env.setenv("HAIJUN_FEDERATION_RULE_ID", "fdrl_01abc")
+        clean_env.setenv("HAIJUN_ORGANIZATION_ID", "org-uuid")
         result = default_credentials()
         assert result is not None
         assert isinstance(result.provider, WorkloadIdentityCredentials)
 
     def test_workload_identity_literal_token(self, clean_env: pytest.MonkeyPatch) -> None:
-        clean_env.setenv("ANTHROPIC_IDENTITY_TOKEN", "literal-jwt")
-        clean_env.setenv("ANTHROPIC_FEDERATION_RULE_ID", "fdrl_01abc")
-        clean_env.setenv("ANTHROPIC_ORGANIZATION_ID", "org-uuid")
+        clean_env.setenv("HAIJUN_IDENTITY_TOKEN", "literal-jwt")
+        clean_env.setenv("HAIJUN_FEDERATION_RULE_ID", "fdrl_01abc")
+        clean_env.setenv("HAIJUN_ORGANIZATION_ID", "org-uuid")
         result = default_credentials()
         assert result is not None
         assert isinstance(result.provider, WorkloadIdentityCredentials)
 
     def test_workload_identity_scope_env(self, clean_env: pytest.MonkeyPatch) -> None:
-        clean_env.setenv("ANTHROPIC_IDENTITY_TOKEN", "literal-jwt")
-        clean_env.setenv("ANTHROPIC_FEDERATION_RULE_ID", "fdrl_01abc")
-        clean_env.setenv("ANTHROPIC_ORGANIZATION_ID", "org-uuid")
-        clean_env.setenv("ANTHROPIC_SCOPE", "api:read api:write")
+        clean_env.setenv("HAIJUN_IDENTITY_TOKEN", "literal-jwt")
+        clean_env.setenv("HAIJUN_FEDERATION_RULE_ID", "fdrl_01abc")
+        clean_env.setenv("HAIJUN_ORGANIZATION_ID", "org-uuid")
+        clean_env.setenv("HAIJUN_SCOPE", "api:read api:write")
         result = default_credentials()
         assert result is not None
         assert isinstance(result.provider, WorkloadIdentityCredentials)
         assert result.provider.scope == "api:read api:write"
 
     def test_workload_identity_workspace_id_env(self, clean_env: pytest.MonkeyPatch) -> None:
-        clean_env.setenv("ANTHROPIC_IDENTITY_TOKEN", "literal-jwt")
-        clean_env.setenv("ANTHROPIC_FEDERATION_RULE_ID", "fdrl_01abc")
-        clean_env.setenv("ANTHROPIC_ORGANIZATION_ID", "org-uuid")
-        clean_env.setenv("ANTHROPIC_WORKSPACE_ID", "wrkspc_01abc")
+        clean_env.setenv("HAIJUN_IDENTITY_TOKEN", "literal-jwt")
+        clean_env.setenv("HAIJUN_FEDERATION_RULE_ID", "fdrl_01abc")
+        clean_env.setenv("HAIJUN_ORGANIZATION_ID", "org-uuid")
+        clean_env.setenv("HAIJUN_WORKSPACE_ID", "wrkspc_01abc")
         result = default_credentials()
         assert result is not None
         provider = result.provider
@@ -1769,12 +1769,12 @@ class TestDefaultCredentials:
     def test_workload_identity_workspace_id_env_empty_treated_unset(
         self, clean_env: pytest.MonkeyPatch, respx_mock: MockRouter
     ) -> None:
-        """``ANTHROPIC_WORKSPACE_ID=""`` (a defaulted-but-empty CI variable) is
-        treated as unset — never put ``"workspace_id": ""`` on the wire."""
-        clean_env.setenv("ANTHROPIC_IDENTITY_TOKEN", "literal-jwt")
-        clean_env.setenv("ANTHROPIC_FEDERATION_RULE_ID", "fdrl_01abc")
-        clean_env.setenv("ANTHROPIC_ORGANIZATION_ID", "org-uuid")
-        clean_env.setenv("ANTHROPIC_WORKSPACE_ID", "")
+        """``HAIJUN_WORKSPACE_ID=""`` (a defaulted-but-empty CI variable) is
+        treated as unset â€” never put ``"workspace_id": ""`` on the wire."""
+        clean_env.setenv("HAIJUN_IDENTITY_TOKEN", "literal-jwt")
+        clean_env.setenv("HAIJUN_FEDERATION_RULE_ID", "fdrl_01abc")
+        clean_env.setenv("HAIJUN_ORGANIZATION_ID", "org-uuid")
+        clean_env.setenv("HAIJUN_WORKSPACE_ID", "")
         respx_mock.post(TOKEN_URL).mock(return_value=httpx.Response(200, json={"access_token": "t", "expires_in": 60}))
         result = default_credentials()
         assert result is not None
@@ -1786,24 +1786,24 @@ class TestDefaultCredentials:
         assert "workspace_id" not in body
 
     def test_workload_identity_literal_token_reads_fresh(self, clean_env: pytest.MonkeyPatch) -> None:
-        """Fix 4: ANTHROPIC_IDENTITY_TOKEN must be re-read on every provider
+        """Fix 4: HAIJUN_IDENTITY_TOKEN must be re-read on every provider
         invocation, not captured into a closure at chain-construction time."""
-        clean_env.setenv("ANTHROPIC_IDENTITY_TOKEN", "jwt-v1")
-        clean_env.setenv("ANTHROPIC_FEDERATION_RULE_ID", "fdrl_01abc")
-        clean_env.setenv("ANTHROPIC_ORGANIZATION_ID", "org-uuid")
+        clean_env.setenv("HAIJUN_IDENTITY_TOKEN", "jwt-v1")
+        clean_env.setenv("HAIJUN_FEDERATION_RULE_ID", "fdrl_01abc")
+        clean_env.setenv("HAIJUN_ORGANIZATION_ID", "org-uuid")
         result = default_credentials()
         assert result is not None
         provider = result.provider
         assert isinstance(provider, WorkloadIdentityCredentials)
         assert provider._identity_token_provider() == "jwt-v1"  # pyright: ignore[reportPrivateUsage]
 
-        clean_env.setenv("ANTHROPIC_IDENTITY_TOKEN", "jwt-v2")
+        clean_env.setenv("HAIJUN_IDENTITY_TOKEN", "jwt-v2")
         assert provider._identity_token_provider() == "jwt-v2"  # pyright: ignore[reportPrivateUsage]
 
     def test_workload_identity_requires_all_three(self, clean_env: pytest.MonkeyPatch) -> None:
         # only two of three set
-        clean_env.setenv("ANTHROPIC_IDENTITY_TOKEN", "literal-jwt")
-        clean_env.setenv("ANTHROPIC_FEDERATION_RULE_ID", "fdrl_01abc")
+        clean_env.setenv("HAIJUN_IDENTITY_TOKEN", "literal-jwt")
+        clean_env.setenv("HAIJUN_FEDERATION_RULE_ID", "fdrl_01abc")
         assert default_credentials() is None
 
     def test_env_federation_beats_fallback_on_disk_profile(
@@ -1813,28 +1813,28 @@ class TestDefaultCredentials:
         profile) in the precedence spec: a machine with WIF env vars wired
         up must use WIF even if a leftover ``default`` profile exists on
         disk. A user who wants the on-disk profile must set
-        ``ANTHROPIC_PROFILE`` explicitly (step 3), which would win.
+        ``HAIJUN_PROFILE`` explicitly (step 3), which would win.
         """
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(tmp_path, "default", {"type": "external"}, {"access_token": "from-on-disk-profile"})
-        clean_env.setenv("ANTHROPIC_IDENTITY_TOKEN", "literal-jwt")
-        clean_env.setenv("ANTHROPIC_FEDERATION_RULE_ID", "fdrl_01abc")
-        clean_env.setenv("ANTHROPIC_ORGANIZATION_ID", "00000000-0000-0000-0000-000000000000")
+        clean_env.setenv("HAIJUN_IDENTITY_TOKEN", "literal-jwt")
+        clean_env.setenv("HAIJUN_FEDERATION_RULE_ID", "fdrl_01abc")
+        clean_env.setenv("HAIJUN_ORGANIZATION_ID", "00000000-0000-0000-0000-000000000000")
         result = default_credentials()
         assert result is not None
         assert isinstance(result.provider, WorkloadIdentityCredentials)
 
     def test_explicit_profile_beats_env_federation(self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
-        """Step 3 (ANTHROPIC_PROFILE) sits above step 4 (env federation).
+        """Step 3 (HAIJUN_PROFILE) sits above step 4 (env federation).
         An explicit profile selection wins over a federation-configured
         environment.
         """
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(tmp_path, "dev", {"type": "external"}, {"access_token": "from-dev-profile"})
-        clean_env.setenv("ANTHROPIC_PROFILE", "dev")
-        clean_env.setenv("ANTHROPIC_IDENTITY_TOKEN", "literal-jwt")
-        clean_env.setenv("ANTHROPIC_FEDERATION_RULE_ID", "fdrl_01abc")
-        clean_env.setenv("ANTHROPIC_ORGANIZATION_ID", "00000000-0000-0000-0000-000000000000")
+        clean_env.setenv("HAIJUN_PROFILE", "dev")
+        clean_env.setenv("HAIJUN_IDENTITY_TOKEN", "literal-jwt")
+        clean_env.setenv("HAIJUN_FEDERATION_RULE_ID", "fdrl_01abc")
+        clean_env.setenv("HAIJUN_ORGANIZATION_ID", "00000000-0000-0000-0000-000000000000")
         result = default_credentials()
         assert result is not None
         assert isinstance(result.provider, CredentialsFile)
@@ -1846,7 +1846,7 @@ class TestDefaultCredentials:
 
 
 # --------------------------------------------------------------------------- #
-# Anthropic(credentials=...) integration
+# JuGloW(credentials=...) integration
 # --------------------------------------------------------------------------- #
 
 
@@ -1867,7 +1867,7 @@ def _mock_messages_endpoint(respx_mock: MockRouter) -> None:
                 "id": "msg_01",
                 "type": "message",
                 "role": "assistant",
-                "model": "claude-opus-4-5",
+                "model": "haijun-opus-5",
                 "content": [{"type": "text", "text": "hi"}],
                 "stop_reason": "end_turn",
                 "stop_sequence": None,
@@ -1877,22 +1877,22 @@ def _mock_messages_endpoint(respx_mock: MockRouter) -> None:
     )
 
 
-def _send_message(client: Anthropic) -> None:
+def _send_message(client: JuGloW) -> None:
     client.messages.create(
         max_tokens=1,
-        model="claude-opus-4-5",
+        model="haijun-opus-5",
         messages=[{"role": "user", "content": "hi"}],
     )
 
 
 @pytest.mark.usefixtures("clean_env", "no_default_creds_file")
-class TestAnthropicCredentials:
+class TestJuglowCredentials:
     @pytest.mark.respx()
     def test_messages_request_has_bearer_and_beta(self, respx_mock: MockRouter) -> None:
         _mock_token_endpoint(respx_mock)
         _mock_messages_endpoint(respx_mock)
 
-        client = Anthropic(
+        client = JuGloW(
             credentials=WorkloadIdentityCredentials(
                 identity_token_provider=lambda: "ext-jwt",
                 federation_rule_id="fdrl_01abc",
@@ -1906,10 +1906,10 @@ class TestAnthropicCredentials:
         assert len(msg_calls) == 1
         req = msg_calls[0].request
         assert req.headers["Authorization"] == "Bearer sk-ant-oat01-test"
-        # Authenticated API requests carry oauth-2025-04-20 (API beta) —
+        # Authenticated API requests carry oauth-2025-04-20 (API beta) â€”
         # NOT the federation routing switch, which is only for jwt-bearer
         # exchanges at /v1/oauth/token.
-        msg_flags = {f.strip() for f in req.headers["anthropic-beta"].split(",")}
+        msg_flags = {f.strip() for f in req.headers["juglow-beta"].split(",")}
         assert OAUTH_API_BETA_HEADER in msg_flags
         assert FEDERATION_BETA_HEADER not in msg_flags
         assert "X-Api-Key" not in req.headers
@@ -1930,7 +1930,7 @@ class TestAnthropicCredentials:
                     "id": "msg_01",
                     "type": "message",
                     "role": "assistant",
-                    "model": "claude-opus-4-5",
+                    "model": "haijun-opus-5",
                     "content": [{"type": "text", "text": "hi"}],
                     "stop_reason": "end_turn",
                     "stop_sequence": None,
@@ -1939,7 +1939,7 @@ class TestAnthropicCredentials:
             )
         )
 
-        client = Anthropic(
+        client = JuGloW(
             credentials=WorkloadIdentityCredentials(
                 identity_token_provider=lambda: "ext-jwt",
                 federation_rule_id="fdrl_01abc",
@@ -1961,7 +1961,7 @@ class TestAnthropicCredentials:
         _mock_token_endpoint(respx_mock)
         _mock_messages_endpoint(respx_mock)
 
-        client = Anthropic(
+        client = JuGloW(
             credentials=WorkloadIdentityCredentials(
                 identity_token_provider=lambda: "ext-jwt",
                 federation_rule_id="fdrl_01abc",
@@ -1981,25 +1981,25 @@ class TestAnthropicCredentials:
     @pytest.mark.respx()
     def test_static_token_credentials(self, respx_mock: MockRouter) -> None:
         _mock_messages_endpoint(respx_mock)
-        client = Anthropic(credentials=StaticToken("static-bearer"))
+        client = JuGloW(credentials=StaticToken("static-bearer"))
         _send_message(client)
 
         req = cast("list[MockRequestCall]", respx_mock.calls)[0].request
         assert req.headers["Authorization"] == "Bearer static-bearer"
-        assert OAUTH_API_BETA_HEADER in req.headers["anthropic-beta"]
+        assert OAUTH_API_BETA_HEADER in req.headers["juglow-beta"]
 
     @pytest.mark.respx()
     def test_beta_header_not_duplicated(self, respx_mock: MockRouter) -> None:
         _mock_messages_endpoint(respx_mock)
-        client = Anthropic(credentials=StaticToken("static-bearer"))
+        client = JuGloW(credentials=StaticToken("static-bearer"))
         client.messages.create(
             max_tokens=1,
-            model="claude-opus-4-5",
+            model="haijun-opus-5",
             messages=[{"role": "user", "content": "hi"}],
-            extra_headers={"anthropic-beta": OAUTH_API_BETA_HEADER},
+            extra_headers={"juglow-beta": OAUTH_API_BETA_HEADER},
         )
         req = cast("list[MockRequestCall]", respx_mock.calls)[0].request
-        assert req.headers["anthropic-beta"] == OAUTH_API_BETA_HEADER
+        assert req.headers["juglow-beta"] == OAUTH_API_BETA_HEADER
 
     @pytest.mark.respx()
     def test_beta_header_dedupe_is_token_based(self, respx_mock: MockRouter) -> None:
@@ -2008,7 +2008,7 @@ class TestAnthropicCredentials:
         suffixed variant) must NOT prevent the SDK from adding its own flag."""
         _mock_token_endpoint(respx_mock)
         _mock_messages_endpoint(respx_mock)
-        client = Anthropic(
+        client = JuGloW(
             credentials=WorkloadIdentityCredentials(
                 identity_token_provider=lambda: "ext-jwt",
                 federation_rule_id="fdrl_x",
@@ -2017,14 +2017,14 @@ class TestAnthropicCredentials:
         )
         client.messages.create(
             max_tokens=1,
-            model="claude-opus-4-5",
+            model="haijun-opus-5",
             messages=[{"role": "user", "content": "hi"}],
-            extra_headers={"anthropic-beta": f"{OAUTH_API_BETA_HEADER}-future-variant"},
+            extra_headers={"juglow-beta": f"{OAUTH_API_BETA_HEADER}-future-variant"},
         )
         msg_calls = [
             c for c in cast("list[MockRequestCall]", respx_mock.calls) if str(c.request.url).endswith("/v1/messages")
         ]
-        flags = [f.strip() for f in msg_calls[0].request.headers["anthropic-beta"].split(",")]
+        flags = [f.strip() for f in msg_calls[0].request.headers["juglow-beta"].split(",")]
         assert OAUTH_API_BETA_HEADER in flags
         assert f"{OAUTH_API_BETA_HEADER}-future-variant" in flags
 
@@ -2034,14 +2034,14 @@ class TestAnthropicCredentials:
     ) -> None:
         f = tmp_path / "jwt"
         f.write_text("env-jwt")
-        clean_env.setenv("ANTHROPIC_IDENTITY_TOKEN_FILE", str(f))
-        clean_env.setenv("ANTHROPIC_FEDERATION_RULE_ID", "fdrl_01abc")
-        clean_env.setenv("ANTHROPIC_ORGANIZATION_ID", "org-uuid")
+        clean_env.setenv("HAIJUN_IDENTITY_TOKEN_FILE", str(f))
+        clean_env.setenv("HAIJUN_FEDERATION_RULE_ID", "fdrl_01abc")
+        clean_env.setenv("HAIJUN_ORGANIZATION_ID", "org-uuid")
 
         _mock_token_endpoint(respx_mock)
         _mock_messages_endpoint(respx_mock)
 
-        client = Anthropic()
+        client = JuGloW()
         assert isinstance(client.credentials, WorkloadIdentityCredentials)
         _send_message(client)
 
@@ -2056,14 +2056,14 @@ class TestAnthropicCredentials:
     def test_zero_config_credentials_file_from_env(
         self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        # no_default_creds_file patched _config_dir → empty dir; re-point at tmp_path
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
-        clean_env.setenv("ANTHROPIC_CONFIG_DIR", str(tmp_path))
+        # no_default_creds_file patched _config_dir â†’ empty dir; re-point at tmp_path
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setenv("HAIJUN_CONFIG_DIR", str(tmp_path))
         _write_profile(tmp_path, "default", {"type": "external"}, {"access_token": "sk-ant-oat01-file"})
 
         _mock_messages_endpoint(respx_mock)
 
-        client = Anthropic()
+        client = JuGloW()
         assert isinstance(client.credentials, CredentialsFile)
         _send_message(client)
 
@@ -2071,12 +2071,12 @@ class TestAnthropicCredentials:
         assert req.headers["Authorization"] == "Bearer sk-ant-oat01-file"
 
     def test_profile_base_url_adopted_by_client(self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
-        """Outbound: a zero-arg ``Anthropic()`` adopts the active profile's
+        """Outbound: a zero-arg ``JuGloW()`` adopts the active profile's
         ``base_url`` when the user supplied neither ``base_url=`` nor
-        ``ANTHROPIC_BASE_URL``. Precedence: kwarg > env > profile > default."""
-        clean_env.delenv("ANTHROPIC_BASE_URL", raising=False)
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
-        clean_env.setenv("ANTHROPIC_CONFIG_DIR", str(tmp_path))
+        ``HAIJUN_BASE_URL``. Precedence: kwarg > env > profile > default."""
+        clean_env.delenv("HAIJUN_BASE_URL", raising=False)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setenv("HAIJUN_CONFIG_DIR", str(tmp_path))
         _write_profile(
             tmp_path,
             "default",
@@ -2084,34 +2084,34 @@ class TestAnthropicCredentials:
             {"access_token": "sk-ant-oat01-x"},
         )
 
-        # profile base_url → client.base_url
-        assert str(Anthropic().base_url).rstrip("/") == "https://staging.example"
-        assert str(AsyncAnthropic().base_url).rstrip("/") == "https://staging.example"
+        # profile base_url â†’ client.base_url
+        assert str(JuGloW().base_url).rstrip("/") == "https://staging.example"
+        assert str(AsyncJuGloW().base_url).rstrip("/") == "https://staging.example"
 
-        # ANTHROPIC_BASE_URL beats profile
-        clean_env.setenv("ANTHROPIC_BASE_URL", "https://env.example")
-        assert str(Anthropic().base_url).rstrip("/") == "https://env.example"
-        clean_env.delenv("ANTHROPIC_BASE_URL", raising=False)
+        # HAIJUN_BASE_URL beats profile
+        clean_env.setenv("HAIJUN_BASE_URL", "https://env.example")
+        assert str(JuGloW().base_url).rstrip("/") == "https://env.example"
+        clean_env.delenv("HAIJUN_BASE_URL", raising=False)
 
         # base_url= kwarg beats profile
-        assert str(Anthropic(base_url="https://kwarg.example").base_url).rstrip("/") == "https://kwarg.example"
+        assert str(JuGloW(base_url="https://kwarg.example").base_url).rstrip("/") == "https://kwarg.example"
 
-        # profile without base_url → hardcoded default
+        # profile without base_url â†’ hardcoded default
         _write_profile(
             tmp_path,
             "default",
             {"type": "external"},
             {"access_token": "sk-ant-oat01-x"},
         )
-        assert str(Anthropic().base_url).rstrip("/") == "https://api.anthropic.com"
+        assert str(JuGloW().base_url).rstrip("/") == "https://platform.juglow.my.id"
 
     def test_config_dict_base_url_adopted_by_client(
         self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        """Outbound, ``config=`` path: ``Anthropic(config={"base_url": ...})``
+        """Outbound, ``config=`` path: ``JuGloW(config={"base_url": ...})``
         adopts the dict's ``base_url`` for API requests when no kwarg/env is
         set, mirroring the disk-profile behaviour."""
-        clean_env.delenv("ANTHROPIC_BASE_URL", raising=False)
+        clean_env.delenv("HAIJUN_BASE_URL", raising=False)
         creds_path = tmp_path / "creds.json"
         creds_path.write_text(json.dumps({"type": "oauth_token", "access_token": "sk-ant-oat01-x"}))
         creds_path.chmod(0o600)
@@ -2120,21 +2120,21 @@ class TestAnthropicCredentials:
             "authentication": {"type": "user_oauth", "credentials_path": str(creds_path)},
         }
 
-        assert str(Anthropic(config=cfg).base_url).rstrip("/") == "https://staging.example"
-        assert str(AsyncAnthropic(config=cfg).base_url).rstrip("/") == "https://staging.example"
+        assert str(JuGloW(config=cfg).base_url).rstrip("/") == "https://staging.example"
+        assert str(AsyncJuGloW(config=cfg).base_url).rstrip("/") == "https://staging.example"
 
         # explicit base_url= still wins over config dict
         assert (
-            str(Anthropic(config=cfg, base_url="https://kwarg.example").base_url).rstrip("/") == "https://kwarg.example"
+            str(JuGloW(config=cfg, base_url="https://kwarg.example").base_url).rstrip("/") == "https://kwarg.example"
         )
 
     @pytest.mark.respx()
     def test_workspace_id_header_from_config(
         self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        """workspace_id in the config file → anthropic-workspace-id header on API requests."""
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
-        clean_env.setenv("ANTHROPIC_CONFIG_DIR", str(tmp_path))
+        """workspace_id in the config file â†’ Juglow-workspace-id header on API requests."""
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setenv("HAIJUN_CONFIG_DIR", str(tmp_path))
         _write_profile(
             tmp_path,
             "default",
@@ -2144,11 +2144,11 @@ class TestAnthropicCredentials:
 
         _mock_messages_endpoint(respx_mock)
 
-        client = Anthropic()
+        client = JuGloW()
         _send_message(client)
 
         req = cast("list[MockRequestCall]", respx_mock.calls)[0].request
-        assert req.headers["anthropic-workspace-id"] == "wrkspc_01abc"
+        assert req.headers["Juglow-workspace-id"] == "wrkspc_01abc"
 
     @pytest.mark.respx()
     def test_401_invalidates_cache_and_retries_once(self, respx_mock: MockRouter) -> None:
@@ -2161,7 +2161,7 @@ class TestAnthropicCredentials:
             provider_calls.append("called")
             return AccessToken(token=f"tok-{len(provider_calls)}", expires_at=None)
 
-        # 401 then 200 — the retry should succeed transparently.
+        # 401 then 200 â€” the retry should succeed transparently.
         respx_mock.post(f"{BASE_URL}/v1/messages").mock(
             side_effect=[
                 httpx.Response(401, json={"error": "unauthorized"}),
@@ -2171,7 +2171,7 @@ class TestAnthropicCredentials:
                         "id": "msg_01",
                         "type": "message",
                         "role": "assistant",
-                        "model": "claude-opus-4-5",
+                        "model": "haijun-opus-5",
                         "content": [{"type": "text", "text": "hi"}],
                         "stop_reason": "end_turn",
                         "stop_sequence": None,
@@ -2180,7 +2180,7 @@ class TestAnthropicCredentials:
                 ),
             ],
         )
-        client = Anthropic(credentials=provider, max_retries=2)
+        client = JuGloW(credentials=provider, max_retries=2)
         _send_message(client)
         assert len(provider_calls) == 2
         calls = cast("list[MockRequestCall]", respx_mock.calls)
@@ -2189,7 +2189,7 @@ class TestAnthropicCredentials:
 
     @pytest.mark.respx()
     def test_401_retry_is_single_shot(self, respx_mock: MockRouter) -> None:
-        """Two consecutive 401s → exactly one retry, then the error surfaces
+        """Two consecutive 401s â†’ exactly one retry, then the error surfaces
         even with max_retries > 1 remaining."""
         respx_mock.post(f"{BASE_URL}/v1/messages").mock(
             return_value=httpx.Response(401, json={"error": "unauthorized"}),
@@ -2200,8 +2200,8 @@ class TestAnthropicCredentials:
             provider_calls.append("called")
             return AccessToken(token=f"tok-{len(provider_calls)}", expires_at=None)
 
-        client = Anthropic(credentials=provider, max_retries=3)
-        with pytest.raises(anthropic.AuthenticationError):
+        client = JuGloW(credentials=provider, max_retries=3)
+        with pytest.raises(Juglow.AuthenticationError):
             _send_message(client)
         assert len(provider_calls) == 2  # initial + one retry
         assert len(cast("list[MockRequestCall]", respx_mock.calls)) == 2
@@ -2210,16 +2210,16 @@ class TestAnthropicCredentials:
     def test_api_key_precedence_preserved(
         self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        # ANTHROPIC_API_KEY takes precedence over the credential chain — credentials
+        # HAIJUN_API_KEY takes precedence over the credential chain â€” credentials
         # stays None and X-Api-Key is used (existing behavior preserved).
-        clean_env.setenv("ANTHROPIC_API_KEY", "sk-ant-api-key")
+        clean_env.setenv("HAIJUN_API_KEY", "sk-ant-api-key")
         # also set chain env vars; they should be ignored
-        clean_env.setenv("ANTHROPIC_CONFIG_DIR", str(tmp_path))
+        clean_env.setenv("HAIJUN_CONFIG_DIR", str(tmp_path))
         _write_profile(tmp_path, "default", {"type": "external"}, {"access_token": "should-not-be-used"})
 
         _mock_messages_endpoint(respx_mock)
 
-        client = Anthropic()
+        client = JuGloW()
         assert client.credentials is None
         assert client._token_cache is None
         _send_message(client)
@@ -2230,7 +2230,7 @@ class TestAnthropicCredentials:
 
     def test_copy_propagates_credentials(self) -> None:
         creds = StaticToken("a")
-        client = Anthropic(credentials=creds)
+        client = JuGloW(credentials=creds)
         copied = client.copy()
         assert copied.credentials is creds
         # The TokenCache instance is shared so a with_options() copy doesn't
@@ -2247,14 +2247,14 @@ class TestAnthropicCredentials:
         assert cleared._token_cache is None
 
     def test_with_options_alias(self) -> None:
-        client = Anthropic(credentials=StaticToken("a"))
+        client = JuGloW(credentials=StaticToken("a"))
         copied = client.with_options(max_retries=7)
         assert copied.max_retries == 7
         assert copied.credentials is client.credentials
 
     @pytest.mark.respx()
     def test_config_param_builds_in_memory_federation(self, respx_mock: MockRouter, tmp_path: pathlib.Path) -> None:
-        """``Anthropic(config={...})`` accepts a config-file-shaped dict and
+        """``JuGloW(config={...})`` accepts a config-file-shaped dict and
         wires it through to a federation provider, including ``workspace_id``
         as a default header."""
         jwt_path = tmp_path / "jwt"
@@ -2262,7 +2262,7 @@ class TestAnthropicCredentials:
         _mock_token_endpoint(respx_mock)
         _mock_messages_endpoint(respx_mock)
 
-        client = Anthropic(
+        client = JuGloW(
             config={
                 "organization_id": "org_x",
                 "workspace_id": "wrkspc_x",
@@ -2278,13 +2278,13 @@ class TestAnthropicCredentials:
         msg_req = cast("list[MockRequestCall]", respx_mock.calls)[-1].request
         assert msg_req.headers["Authorization"] == "Bearer sk-ant-oat01-test"
         # Federation profiles send workspace_id in the exchange body, not as a header.
-        assert "anthropic-workspace-id" not in msg_req.headers
+        assert "Juglow-workspace-id" not in msg_req.headers
         token_req = cast("list[MockRequestCall]", respx_mock.calls)[0].request
         assert json.loads(token_req.content)["workspace_id"] == "wrkspc_x"
 
     def test_config_and_credentials_mutually_exclusive(self) -> None:
         with pytest.raises(TypeError, match="at most one of"):
-            Anthropic(
+            JuGloW(
                 credentials=StaticToken("a"),
                 config={"authentication": {"type": "oidc_federation"}},
             )
@@ -2304,19 +2304,19 @@ class TestAnthropicCredentials:
                 "identity_token": {"source": "file", "path": str(jwt_path)},
             },
         }
-        explicit = Anthropic(api_key="sk-explicit", config=cfg)
+        explicit = JuGloW(api_key="sk-explicit", config=cfg)
         assert explicit.api_key == "sk-explicit"
         assert isinstance(explicit.credentials, InMemoryConfig)
 
     def test_explicit_config_beats_env_api_key(self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Explicit ``config=`` is step 1 and beats env ``ANTHROPIC_API_KEY``
+        """Explicit ``config=`` is step 1 and beats env ``HAIJUN_API_KEY``
         (step 2). The env api_key is ignored entirely and the config-derived
         credentials provider wins.
         """
-        monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-from-env")
+        monkeypatch.setenv("HAIJUN_API_KEY", "sk-from-env")
         jwt_path = tmp_path / "jwt"
         jwt_path.write_text("ext-jwt.ext-jwt.ext-jwt")
-        client = Anthropic(
+        client = JuGloW(
             config={
                 "organization_id": "org_x",
                 "authentication": {
@@ -2330,35 +2330,35 @@ class TestAnthropicCredentials:
         assert isinstance(client.credentials, InMemoryConfig)
 
     def test_profile_param_loads_named_profile(self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        """``Anthropic(profile="staging")`` loads ``configs/staging.json`` from
-        the config directory, equivalent to setting ``ANTHROPIC_PROFILE``."""
-        monkeypatch.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        """``JuGloW(profile="staging")`` loads ``configs/staging.json`` from
+        the config directory, equivalent to setting ``HAIJUN_PROFILE``."""
+        monkeypatch.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
             "staging",
             config={"type": "external", "base_url": "https://staging.example"},
             credentials={"access_token": "sk-ant-oat01-staging"},
         )
-        client = Anthropic(profile="staging")
+        client = JuGloW(profile="staging")
         assert isinstance(client.credentials, CredentialsFile)
         assert client.credentials.profile == "staging"
         assert str(client.base_url).rstrip("/") == "https://staging.example"
 
     def test_profile_and_config_mutually_exclusive(self) -> None:
         with pytest.raises(TypeError, match="at most one of"):
-            Anthropic(profile="x", config={"authentication": {"type": "oidc_federation"}})
+            JuGloW(profile="x", config={"authentication": {"type": "oidc_federation"}})
 
     def test_profile_and_credentials_mutually_exclusive(self) -> None:
         with pytest.raises(TypeError, match="at most one of"):
-            Anthropic(profile="x", credentials=StaticToken("a"))
+            JuGloW(profile="x", credentials=StaticToken("a"))
 
     def test_explicit_profile_beats_env_api_key(self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """Explicit ``profile=`` is a constructor argument and beats env
-        ``ANTHROPIC_API_KEY`` — the env var is not consulted."""
-        monkeypatch.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
-        monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-from-env")
+        ``HAIJUN_API_KEY`` â€” the env var is not consulted."""
+        monkeypatch.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
+        monkeypatch.setenv("HAIJUN_API_KEY", "sk-from-env")
         _write_profile(tmp_path, "dev", config={"type": "external"}, credentials={"access_token": "sk-ant-oat01-dev"})
-        client = Anthropic(profile="dev")
+        client = JuGloW(profile="dev")
         assert client.api_key is None
         assert isinstance(client.credentials, CredentialsFile)
         assert client.credentials.profile == "dev"
@@ -2377,7 +2377,7 @@ class TestAnthropicCredentials:
                 body={"error": {"type": "permission_error", "message": "Permission denied"}},
             )
 
-        client = Anthropic(credentials=failing_provider, max_retries=3)
+        client = JuGloW(credentials=failing_provider, max_retries=3)
         with pytest.raises(WorkloadIdentityError) as exc_info:
             _send_message(client)
         assert exc_info.value.status_code == 403
@@ -2432,7 +2432,7 @@ class TestInMemoryConfig:
         body = json.loads(cast("list[MockRequestCall]", respx_mock.calls)[0].request.content)
         assert body["assertion"] == "programmatic-jwt"
         # workspace_id flows through InMemoryConfig._build_workload_delegate
-        # even when identity_token_provider is overridden — that branch builds
+        # even when identity_token_provider is overridden â€” that branch builds
         # the delegate independently of the file-backed CredentialsFile path.
         assert body["workspace_id"] == "wrkspc_x"
 
@@ -2441,7 +2441,7 @@ class TestInMemoryConfig:
         self, respx_mock: MockRouter, tmp_path: pathlib.Path
     ) -> None:
         """Without ``authentication.credentials_path``, every call exchanges
-        fresh — nothing is written to disk."""
+        fresh â€” nothing is written to disk."""
         token_route = respx_mock.post(TOKEN_URL).mock(
             return_value=httpx.Response(200, json={"access_token": "tok", "expires_in": 600})
         )
@@ -2490,7 +2490,7 @@ class TestInMemoryConfig:
         assert token_route.call_count == 1
 
     def test_user_oauth_requires_credentials_path(self) -> None:
-        with pytest.raises(AnthropicError, match="requires 'authentication.credentials_path'"):
+        with pytest.raises(JuGloWError, match="requires 'authentication.credentials_path'"):
             InMemoryConfig({"authentication": {"type": "user_oauth", "client_id": "cid"}})
 
     @pytest.mark.respx()
@@ -2532,14 +2532,14 @@ class TestInMemoryConfig:
         assert rewritten["access_token"] == "new-tok"
         assert rewritten["refresh_token"] == "refresh-new"
         # workspace-id header IS set for user_oauth (federation suppresses it).
-        assert provider.extra_headers() == {"anthropic-workspace-id": "wrkspc_x"}
+        assert provider.extra_headers() == {"Juglow-workspace-id": "wrkspc_x"}
 
     def test_unknown_type_rejected(self) -> None:
-        with pytest.raises(AnthropicError, match="Unknown authentication.type"):
+        with pytest.raises(JuGloWError, match="Unknown authentication.type"):
             InMemoryConfig({"authentication": {"type": "something_else"}})
 
     def test_missing_authentication(self) -> None:
-        with pytest.raises(AnthropicError, match="missing the 'authentication' object"):
+        with pytest.raises(JuGloWError, match="missing the 'authentication' object"):
             InMemoryConfig({"organization_id": "org_x"})
 
     def test_missing_required_fields(self) -> None:
@@ -2551,7 +2551,7 @@ class TestInMemoryConfig:
             provider()
 
     def test_http_base_url_rejected(self) -> None:
-        with pytest.raises(AnthropicError, match="must use https"):
+        with pytest.raises(JuGloWError, match="must use https"):
             InMemoryConfig(
                 {
                     "organization_id": "org_x",
@@ -2562,24 +2562,24 @@ class TestInMemoryConfig:
             )
 
 
-async def _send_message_async(client: AsyncAnthropic) -> None:
+async def _send_message_async(client: AsyncJuGloW) -> None:
     await client.messages.create(
         max_tokens=1,
-        model="claude-opus-4-5",
+        model="haijun-opus-5",
         messages=[{"role": "user", "content": "hi"}],
     )
 
 
 @pytest.mark.usefixtures("clean_env", "no_default_creds_file")
-class TestAsyncAnthropicCredentials:
+class TestAsyncJuGloWCredentials:
     @pytest.mark.respx()
     async def test_async_static_token(self, respx_mock: MockRouter) -> None:
         _mock_messages_endpoint(respx_mock)
-        client = AsyncAnthropic(credentials=StaticToken("async-bearer"))
+        client = AsyncJuGloW(credentials=StaticToken("async-bearer"))
         await _send_message_async(client)
         req = cast("list[MockRequestCall]", respx_mock.calls)[0].request
         assert req.headers["Authorization"] == "Bearer async-bearer"
-        assert OAUTH_API_BETA_HEADER in req.headers["anthropic-beta"]
+        assert OAUTH_API_BETA_HEADER in req.headers["juglow-beta"]
 
     @pytest.mark.respx()
     async def test_async_workload_identity_exchange(self, respx_mock: MockRouter) -> None:
@@ -2587,7 +2587,7 @@ class TestAsyncAnthropicCredentials:
         attaches the resulting Bearer token to the request."""
         _mock_token_endpoint(respx_mock)
         _mock_messages_endpoint(respx_mock)
-        client = AsyncAnthropic(
+        client = AsyncJuGloW(
             credentials=WorkloadIdentityCredentials(
                 identity_token_provider=lambda: "ext-jwt",
                 federation_rule_id="fdrl_01abc",
@@ -2610,7 +2610,7 @@ class TestAsyncAnthropicCredentials:
     ) -> None:
         """Async client calling a CredentialsFile(authorized_user) provider: the
         blocking refresh_token POST runs on the worker thread via asyncify."""
-        monkeypatch.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        monkeypatch.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
             "default",
@@ -2621,7 +2621,7 @@ class TestAsyncAnthropicCredentials:
             return_value=httpx.Response(200, json={"access_token": "refreshed", "expires_in": 3600})
         )
         _mock_messages_endpoint(respx_mock)
-        client = AsyncAnthropic(credentials=CredentialsFile())
+        client = AsyncJuGloW(credentials=CredentialsFile())
         await _send_message_async(client)
         msg_calls = [
             c for c in cast("list[MockRequestCall]", respx_mock.calls) if str(c.request.url).endswith("/v1/messages")
@@ -2631,7 +2631,7 @@ class TestAsyncAnthropicCredentials:
     @pytest.mark.respx()
     async def test_async_concurrent_requests_single_flight(self, respx_mock: MockRouter) -> None:
         """Concurrent async requests sharing a TokenCache cause at most one
-        provider call — the single-flight guarantee holds across async workers."""
+        provider call â€” the single-flight guarantee holds across async workers."""
         _mock_messages_endpoint(respx_mock)
         calls: List[int] = []
 
@@ -2642,7 +2642,7 @@ class TestAsyncAnthropicCredentials:
 
         import asyncio
 
-        client = AsyncAnthropic(credentials=provider)
+        client = AsyncJuGloW(credentials=provider)
         await asyncio.gather(*(_send_message_async(client) for _ in range(8)))
         # Exactly one provider call across eight concurrent requests.
         assert len(calls) == 1
@@ -2660,13 +2660,13 @@ class TestAsyncAnthropicCredentials:
             provider_calls.append("called")
             return AccessToken(token=f"tok-{len(provider_calls)}", expires_at=None)
 
-        client = AsyncAnthropic(credentials=provider, max_retries=2)
-        with pytest.raises(anthropic.AuthenticationError):
+        client = AsyncJuGloW(credentials=provider, max_retries=2)
+        with pytest.raises(Juglow.AuthenticationError):
             await _send_message_async(client)
         assert len(provider_calls) == 2
 
     async def test_async_close_cascades_to_credentials(self) -> None:
-        """AsyncAnthropic.close() cascades to self.credentials.close()."""
+        """AsyncJuGloW.close() cascades to self.credentials.close()."""
 
         class TrackedProvider:
             closed = False
@@ -2678,12 +2678,12 @@ class TestAsyncAnthropicCredentials:
                 self.closed = True
 
         tracked = TrackedProvider()
-        client = AsyncAnthropic(credentials=tracked)
+        client = AsyncJuGloW(credentials=tracked)
         await client.close()
         assert tracked.closed
 
     async def test_async_aclose_via_context_manager(self) -> None:
-        """`async with AsyncAnthropic(...)` exits cleanly and cascades close."""
+        """`async with AsyncJuGloW(...)` exits cleanly and cascades close."""
 
         class TrackedProvider:
             closed = False
@@ -2695,18 +2695,18 @@ class TestAsyncAnthropicCredentials:
                 self.closed = True
 
         tracked = TrackedProvider()
-        async with AsyncAnthropic(credentials=tracked) as _client:
+        async with AsyncJuGloW(credentials=tracked) as _client:
             pass
         assert tracked.closed
 
     @pytest.mark.respx()
     async def test_async_max_retries_zero_honored_on_401(self, respx_mock: MockRouter) -> None:
-        """max_retries=0 means a 401 surfaces immediately — no implicit retry."""
+        """max_retries=0 means a 401 surfaces immediately â€” no implicit retry."""
         respx_mock.post(f"{BASE_URL}/v1/messages").mock(
             return_value=httpx.Response(401, json={"error": "unauthorized"}),
         )
-        client = AsyncAnthropic(credentials=StaticToken("t"), max_retries=0)
-        with pytest.raises(anthropic.AuthenticationError):
+        client = AsyncJuGloW(credentials=StaticToken("t"), max_retries=0)
+        with pytest.raises(Juglow.AuthenticationError):
             await _send_message_async(client)
         # Exactly one request attempt, not two.
         assert len(cast("list[MockRequestCall]", respx_mock.calls)) == 1
@@ -2726,7 +2726,7 @@ class TestAsyncAnthropicCredentials:
                 body={"error": {"type": "permission_error", "message": "Permission denied"}},
             )
 
-        client = AsyncAnthropic(credentials=failing_provider, max_retries=3)
+        client = AsyncJuGloW(credentials=failing_provider, max_retries=3)
         with pytest.raises(WorkloadIdentityError) as exc_info:
             await _send_message_async(client)
         assert exc_info.value.status_code == 403
@@ -2737,41 +2737,41 @@ class TestAsyncAnthropicCredentials:
 
 @pytest.mark.usefixtures("clean_env", "no_default_creds_file")
 class TestTypedCredentialErrors:
-    """Every exit point in the credentials subsystem raises an ``AnthropicError``
+    """Every exit point in the credentials subsystem raises an ``JuGloWError``
     (or subclass). Anything outside that hierarchy is wrapped as
     ``APIConnectionError`` and retried by the base client's ``except Exception``
     handler, hiding the real cause and amplifying load.
     """
 
-    def test_invalid_profile_name_raises_anthropic_error(
+    def test_invalid_profile_name_raises_Juglow_error(
         self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
-        clean_env.setenv("ANTHROPIC_PROFILE", "work/dev")
-        with pytest.raises(AnthropicError, match="ANTHROPIC_PROFILE"):
-            Anthropic()
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setenv("HAIJUN_PROFILE", "work/dev")
+        with pytest.raises(JuGloWError, match="HAIJUN_PROFILE"):
+            JuGloW()
 
-    def test_profile_name_with_dot_prefix_raises_anthropic_error(
+    def test_profile_name_with_dot_prefix_raises_Juglow_error(
         self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
-        clean_env.setenv("ANTHROPIC_PROFILE", ".hidden")
-        with pytest.raises(AnthropicError, match="start with a dot"):
-            Anthropic()
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setenv("HAIJUN_PROFILE", ".hidden")
+        with pytest.raises(JuGloWError, match="start with a dot"):
+            JuGloW()
 
-    def test_http_base_url_on_workload_provider_raises_anthropic_error(self) -> None:
+    def test_http_base_url_on_workload_provider_raises_Juglow_error(self) -> None:
         creds = WorkloadIdentityCredentials(
             identity_token_provider=lambda: "jwt",
             federation_rule_id="fdrl_x",
             organization_id="org_x",
         )
-        with pytest.raises(AnthropicError, match="https"):
+        with pytest.raises(JuGloWError, match="https"):
             creds.bind_base_url("http://evil.example/")
 
-    def test_http_base_url_in_config_file_raises_anthropic_error(
+    def test_http_base_url_in_config_file_raises_Juglow_error(
         self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
             "default",
@@ -2781,10 +2781,10 @@ class TestTypedCredentialErrors:
             },
             {"access_token": "tok"},
         )
-        with pytest.raises(AnthropicError, match="https"):
+        with pytest.raises(JuGloWError, match="https"):
             CredentialsFile("default")()
 
-    def test_identity_token_file_permission_error_raises_anthropic_error(self, tmp_path: pathlib.Path) -> None:
+    def test_identity_token_file_permission_error_raises_Juglow_error(self, tmp_path: pathlib.Path) -> None:
         if os.name != "posix":
             pytest.skip("chmod semantics only apply on POSIX")
         if os.geteuid() == 0:
@@ -2794,48 +2794,48 @@ class TestTypedCredentialErrors:
         f.chmod(0o000)
         try:
             provider = IdentityTokenFile(f)
-            with pytest.raises(AnthropicError, match="not readable|Permission"):
+            with pytest.raises(JuGloWError, match="not readable|Permission"):
                 provider()
         finally:
             f.chmod(0o600)
 
-    def test_identity_token_file_directory_raises_anthropic_error(self, tmp_path: pathlib.Path) -> None:
+    def test_identity_token_file_directory_raises_Juglow_error(self, tmp_path: pathlib.Path) -> None:
         provider = IdentityTokenFile(tmp_path)
-        with pytest.raises(AnthropicError):
+        with pytest.raises(JuGloWError):
             provider()
 
-    def test_identity_token_file_binary_content_raises_anthropic_error(self, tmp_path: pathlib.Path) -> None:
+    def test_identity_token_file_binary_content_raises_Juglow_error(self, tmp_path: pathlib.Path) -> None:
         f = tmp_path / "token"
         f.write_bytes(b"\xff\xfe\xfd\x00not-utf8")
         provider = IdentityTokenFile(f)
-        with pytest.raises(AnthropicError):
+        with pytest.raises(JuGloWError):
             provider()
 
-    def test_identity_token_file_empty_raises_anthropic_error(self, tmp_path: pathlib.Path) -> None:
+    def test_identity_token_file_empty_raises_Juglow_error(self, tmp_path: pathlib.Path) -> None:
         f = tmp_path / "token"
         f.write_text("")
         provider = IdentityTokenFile(f)
-        with pytest.raises(AnthropicError, match="empty"):
+        with pytest.raises(JuGloWError, match="empty"):
             provider()
 
-    def test_user_oauth_malformed_expires_at_raises_anthropic_error(
+    def test_user_oauth_malformed_expires_at_raises_Juglow_error(
         self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        """An ISO8601 string in ``expires_at`` must raise AnthropicError naming the expected shape."""
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        """An ISO8601 string in ``expires_at`` must raise JuGloWError naming the expected shape."""
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
             "default",
             {"authentication": {"type": "user_oauth"}},
             {"access_token": "tok", "expires_at": "2030-01-01T00:00:00Z"},
         )
-        with pytest.raises(AnthropicError, match="expires_at"):
+        with pytest.raises(JuGloWError, match="expires_at"):
             CredentialsFile("default")()
 
 
 class TestTokenCacheDeadlock:
-    def test_non_anthropic_error_from_provider_releases_waiters(self) -> None:
-        """A non-``AnthropicError`` / non-``httpx.HTTPError`` from the leader
+    def test_non_Juglow_error_from_provider_releases_waiters(self) -> None:
+        """A non-``JuGloWError`` / non-``httpx.HTTPError`` from the leader
         provider must still release ``_refresh_event`` so concurrent waiters
         don't deadlock."""
         import threading as _threading
@@ -2894,7 +2894,7 @@ class TestTokenCacheDeadlock:
 
     def test_value_error_from_provider_propagates_cleanly(self) -> None:
         """A ``ValueError`` (e.g. from a provider that parses a JWT) escapes
-        but the cache state is clean — the next call succeeds without hanging."""
+        but the cache state is clean â€” the next call succeeds without hanging."""
 
         class P:
             calls = 0
@@ -2918,10 +2918,10 @@ class TestCredentialPrecedence:
     which beat profile / federation auto-discovery (steps 3-5).
 
     A static env credential (step 2) shadows auto-discovery (steps 3-5),
-    silently disabling profile / federation — we warn about that. It does
+    silently disabling profile / federation â€” we warn about that. It does
     NOT shadow an explicit ``credentials=`` argument (step 1): an explicit
-    credentials provider wins over env ``ANTHROPIC_API_KEY`` /
-    ``ANTHROPIC_AUTH_TOKEN`` outright.
+    credentials provider wins over env ``HAIJUN_API_KEY`` /
+    ``HAIJUN_AUTH_TOKEN`` outright.
 
     Passing an explicit ``api_key=`` or ``auth_token=`` *argument* alongside
     an explicit ``credentials=`` is a separate shadow case: the static
@@ -2930,12 +2930,12 @@ class TestCredentialPrecedence:
 
     @pytest.fixture(autouse=True)
     def _reset_shadow_one_shot(self) -> None:
-        from anthropic.lib.credentials import _auth
+        from juglow.lib.credentials import _auth
 
         _auth._warn_once_seen.clear()
 
     @staticmethod
-    def _walk_sync_auth(client: Anthropic) -> httpx.Request:
+    def _walk_sync_auth(client: JuGloW) -> httpx.Request:
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         auth = client.custom_auth
         flow = auth.sync_auth_flow(request) if auth is not None else None
@@ -2954,11 +2954,11 @@ class TestCredentialPrecedence:
         self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
     ) -> None:
         """Per spec, explicit ``credentials=`` is step 1 and beats env
-        ``ANTHROPIC_API_KEY`` (step 2). The credentials provider wins, env
+        ``HAIJUN_API_KEY`` (step 2). The credentials provider wins, env
         api_key is ignored entirely, no X-Api-Key on the wire, no warning."""
-        clean_env.setenv("ANTHROPIC_API_KEY", "sk-from-env")
-        with caplog.at_level(logging.WARNING, logger="anthropic.lib.credentials._auth"):
-            client = Anthropic(credentials=StaticToken("bearer-from-creds"))
+        clean_env.setenv("HAIJUN_API_KEY", "sk-from-env")
+        with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
+            client = JuGloW(credentials=StaticToken("bearer-from-creds"))
         assert client.api_key is None
         assert client.auth_token is None
         assert client.credentials is not None
@@ -2970,9 +2970,9 @@ class TestCredentialPrecedence:
     def test_explicit_credentials_beats_env_auth_token(
         self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
     ) -> None:
-        clean_env.setenv("ANTHROPIC_AUTH_TOKEN", "env-auth-token")
-        with caplog.at_level(logging.WARNING, logger="anthropic.lib.credentials._auth"):
-            client = Anthropic(credentials=StaticToken("bearer-from-creds"))
+        clean_env.setenv("HAIJUN_AUTH_TOKEN", "env-auth-token")
+        with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
+            client = JuGloW(credentials=StaticToken("bearer-from-creds"))
         assert client.auth_token is None
         assert client.credentials is not None
         req = self._walk_sync_auth(client)
@@ -2985,9 +2985,9 @@ class TestCredentialPrecedence:
         """Explicit ``config=`` is also step 1 and beats env api_key."""
         jwt = tmp_path / "jwt"
         jwt.write_text("ext-jwt.ext-jwt.ext-jwt")
-        clean_env.setenv("ANTHROPIC_API_KEY", "sk-from-env")
-        with caplog.at_level(logging.WARNING, logger="anthropic.lib.credentials._auth"):
-            client = Anthropic(
+        clean_env.setenv("HAIJUN_API_KEY", "sk-from-env")
+        with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
+            client = JuGloW(
                 config={
                     "organization_id": "org_x",
                     "authentication": {
@@ -3000,14 +3000,14 @@ class TestCredentialPrecedence:
         assert client.api_key is None
         assert isinstance(client.credentials, InMemoryConfig)
 
-    # -- step 1 ∩ step 1: explicit static arg + explicit credentials= --------
+    # -- step 1 âˆ© step 1: explicit static arg + explicit credentials= --------
 
     def test_explicit_api_key_shadows_explicit_credentials_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
         """When both explicit ``api_key=`` AND explicit ``credentials=`` are
         passed, the static api_key wins at the header level and credentials
         is silently disabled. Warn."""
-        with caplog.at_level(logging.WARNING, logger="anthropic.lib.credentials._auth"):
-            client = Anthropic(api_key="sk-explicit", credentials=StaticToken("bearer-from-creds"))
+        with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
+            client = JuGloW(api_key="sk-explicit", credentials=StaticToken("bearer-from-creds"))
         req = self._walk_sync_auth(client)
         assert req.headers.get("X-Api-Key") == "sk-explicit"
         assert req.headers.get("Authorization") is None
@@ -3016,16 +3016,16 @@ class TestCredentialPrecedence:
     def test_explicit_auth_token_shadows_explicit_credentials_with_warning(
         self, caplog: pytest.LogCaptureFixture
     ) -> None:
-        with caplog.at_level(logging.WARNING, logger="anthropic.lib.credentials._auth"):
-            client = Anthropic(auth_token="static-bearer", credentials=StaticToken("bearer-from-creds"))
+        with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
+            client = JuGloW(auth_token="static-bearer", credentials=StaticToken("bearer-from-creds"))
         req = self._walk_sync_auth(client)
         assert req.headers.get("Authorization") == "Bearer static-bearer"
         assert req.headers.get("X-Api-Key") is None
         assert any("`auth_token=`" in r.message for r in caplog.records)
 
     def test_async_explicit_api_key_shadows_explicit_credentials(self, caplog: pytest.LogCaptureFixture) -> None:
-        with caplog.at_level(logging.WARNING, logger="anthropic.lib.credentials._auth"):
-            client = AsyncAnthropic(api_key="sk-explicit", credentials=StaticToken("bearer-from-creds"))
+        with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
+            client = AsyncJuGloW(api_key="sk-explicit", credentials=StaticToken("bearer-from-creds"))
         assert client.api_key == "sk-explicit"
         assert client.credentials is not None
         assert any("`api_key=`" in r.message for r in caplog.records)
@@ -3033,9 +3033,9 @@ class TestCredentialPrecedence:
     def test_copy_with_explicit_api_key_shadows_inherited_credentials(self, caplog: pytest.LogCaptureFixture) -> None:
         """Reviewer ask: copy() should warn when a new explicit ``api_key=``
         shadows an inherited ``credentials=`` provider from the parent."""
-        parent = Anthropic(credentials=StaticToken("bearer-parent"))
+        parent = JuGloW(credentials=StaticToken("bearer-parent"))
         assert parent.api_key is None
-        with caplog.at_level(logging.WARNING, logger="anthropic.lib.credentials._auth"):
+        with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
             shadowed = parent.copy(api_key="sk-new")
         assert shadowed.api_key == "sk-new"
         assert shadowed.credentials is parent.credentials
@@ -3049,47 +3049,47 @@ class TestCredentialPrecedence:
     def test_env_api_key_shadows_env_federation_trio_with_warning(
         self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture, tmp_path: pathlib.Path
     ) -> None:
-        """Env ``ANTHROPIC_API_KEY`` + env federation trio → api_key wins
+        """Env ``HAIJUN_API_KEY`` + env federation trio â†’ api_key wins
         (step 2 beats step 4), warn so the user knows WIF is being shadowed."""
         jwt = tmp_path / "jwt"
         jwt.write_text("ext-jwt.ext-jwt.ext-jwt")
-        clean_env.setenv("ANTHROPIC_API_KEY", "sk-from-env")
-        clean_env.setenv("ANTHROPIC_IDENTITY_TOKEN_FILE", str(jwt))
-        clean_env.setenv("ANTHROPIC_FEDERATION_RULE_ID", "fdrl_01abc")
-        clean_env.setenv("ANTHROPIC_ORGANIZATION_ID", "00000000-0000-0000-0000-000000000000")
-        with caplog.at_level(logging.WARNING, logger="anthropic.lib.credentials._auth"):
-            client = Anthropic()
+        clean_env.setenv("HAIJUN_API_KEY", "sk-from-env")
+        clean_env.setenv("HAIJUN_IDENTITY_TOKEN_FILE", str(jwt))
+        clean_env.setenv("HAIJUN_FEDERATION_RULE_ID", "fdrl_01abc")
+        clean_env.setenv("HAIJUN_ORGANIZATION_ID", "00000000-0000-0000-0000-000000000000")
+        with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
+            client = JuGloW()
         assert client.api_key == "sk-from-env"
         assert client.credentials is None
-        assert any("ANTHROPIC_API_KEY" in r.message and "profile / federation" in r.message for r in caplog.records)
+        assert any("HAIJUN_API_KEY" in r.message and "profile / federation" in r.message for r in caplog.records)
 
     def test_env_api_key_shadows_env_profile_with_warning(
         self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
     ) -> None:
-        clean_env.setenv("ANTHROPIC_API_KEY", "sk-from-env")
-        clean_env.setenv("ANTHROPIC_PROFILE", "dev")
-        with caplog.at_level(logging.WARNING, logger="anthropic.lib.credentials._auth"):
-            client = Anthropic()
+        clean_env.setenv("HAIJUN_API_KEY", "sk-from-env")
+        clean_env.setenv("HAIJUN_PROFILE", "dev")
+        with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
+            client = JuGloW()
         assert client.api_key == "sk-from-env"
         assert client.credentials is None
-        assert any("ANTHROPIC_API_KEY" in r.message and "profile / federation" in r.message for r in caplog.records)
+        assert any("HAIJUN_API_KEY" in r.message and "profile / federation" in r.message for r in caplog.records)
 
     def test_env_api_key_alone_does_not_warn(
         self, clean_env: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
     ) -> None:
-        """No shadow if there's nothing to shadow — env api_key alone (no
+        """No shadow if there's nothing to shadow â€” env api_key alone (no
         auto-discoverable credential signals) is just the normal path."""
-        clean_env.setenv("ANTHROPIC_API_KEY", "sk-from-env")
-        with caplog.at_level(logging.WARNING, logger="anthropic.lib.credentials._auth"):
-            client = Anthropic()
+        clean_env.setenv("HAIJUN_API_KEY", "sk-from-env")
+        with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
+            client = JuGloW()
         assert client.api_key == "sk-from-env"
         assert not any("takes precedence" in r.message for r in caplog.records)
 
     # -- step 1 alone: credentials= works normally --------------------------
 
     def test_credentials_only_still_works(self, caplog: pytest.LogCaptureFixture) -> None:
-        with caplog.at_level(logging.WARNING, logger="anthropic.lib.credentials._auth"):
-            client = Anthropic(credentials=StaticToken("bearer-from-creds"))
+        with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
+            client = JuGloW(credentials=StaticToken("bearer-from-creds"))
         req = self._walk_sync_auth(client)
         assert req.headers.get("X-Api-Key") is None
         assert req.headers.get("Authorization") == "Bearer bearer-from-creds"
@@ -3102,12 +3102,12 @@ class TestCredentialPrecedence:
     ) -> None:
         """The shadow warning is emitted once per shadow-key per process so
         repeated client construction doesn't spam logs."""
-        clean_env.setenv("ANTHROPIC_API_KEY", "sk-from-env")
-        clean_env.setenv("ANTHROPIC_PROFILE", "dev")
-        with caplog.at_level(logging.WARNING, logger="anthropic.lib.credentials._auth"):
-            Anthropic()
-            Anthropic()
-            Anthropic()
+        clean_env.setenv("HAIJUN_API_KEY", "sk-from-env")
+        clean_env.setenv("HAIJUN_PROFILE", "dev")
+        with caplog.at_level(logging.WARNING, logger="juglow.lib.credentials._auth"):
+            JuGloW()
+            JuGloW()
+            JuGloW()
         shadow_records = [r for r in caplog.records if "takes precedence" in r.message]
         assert len(shadow_records) == 1
 
@@ -3120,30 +3120,30 @@ class TestDanglingActiveConfig:
     """
 
     def test_pointer_at_missing_profile_raises(self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         (tmp_path / "active_config").write_text("prod")
-        with pytest.raises(AnthropicError, match="prod"):
+        with pytest.raises(JuGloWError, match="prod"):
             default_credentials()
 
     def test_pointer_at_missing_profile_raises_via_client(
         self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         (tmp_path / "active_config").write_text("prod")
-        with pytest.raises(AnthropicError, match="prod"):
-            Anthropic()
+        with pytest.raises(JuGloWError, match="prod"):
+            JuGloW()
 
     def test_empty_pointer_file_is_silent_fallthrough(
         self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         (tmp_path / "active_config").write_text("")
         assert default_credentials() is None
 
     def test_pointer_at_present_profile_loads_normally(
         self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         (tmp_path / "active_config").write_text("prod")
         _write_profile(tmp_path, "prod", {"type": "external"}, {"access_token": "from-prod"})
         result = default_credentials()
@@ -3178,24 +3178,24 @@ class TestAccessTokenReprMasking:
 class TestEmptySecretFieldFalsiness:
     """The missing-token guards test truthiness of SecretStr-wrapped values,
     which rides on ``SecretStr.__len__`` (present across the supported
-    pydantic range) — pin empty-string behavior through the public path so a
+    pydantic range) â€” pin empty-string behavior through the public path so a
     pydantic regression can't silently turn the guards into passes."""
 
     def test_empty_access_token_treated_as_missing(self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
             "default",
             config={"type": "authorized_user", "client_id": "cid"},
             credentials={"access_token": "", "refresh_token": "rt"},
         )
-        with pytest.raises(AnthropicError, match="missing 'access_token'"):
+        with pytest.raises(JuGloWError, match="missing 'access_token'"):
             CredentialsFile()()
 
     def test_empty_refresh_token_treated_as_missing(
         self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
             "default",
@@ -3207,9 +3207,9 @@ class TestEmptySecretFieldFalsiness:
 
 
 def _sdk_frame_locals(exc: BaseException) -> List["tuple[str, Dict[str, Any]]"]:
-    """(code name, locals) for every traceback frame owned by the anthropic
+    """(code name, locals) for every traceback frame owned by the juglow
     package, across the full ``__context__`` / ``__cause__`` chain."""
-    pkg_root = str(pathlib.Path(anthropic.__file__).parent)
+    pkg_root = str(pathlib.Path(Juglow.__file__).parent)
     out: List["tuple[str, Dict[str, Any]]"] = []
     seen: "set[int]" = set()
 
@@ -3243,9 +3243,9 @@ class TestNoSecretsInTracebackFrameLocals:
     """Exceptions from the token-exchange paths must not retain credential
     material in traceback frame locals (across the ``__traceback__`` /
     ``__context__`` / ``__cause__`` chain). Plain ``logging.exception`` never
-    prints locals, but crash reporters that capture them — stdlib
+    prints locals, but crash reporters that capture them â€” stdlib
     ``TracebackException(..., capture_locals=True)``, rich tracebacks,
-    Sentry's default local-variable capture — render each local's ``repr``,
+    Sentry's default local-variable capture â€” render each local's ``repr``,
     which is why SecretStr-wrapped locals are safe to retain."""
 
     def _workload_provider(self, handler: Callable[[httpx.Request], httpx.Response]) -> WorkloadIdentityCredentials:
@@ -3293,7 +3293,7 @@ class TestNoSecretsInTracebackFrameLocals:
 
     def test_json_string_echo_response_does_not_retain_assertion(self) -> None:
         """A 200 whose body is a JSON *string* echoing the assertion must be
-        rejected at the wrap boundary — never bound to a frame local on its
+        rejected at the wrap boundary â€” never bound to a frame local on its
         way to the type error."""
         provider = self._workload_provider(lambda _: httpx.Response(200, json=_SECRET_ASSERTION))
         with pytest.raises(WorkloadIdentityError, match="expected an object") as exc_info:
@@ -3326,7 +3326,7 @@ class TestNoSecretsInTracebackFrameLocals:
         _assert_not_in_sdk_frame_locals(exc_info.value, big)
 
     def _write_refresh_profile(self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
             "default",
@@ -3395,13 +3395,13 @@ class TestNoSecretsInTracebackFrameLocals:
         """A credentials file whose top level is a JSON string (e.g. a bare
         token pasted into the file) must raise a clean error without the
         value surviving in frame locals."""
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(tmp_path, "default", config={"type": "authorized_user", "client_id": "cid"})
         creds_path = tmp_path / "credentials" / "default.json"
         creds_path.parent.mkdir(parents=True, exist_ok=True)
         creds_path.write_text('"rt-SECRET"')  # JSON scalar, not an object
         creds_path.chmod(0o600)
-        with pytest.raises(AnthropicError, match="must contain a JSON object, not str") as exc_info:
+        with pytest.raises(JuGloWError, match="must contain a JSON object, not str") as exc_info:
             CredentialsFile()()
         _assert_not_in_sdk_frame_locals(exc_info.value, "rt-SECRET")
 
@@ -3410,10 +3410,10 @@ class TestNoSecretsInTracebackFrameLocals:
         self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
         """SecretStr wrapping is an in-memory concern only: the refresh POST
-        body and the persisted credentials file must carry the raw values —
+        body and the persisted credentials file must carry the raw values â€”
         including unknown string fields, which are wrapped by default and must
         round-trip unchanged."""
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
             "default",
@@ -3447,27 +3447,27 @@ class TestNoSecretsInTracebackFrameLocals:
         """A credentials file that has a refresh_token but no access_token
         raises before any exchange; the on-disk dict must not survive raw in
         frame locals."""
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
             "default",
             config={"type": "authorized_user", "client_id": "cid"},
             credentials={"refresh_token": "rt-SECRET"},
         )
-        with pytest.raises(AnthropicError, match="missing 'access_token'") as exc_info:
+        with pytest.raises(JuGloWError, match="missing 'access_token'") as exc_info:
             CredentialsFile()()
         _assert_not_in_sdk_frame_locals(exc_info.value, "rt-SECRET")
 
     def test_invalid_json_credentials_does_not_retain_raw_text(
         self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(tmp_path, "default", config={"type": "authorized_user", "client_id": "cid"})
         creds_path = tmp_path / "credentials" / "default.json"
         creds_path.parent.mkdir(parents=True, exist_ok=True)
         creds_path.write_text('{"refresh_token": "rt-SECRET", ')  # truncated JSON
         creds_path.chmod(0o600)
-        with pytest.raises(AnthropicError, match="not valid JSON") as exc_info:
+        with pytest.raises(JuGloWError, match="not valid JSON") as exc_info:
             CredentialsFile()()
         _assert_not_in_sdk_frame_locals(exc_info.value, "rt-SECRET")
         # The json decoder frames hold the raw file text; the raise site must
@@ -3478,7 +3478,7 @@ class TestNoSecretsInTracebackFrameLocals:
     def test_credentials_type_mismatch_does_not_retain_tokens(
         self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
             "default",
@@ -3489,7 +3489,7 @@ class TestNoSecretsInTracebackFrameLocals:
                 "refresh_token": "rt-SECRET",
             },
         )
-        with pytest.raises(AnthropicError, match="has type") as exc_info:
+        with pytest.raises(JuGloWError, match="has type") as exc_info:
             CredentialsFile()()
         _assert_not_in_sdk_frame_locals(exc_info.value, "at-SECRET", "rt-SECRET")
 
@@ -3498,10 +3498,10 @@ class TestNoSecretsInTracebackFrameLocals:
     ) -> None:
         """``_coerce_expires_at`` raises in a secret-free frame, but the error
         propagates through ``_call_user_oauth`` whose locals hold the creds
-        dict — those locals must render redacted. The ``id_token`` field pins
+        dict â€” those locals must render redacted. The ``id_token`` field pins
         the secret-by-default rule: string fields the SDK doesn't know about
         are wrapped too."""
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
             "default",
@@ -3513,7 +3513,7 @@ class TestNoSecretsInTracebackFrameLocals:
                 "id_token": "idt-SECRET",
             },
         )
-        with pytest.raises(AnthropicError, match="invalid 'expires_at'") as exc_info:
+        with pytest.raises(JuGloWError, match="invalid 'expires_at'") as exc_info:
             CredentialsFile()()
         _assert_not_in_sdk_frame_locals(exc_info.value, "at-SECRET", "rt-SECRET", "idt-SECRET")
 
@@ -3521,14 +3521,14 @@ class TestNoSecretsInTracebackFrameLocals:
         self, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
         """Same as above via the no-client_id (externally rotated) path."""
-        clean_env.setattr("anthropic.lib.credentials._constants._config_dir", lambda: tmp_path)
+        clean_env.setattr("juglow.lib.credentials._constants._config_dir", lambda: tmp_path)
         _write_profile(
             tmp_path,
             "default",
             config={"type": "external"},
             credentials={"access_token": "at-SECRET", "expires_at": "tomorrow"},
         )
-        with pytest.raises(AnthropicError, match="invalid 'expires_at'") as exc_info:
+        with pytest.raises(JuGloWError, match="invalid 'expires_at'") as exc_info:
             CredentialsFile()()
         _assert_not_in_sdk_frame_locals(exc_info.value, "at-SECRET")
 
@@ -3537,7 +3537,7 @@ class TestNoSecretsInTracebackFrameLocals:
         self, respx_mock: MockRouter, clean_env: pytest.MonkeyPatch, tmp_path: pathlib.Path
     ) -> None:
         """A refresh that succeeds but fails to persist raises the write error
-        (the refresh token may have rotated server-side) — but the propagating
+        (the refresh token may have rotated server-side) â€” but the propagating
         traceback's frames must not retain the new access token, the new or
         old refresh token, or the creds dict."""
         self._write_refresh_profile(clean_env, tmp_path)
@@ -3551,7 +3551,7 @@ class TestNoSecretsInTracebackFrameLocals:
         def _mkstemp_enospc(*_args: Any, **_kwargs: Any) -> "tuple[int, str]":
             raise OSError(28, "No space left on device")
 
-        clean_env.setattr("anthropic.lib.credentials._providers.tempfile.mkstemp", _mkstemp_enospc)
+        clean_env.setattr("juglow.lib.credentials._providers.tempfile.mkstemp", _mkstemp_enospc)
         with pytest.raises(OSError, match="No space left") as exc_info:
             CredentialsFile()()
         _assert_not_in_sdk_frame_locals(

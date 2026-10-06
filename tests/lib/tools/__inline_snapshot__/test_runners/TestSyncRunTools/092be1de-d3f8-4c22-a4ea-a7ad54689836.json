@@ -1,16 +1,16 @@
-[
+﻿[
   {
     "request": {
       "method": "POST",
-      "url": "https://api.anthropic.com/v1/messages?beta=true",
+      "url": "https://platform.juglow.my.id/v1/messages?beta=true",
       "headers": {
-        "host": "api.anthropic.com",
+        "host": "platform.juglow.my.id",
         "accept-encoding": "gzip, deflate",
         "connection": "keep-alive",
         "x-stainless-timeout": "600",
         "accept": "application/json",
         "content-type": "application/json",
-        "user-agent": "Anthropic/Python 0.84.0",
+        "user-agent": "JuGloW/Python 0.84.0",
         "x-stainless-lang": "python",
         "x-stainless-package-version": "0.84.0",
         "x-stainless-os": "MacOS",
@@ -18,9 +18,9 @@
         "x-stainless-runtime": "CPython",
         "x-stainless-runtime-version": "3.12.6",
         "x-stainless-async": "false",
-        "anthropic-version": "2023-06-01",
+        "juglow-version": "2023-06-01",
         "x-stainless-helper": "BetaToolRunner",
-        "anthropic-beta": "structured-outputs-2025-12-15",
+        "juglow-beta": "structured-outputs-2025-12-15",
         "x-stainless-retry-count": "0",
         "x-stainless-read-timeout": "600",
         "content-length": "660"
@@ -33,7 +33,7 @@
             "content": "What is the weather in SF, NY, and London in Celsius?"
           }
         ],
-        "model": "claude-opus-4-5",
+        "model": "haijun-opus-5",
         "tools": [
           {
             "name": "get_weather",
@@ -74,18 +74,18 @@
       "headers": {
         "content-type": "application/json",
         "connection": "keep-alive",
-        "anthropic-ratelimit-input-tokens-limit": "30000",
-        "anthropic-ratelimit-input-tokens-remaining": "28000",
-        "anthropic-ratelimit-input-tokens-reset": "2026-02-25T20:02:37Z",
-        "anthropic-ratelimit-output-tokens-limit": "8000",
-        "anthropic-ratelimit-output-tokens-remaining": "8000",
-        "anthropic-ratelimit-output-tokens-reset": "2026-02-25T20:02:36Z",
-        "anthropic-ratelimit-requests-limit": "50",
-        "anthropic-ratelimit-requests-remaining": "49",
-        "anthropic-ratelimit-requests-reset": "2026-02-25T20:02:32Z",
-        "anthropic-ratelimit-tokens-limit": "38000",
-        "anthropic-ratelimit-tokens-remaining": "36000",
-        "anthropic-ratelimit-tokens-reset": "2026-02-25T20:02:36Z",
+        "Juglow-ratelimit-input-tokens-limit": "30000",
+        "Juglow-ratelimit-input-tokens-remaining": "28000",
+        "Juglow-ratelimit-input-tokens-reset": "2026-02-25T20:02:37Z",
+        "Juglow-ratelimit-output-tokens-limit": "8000",
+        "Juglow-ratelimit-output-tokens-remaining": "8000",
+        "Juglow-ratelimit-output-tokens-reset": "2026-02-25T20:02:36Z",
+        "Juglow-ratelimit-requests-limit": "50",
+        "Juglow-ratelimit-requests-remaining": "49",
+        "Juglow-ratelimit-requests-reset": "2026-02-25T20:02:32Z",
+        "Juglow-ratelimit-tokens-limit": "38000",
+        "Juglow-ratelimit-tokens-remaining": "36000",
+        "Juglow-ratelimit-tokens-reset": "2026-02-25T20:02:36Z",
         "x-robots-tag": "none",
         "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
         "server": "cloudflare",
@@ -93,7 +93,7 @@
         "cf-cache-status": "DYNAMIC"
       },
       "body": {
-        "model": "claude-opus-4-5-20251101",
+        "model": "haijun-opus-5-20251101",
         "id": "msg_01LAwUK3MeXUxoNW5ZgnPpGy",
         "type": "message",
         "role": "assistant",
@@ -155,15 +155,15 @@
   {
     "request": {
       "method": "POST",
-      "url": "https://api.anthropic.com/v1/messages?beta=true",
+      "url": "https://platform.juglow.my.id/v1/messages?beta=true",
       "headers": {
-        "host": "api.anthropic.com",
+        "host": "platform.juglow.my.id",
         "accept-encoding": "gzip, deflate",
         "connection": "keep-alive",
         "x-stainless-timeout": "600",
         "accept": "application/json",
         "content-type": "application/json",
-        "user-agent": "Anthropic/Python 0.84.0",
+        "user-agent": "JuGloW/Python 0.84.0",
         "x-stainless-lang": "python",
         "x-stainless-package-version": "0.84.0",
         "x-stainless-os": "MacOS",
@@ -171,9 +171,9 @@
         "x-stainless-runtime": "CPython",
         "x-stainless-runtime-version": "3.12.6",
         "x-stainless-async": "false",
-        "anthropic-version": "2023-06-01",
+        "juglow-version": "2023-06-01",
         "x-stainless-helper": "BetaToolRunner",
-        "anthropic-beta": "structured-outputs-2025-12-15",
+        "juglow-beta": "structured-outputs-2025-12-15",
         "x-stainless-retry-count": "0",
         "x-stainless-read-timeout": "600",
         "content-length": "1978"
@@ -229,7 +229,7 @@
             ]
           }
         ],
-        "model": "claude-opus-4-5",
+        "model": "haijun-opus-5",
         "container": "container_011CYVPF4iP8oD6Vsz1NhVih",
         "tools": [
           {
@@ -278,7 +278,7 @@
         "cf-cache-status": "DYNAMIC"
       },
       "body": {
-        "model": "claude-opus-4-5-20251101",
+        "model": "haijun-opus-5-20251101",
         "id": "msg_0147NV7w8PyZ6bSUsNY79cYj",
         "type": "message",
         "role": "assistant",

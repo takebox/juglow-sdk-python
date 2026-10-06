@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import os
 import sys
@@ -10,9 +10,9 @@ import httpx
 import pytest
 from respx import MockRouter
 
-from anthropic import AnthropicVertex, AsyncAnthropicVertex
-from anthropic.lib.vertex._auth import refresh_auth
-from anthropic.lib._extras._common import MissingDependencyError
+from juglow import JuGloWVertex, AsyncJuGloWVertex
+from juglow.lib.vertex._auth import refresh_auth
+from juglow.lib._extras._common import MissingDependencyError
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -21,12 +21,12 @@ class MockRequestCall(Protocol):
     request: httpx.Request
 
 
-class TestAnthropicVertex:
-    client = AnthropicVertex(region="region", project_id="project", access_token="my-access-token")
+class TestJuGloWVertex:
+    client = JuGloWVertex(region="region", project_id="project", access_token="my-access-token")
 
     @pytest.mark.respx()
     def test_messages_retries(self, respx_mock: MockRouter) -> None:
-        request_url = "https://region-aiplatform.googleapis.com/v1/projects/project/locations/region/publishers/anthropic/models/claude-3-sonnet@20240229:rawPredict"
+        request_url = "https://region-aiplatform.googleapis.com/v1/projects/project/locations/region/publishers/Juglow/models/haijun-3-sonnet@20240229:rawPredict"
         respx_mock.post(request_url).mock(
             side_effect=[
                 httpx.Response(500, json={"error": "server error"}, headers={"retry-after-ms": "10"}),
@@ -42,7 +42,7 @@ class TestAnthropicVertex:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-3-sonnet@20240229",
+            model="haijun-3-sonnet@20240229",
         )
 
         calls = cast("list[MockRequestCall]", respx_mock.calls)
@@ -86,7 +86,7 @@ class TestAnthropicVertex:
         assert isinstance(self.client.timeout, httpx.Timeout)
 
     def test_copy_default_headers(self) -> None:
-        client = AnthropicVertex(
+        client = JuGloWVertex(
             base_url=base_url,
             region="region",
             project_id="project",
@@ -125,7 +125,7 @@ class TestAnthropicVertex:
 
     def test_copy_x_stainless_helper_header_appends(self) -> None:
         # `x-stainless-helper` accumulates across copies instead of being clobbered
-        client = AnthropicVertex(
+        client = JuGloWVertex(
             base_url=base_url,
             region="region",
             project_id="project",
@@ -137,33 +137,33 @@ class TestAnthropicVertex:
 
     def test_global_region_base_url(self) -> None:
         """Test that global region uses the correct base URL."""
-        client = AnthropicVertex(region="global", project_id="test-project", access_token="fake-token")
+        client = JuGloWVertex(region="global", project_id="test-project", access_token="fake-token")
         assert str(client.base_url).rstrip("/") == "https://aiplatform.googleapis.com/v1"
 
     def test_us_region_base_url(self) -> None:
         """Test that us region uses the correct base URL."""
-        client = AnthropicVertex(region="us", project_id="test-project", access_token="fake-token")
+        client = JuGloWVertex(region="us", project_id="test-project", access_token="fake-token")
         assert str(client.base_url).rstrip("/") == "https://aiplatform.us.rep.googleapis.com/v1"
 
     def test_eu_region_base_url(self) -> None:
         """Test that us region uses the correct base URL."""
-        client = AnthropicVertex(region="eu", project_id="test-project", access_token="fake-token")
+        client = JuGloWVertex(region="eu", project_id="test-project", access_token="fake-token")
         assert str(client.base_url).rstrip("/") == "https://aiplatform.eu.rep.googleapis.com/v1"
 
     @pytest.mark.parametrize("region", ["us-central1", "europe-west1", "asia-southeast1"])
     def test_regional_base_url(self, region: str) -> None:
         """Test that regional endpoints use the correct base URL format."""
-        client = AnthropicVertex(region=region, project_id="test-project", access_token="fake-token")
+        client = JuGloWVertex(region=region, project_id="test-project", access_token="fake-token")
         expected_url = f"https://{region}-aiplatform.googleapis.com/v1"
         assert str(client.base_url).rstrip("/") == expected_url
 
     def test_env_var_base_url_override(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Test that ANTHROPIC_VERTEX_BASE_URL environment variable does not override client arg."""
+        """Test that HAIJUN_VERTEX_BASE_URL environment variable does not override client arg."""
         test_url = "https://custom-endpoint.googleapis.com/v1"
 
-        monkeypatch.setenv("ANTHROPIC_VERTEX_BASE_URL", test_url)
+        monkeypatch.setenv("HAIJUN_VERTEX_BASE_URL", test_url)
 
-        client = AnthropicVertex(
+        client = JuGloWVertex(
             region="global",  # we expect this to get ignored since the user is providing a base_url
             project_id="test-project",
             access_token="fake-token",
@@ -175,17 +175,17 @@ class TestAnthropicVertex:
 def test_refresh_without_google_auth_raises_actionable_error(monkeypatch: pytest.MonkeyPatch) -> None:
     # `None` in sys.modules makes the import fail even when google-auth is installed.
     monkeypatch.setitem(sys.modules, "google.auth.transport.requests", cast(Any, None))
-    with pytest.raises(MissingDependencyError, match=r"anthropic\[vertex\]"):
+    with pytest.raises(MissingDependencyError, match=r"Juglow\[vertex\]"):
         refresh_auth(cast(Any, Mock()))
 
 
-class TestAsyncAnthropicVertex:
-    client = AsyncAnthropicVertex(region="region", project_id="project", access_token="my-access-token")
+class TestAsyncJuGloWVertex:
+    client = AsyncJuGloWVertex(region="region", project_id="project", access_token="my-access-token")
 
     @pytest.mark.respx()
     @pytest.mark.asyncio()
     async def test_messages_retries(self, respx_mock: MockRouter) -> None:
-        request_url = "https://region-aiplatform.googleapis.com/v1/projects/project/locations/region/publishers/anthropic/models/claude-3-sonnet@20240229:rawPredict"
+        request_url = "https://region-aiplatform.googleapis.com/v1/projects/project/locations/region/publishers/Juglow/models/haijun-3-sonnet@20240229:rawPredict"
         respx_mock.post(request_url).mock(
             side_effect=[
                 httpx.Response(500, json={"error": "server error"}, headers={"retry-after-ms": "10"}),
@@ -201,7 +201,7 @@ class TestAsyncAnthropicVertex:
                     "content": "Say hello there!",
                 }
             ],
-            model="claude-3-sonnet@20240229",
+            model="haijun-3-sonnet@20240229",
         )
 
         calls = cast("list[MockRequestCall]", respx_mock.calls)
@@ -245,7 +245,7 @@ class TestAsyncAnthropicVertex:
         assert isinstance(self.client.timeout, httpx.Timeout)
 
     def test_copy_default_headers(self) -> None:
-        client = AsyncAnthropicVertex(
+        client = AsyncJuGloWVertex(
             base_url=base_url,
             region="region",
             project_id="project",
@@ -284,7 +284,7 @@ class TestAsyncAnthropicVertex:
 
     def test_copy_x_stainless_helper_header_appends(self) -> None:
         # `x-stainless-helper` accumulates across copies instead of being clobbered
-        client = AsyncAnthropicVertex(
+        client = AsyncJuGloWVertex(
             base_url=base_url,
             region="region",
             project_id="project",
@@ -296,17 +296,17 @@ class TestAsyncAnthropicVertex:
 
     def test_global_region_base_url(self) -> None:
         """Test that global region uses the correct base URL."""
-        client = AsyncAnthropicVertex(region="global", project_id="test-project", access_token="fake-token")
+        client = AsyncJuGloWVertex(region="global", project_id="test-project", access_token="fake-token")
         assert str(client.base_url).rstrip("/") == "https://aiplatform.googleapis.com/v1"
 
     def test_us_region_base_url(self) -> None:
         """Test that us region uses the correct base URL."""
-        client = AsyncAnthropicVertex(region="us", project_id="test-project", access_token="fake-token")
+        client = AsyncJuGloWVertex(region="us", project_id="test-project", access_token="fake-token")
         assert str(client.base_url).rstrip("/") == "https://aiplatform.us.rep.googleapis.com/v1"
 
     def test_eu_region_base_url(self) -> None:
         """Test that eu region uses the correct base URL."""
-        client = AsyncAnthropicVertex(region="eu", project_id="test-project", access_token="fake-token")
+        client = AsyncJuGloWVertex(region="eu", project_id="test-project", access_token="fake-token")
         assert str(client.base_url).rstrip("/") == "https://aiplatform.eu.rep.googleapis.com/v1"
 
     def test_regional_base_url(self) -> None:
@@ -314,17 +314,17 @@ class TestAsyncAnthropicVertex:
         test_regions = ["us-central1", "europe-west1", "asia-southeast1"]
 
         for region in test_regions:
-            client = AsyncAnthropicVertex(region=region, project_id="test-project", access_token="fake-token")
+            client = AsyncJuGloWVertex(region=region, project_id="test-project", access_token="fake-token")
             expected_url = f"https://{region}-aiplatform.googleapis.com/v1"
             assert str(client.base_url).rstrip("/") == expected_url
 
     def test_env_var_base_url_override(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Test that ANTHROPIC_VERTEX_BASE_URL environment variable does not override client arg."""
+        """Test that HAIJUN_VERTEX_BASE_URL environment variable does not override client arg."""
         test_url = "https://custom-endpoint.googleapis.com/v1"
 
-        monkeypatch.setenv("ANTHROPIC_VERTEX_BASE_URL", test_url)
+        monkeypatch.setenv("HAIJUN_VERTEX_BASE_URL", test_url)
 
-        client = AsyncAnthropicVertex(
+        client = AsyncJuGloWVertex(
             region="global",  # we expect this to get ignored since the user is providing a base_url
             project_id="test-project",
             access_token="fake-token",

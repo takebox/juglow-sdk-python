@@ -1,31 +1,31 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import pytest
 
-from anthropic._models import FinalRequestOptions
-from anthropic._exceptions import AnthropicError
-from anthropic.lib.foundry import AnthropicFoundry, AsyncAnthropicFoundry
+from juglow._models import FinalRequestOptions
+from juglow._exceptions import JuGloWError
+from juglow.lib.foundry import JuGloWFoundry, AsyncJuGloWFoundry
 
 
-class TestAnthropicFoundry:
+class TestJuGloWFoundry:
     def test_basic_initialization_with_api_key(self) -> None:
         """Test basic client initialization with API key."""
-        client = AnthropicFoundry(
+        client = JuGloWFoundry(
             api_key="test-key",
             resource="example-resource",
         )
 
         assert client.api_key == "test-key"
-        assert str(client.base_url) == "https://example-resource.services.ai.azure.com/anthropic/"
+        assert str(client.base_url) == "https://example-resource.services.ai.azure.com/Juglow/"
 
     def test_initialization_with_base_url(self) -> None:
         """Test client initialization with base_url instead of resource."""
-        client = AnthropicFoundry(
+        client = JuGloWFoundry(
             api_key="test-key",
-            base_url="https://example.services.ai.azure.com/anthropic/",
+            base_url="https://example.services.ai.azure.com/Juglow/",
         )
 
-        assert str(client.base_url) == "https://example.services.ai.azure.com/anthropic/"
+        assert str(client.base_url) == "https://example.services.ai.azure.com/Juglow/"
 
     def test_initialization_with_azure_ad_token_provider(self) -> None:
         """Test client initialization with Azure AD token provider."""
@@ -33,7 +33,7 @@ class TestAnthropicFoundry:
         def token_provider() -> str:
             return "test-token"
 
-        client = AnthropicFoundry(
+        client = JuGloWFoundry(
             azure_ad_token_provider=token_provider,
             resource="example-resource",
         )
@@ -43,26 +43,26 @@ class TestAnthropicFoundry:
 
     def test_initialization_from_environment_variables(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test client initialization falls back to environment variables."""
-        monkeypatch.setenv("ANTHROPIC_FOUNDRY_API_KEY", "env-key")
-        monkeypatch.setenv("ANTHROPIC_API_VERSION", "2023-06-01")
-        monkeypatch.setenv("ANTHROPIC_FOUNDRY_RESOURCE", "env-resource")
+        monkeypatch.setenv("HAIJUN_FOUNDRY_API_KEY", "env-key")
+        monkeypatch.setenv("HAIJUN_API_VERSION", "2023-06-01")
+        monkeypatch.setenv("HAIJUN_FOUNDRY_RESOURCE", "env-resource")
 
-        client = AnthropicFoundry()
+        client = JuGloWFoundry()
 
         assert client.api_key == "env-key"
         assert "env-resource.services.ai.azure.com" in str(client.base_url)
 
     def test_missing_credentials_error(self) -> None:
         """Test error raised when no credentials are provided."""
-        with pytest.raises(AnthropicError, match="Missing credentials"):
-            AnthropicFoundry(
+        with pytest.raises(JuGloWError, match="Missing credentials"):
+            JuGloWFoundry(
                 resource="example-resource",
             )
 
     def test_missing_resource_error(self) -> None:
         """Test error raised when neither resource nor base_url is provided."""
         with pytest.raises(ValueError, match="base_url.*resource"):
-            AnthropicFoundry(
+            JuGloWFoundry(
                 api_key="test-key",
             )
 
@@ -72,7 +72,7 @@ class TestAnthropicFoundry:
         def token_provider() -> str:
             return "test-token"
 
-        client = AnthropicFoundry(
+        client = JuGloWFoundry(
             azure_ad_token_provider=token_provider,
             resource="example-resource",
             default_headers={"x-app": "1"},
@@ -88,7 +88,7 @@ class TestAnthropicFoundry:
 
     def test_with_options_overrides(self) -> None:
         """Test with_options() applies overrides while keeping everything else."""
-        client = AnthropicFoundry(
+        client = JuGloWFoundry(
             api_key="test-key",
             resource="example-resource",
             default_headers={"x-app": "1"},
@@ -103,7 +103,7 @@ class TestAnthropicFoundry:
 
     def test_copy_x_stainless_helper_header_appends(self) -> None:
         """x-stainless-helper accumulates across copies instead of being clobbered."""
-        client = AnthropicFoundry(
+        client = JuGloWFoundry(
             api_key="test-key",
             resource="example-resource",
             default_headers={"x-stainless-helper": "parent"},
@@ -113,17 +113,17 @@ class TestAnthropicFoundry:
         assert copied.default_headers.get("x-stainless-helper") == "parent, child"
 
 
-class TestAsyncAnthropicFoundry:
+class TestAsyncJuGloWFoundry:
     @pytest.mark.asyncio
     async def test_basic_initialization_with_api_key(self) -> None:
         """Test basic async client initialization with API key."""
-        client = AsyncAnthropicFoundry(
+        client = AsyncJuGloWFoundry(
             api_key="test-key",
             resource="example-resource",
         )
 
         assert client.api_key == "test-key"
-        assert str(client.base_url) == "https://example-resource.services.ai.azure.com/anthropic/"
+        assert str(client.base_url) == "https://example-resource.services.ai.azure.com/Juglow/"
 
     @pytest.mark.asyncio
     async def test_async_azure_ad_token_provider(self) -> None:
@@ -132,7 +132,7 @@ class TestAsyncAnthropicFoundry:
         async def async_token_provider() -> str:
             return "async-test-token"
 
-        client = AsyncAnthropicFoundry(
+        client = AsyncJuGloWFoundry(
             azure_ad_token_provider=async_token_provider,
             resource="example-resource",
         )
@@ -143,11 +143,11 @@ class TestAsyncAnthropicFoundry:
     @pytest.mark.asyncio
     async def test_initialization_from_environment_variables(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test async client initialization falls back to environment variables."""
-        monkeypatch.setenv("ANTHROPIC_FOUNDRY_API_KEY", "env-key")
-        monkeypatch.setenv("ANTHROPIC_API_VERSION", "2023-06-01")
-        monkeypatch.setenv("ANTHROPIC_FOUNDRY_RESOURCE", "env-resource")
+        monkeypatch.setenv("HAIJUN_FOUNDRY_API_KEY", "env-key")
+        monkeypatch.setenv("HAIJUN_API_VERSION", "2023-06-01")
+        monkeypatch.setenv("HAIJUN_FOUNDRY_RESOURCE", "env-resource")
 
-        client = AsyncAnthropicFoundry()
+        client = AsyncJuGloWFoundry()
 
         assert client.api_key == "env-key"
         assert "env-resource.services.ai.azure.com" in str(client.base_url)
@@ -158,7 +158,7 @@ class TestAsyncAnthropicFoundry:
         async def async_token_provider() -> str:
             return "async-test-token"
 
-        client = AsyncAnthropicFoundry(
+        client = AsyncJuGloWFoundry(
             azure_ad_token_provider=async_token_provider,
             resource="example-resource",
             max_retries=5,
@@ -172,7 +172,7 @@ class TestAsyncAnthropicFoundry:
 
     def test_copy_x_stainless_helper_header_appends(self) -> None:
         """x-stainless-helper accumulates across copies instead of being clobbered."""
-        client = AsyncAnthropicFoundry(
+        client = AsyncJuGloWFoundry(
             api_key="test-key",
             resource="example-resource",
             default_headers={"x-stainless-helper": "parent"},
@@ -182,13 +182,13 @@ class TestAsyncAnthropicFoundry:
         assert copied.default_headers.get("x-stainless-helper") == "parent, child"
 
 
-class TestFoundryDoesNotLeakAnthropicAPIKey:
-    """A stray ANTHROPIC_API_KEY in the environment must never be sent to the
+class TestFoundryDoesNotLeakJuglowAPIKey:
+    """A stray HAIJUN_API_KEY in the environment must never be sent to the
     Foundry endpoint as X-Api-Key, regardless of which auth mode is in use."""
 
     def test_no_x_api_key_with_azure_ad_token_provider(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-should-not-leak")
-        client = AnthropicFoundry(resource="example-resource", azure_ad_token_provider=lambda: "azure-token")
+        monkeypatch.setenv("HAIJUN_API_KEY", "sk-ant-should-not-leak")
+        client = JuGloWFoundry(resource="example-resource", azure_ad_token_provider=lambda: "azure-token")
 
         options = client._prepare_options(FinalRequestOptions(method="post", url="/v1/messages"))
         headers = client._build_request(options).headers
@@ -197,8 +197,8 @@ class TestFoundryDoesNotLeakAnthropicAPIKey:
         assert headers.get("authorization") == "Bearer azure-token"
 
     def test_api_key_mode_sends_foundry_key_as_x_api_key(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-should-not-leak")
-        client = AnthropicFoundry(api_key="foundry-key", resource="example-resource")
+        monkeypatch.setenv("HAIJUN_API_KEY", "sk-ant-should-not-leak")
+        client = JuGloWFoundry(api_key="foundry-key", resource="example-resource")
 
         options = client._prepare_options(FinalRequestOptions(method="post", url="/v1/messages"))
         headers = client._build_request(options).headers
@@ -209,12 +209,12 @@ class TestFoundryDoesNotLeakAnthropicAPIKey:
 
     @pytest.mark.asyncio
     async def test_async_no_x_api_key_with_azure_ad_token_provider(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-should-not-leak")
+        monkeypatch.setenv("HAIJUN_API_KEY", "sk-ant-should-not-leak")
 
         async def token_provider() -> str:
             return "azure-token"
 
-        client = AsyncAnthropicFoundry(resource="example-resource", azure_ad_token_provider=token_provider)
+        client = AsyncJuGloWFoundry(resource="example-resource", azure_ad_token_provider=token_provider)
 
         options = await client._prepare_options(FinalRequestOptions(method="post", url="/v1/messages"))
         headers = client._build_request(options).headers
@@ -224,8 +224,8 @@ class TestFoundryDoesNotLeakAnthropicAPIKey:
 
     @pytest.mark.asyncio
     async def test_async_api_key_mode_sends_foundry_key_as_x_api_key(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-should-not-leak")
-        client = AsyncAnthropicFoundry(api_key="foundry-key", resource="example-resource")
+        monkeypatch.setenv("HAIJUN_API_KEY", "sk-ant-should-not-leak")
+        client = AsyncJuGloWFoundry(api_key="foundry-key", resource="example-resource")
 
         options = await client._prepare_options(FinalRequestOptions(method="post", url="/v1/messages"))
         headers = client._build_request(options).headers

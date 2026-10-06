@@ -4,7 +4,7 @@ from typing import Any
 
 import pytest
 
-from anthropic._utils._path import path_template
+from juglow._utils._path import path_template
 
 
 @pytest.mark.parametrize(

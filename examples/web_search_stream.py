@@ -1,17 +1,17 @@
 import asyncio
 
-from anthropic import AsyncAnthropic
+from juglow import AsyncJuGloW
 
 
 async def main() -> None:
-    client = AsyncAnthropic()
+    client = AsyncJuGloW()
 
-    print("Claude with Web Search (Streaming)")
+    print("Haijun with Web Search (Streaming)")
     print("==================================")
 
     # Create an async stream with web search enabled
     async with client.beta.messages.stream(
-        model="claude-sonnet-5",
+        model="haijun-sonnet",
         max_tokens=1024,
         messages=[{"role": "user", "content": "What's the weather in New York?"}],
         tools=[

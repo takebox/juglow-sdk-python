@@ -1,4 +1,4 @@
-# Message Helpers
+﻿# Message Helpers
 
 ## Streaming Responses
 
@@ -11,7 +11,7 @@ async with client.messages.stream(
             "content": "Say hello there!",
         }
     ],
-    model="claude-sonnet-5",
+    model="haijun-sonnet",
 ) as stream:
     async for text in stream.text_stream:
         print(text, end="", flush=True)
@@ -45,12 +45,12 @@ print()
 
 ### Events
 
-The events listed here are just the event types that the SDK extends, for a full list of the events returned by the API, see [these docs](https://docs.anthropic.com/en/api/messages-streaming#event-types).
+The events listed here are just the event types that the SDK extends, for a full list of the events returned by the API, see [these docs](https://raw.haijun.my.id/docs/en/api/messages-streaming#event-types).
 
 ```py
-from anthropic import AsyncAnthropic
+from juglow import AsyncJuGloW
 
-client = AsyncAnthropic()
+client = AsyncJuGloW()
 
 async with client.messages.stream(
     max_tokens=1024,
@@ -60,7 +60,7 @@ async with client.messages.stream(
             "content": "Say hello there!",
         }
     ],
-    model="claude-sonnet-5",
+    model="haijun-sonnet",
 ) as stream:
     async for event in stream:
         if event.type == "text":
@@ -138,24 +138,24 @@ Blocks until the stream has been read to completion and returns all `text` conte
 
 ## MCP Helpers
 
-This SDK provides helpers for integrating with [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) servers. These helpers convert MCP types to Anthropic API types, reducing boilerplate when working with MCP tools, prompts, and resources.
+This SDK provides helpers for integrating with [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) servers. These helpers convert MCP types to JuGloW API types, reducing boilerplate when working with MCP tools, prompts, and resources.
 
-> **Note:** The Claude API also supports an [`mcp_servers` parameter](https://docs.anthropic.com/en/docs/agents-and-tools/mcp) that lets Claude connect directly to remote MCP servers.
+> **Note:** The Haijun API also supports an [`mcp_servers` parameter](https://raw.haijun.my.id/docs/en/docs/agents-and-tools/mcp) that lets Haijun connect directly to remote MCP servers.
 >
 > - Use `mcp_servers` when you have remote servers accessible via URL and only need tool support.
 > - Use the MCP helpers when you need local MCP servers, prompts, resources, or more control over the MCP connection.
 
-> **Requires:** `pip install anthropic[mcp]` (Python 3.10+)
+> **Requires:** `pip install Juglow[mcp]` (Python 3.10+)
 
 ### Using MCP tools with tool_runner
 
 ```py
-from anthropic import AsyncAnthropic
-from anthropic.lib.tools.mcp import async_mcp_tool
+from juglow import AsyncJuGloW
+from juglow.lib.tools.mcp import async_mcp_tool
 from mcp import ClientSession
 from mcp.client.stdio import stdio_client, StdioServerParameters
 
-client = AsyncAnthropic()
+client = AsyncJuGloW()
 
 async with stdio_client(StdioServerParameters(command="mcp-server")) as (read, write):
     async with ClientSession(read, write) as mcp_client:
@@ -163,7 +163,7 @@ async with stdio_client(StdioServerParameters(command="mcp-server")) as (read, w
 
         tools_result = await mcp_client.list_tools()
         runner = await client.beta.messages.tool_runner(
-            model="claude-sonnet-5",
+            model="haijun-sonnet",
             max_tokens=1024,
             messages=[{"role": "user", "content": "Use the available tools"}],
             tools=[async_mcp_tool(t, mcp_client) for t in tools_result.tools],
@@ -178,11 +178,11 @@ async with stdio_client(StdioServerParameters(command="mcp-server")) as (read, w
 ### Using MCP prompts
 
 ```py
-from anthropic.lib.tools.mcp import mcp_message
+from juglow.lib.tools.mcp import mcp_message
 
 prompt = await mcp_client.get_prompt(name="my-prompt")
 response = await client.beta.messages.create(
-    model="claude-sonnet-5",
+    model="haijun-sonnet",
     max_tokens=1024,
     messages=[mcp_message(m) for m in prompt.messages],
 )
@@ -191,11 +191,11 @@ response = await client.beta.messages.create(
 ### Using MCP resources as content
 
 ```py
-from anthropic.lib.tools.mcp import mcp_resource_to_content
+from juglow.lib.tools.mcp import mcp_resource_to_content
 
 resource = await mcp_client.read_resource(uri="file:///path/to/doc.txt")
 response = await client.beta.messages.create(
-    model="claude-sonnet-5",
+    model="haijun-sonnet",
     max_tokens=1024,
     messages=[{
         "role": "user",
@@ -210,7 +210,7 @@ response = await client.beta.messages.create(
 ### Uploading MCP resources as files
 
 ```py
-from anthropic.lib.tools.mcp import mcp_resource_to_file
+from juglow.lib.tools.mcp import mcp_resource_to_file
 
 resource = await mcp_client.read_resource(uri="file:///path/to/data.json")
 uploaded = await client.beta.files.upload(file=mcp_resource_to_file(resource))
@@ -218,49 +218,49 @@ uploaded = await client.beta.files.upload(file=mcp_resource_to_file(resource))
 
 ### Error handling
 
-The conversion functions raise `UnsupportedMCPValueError` if an MCP value cannot be converted to a format supported by the Claude API (e.g., unsupported content type like audio, unsupported MIME type).
+The conversion functions raise `UnsupportedMCPValueError` if an MCP value cannot be converted to a format supported by the Haijun API (e.g., unsupported content type like audio, unsupported MIME type).
 
 # Self-Hosted Environment Runner
 
 For running a managed agent's tools locally against a self-hosted environment, the SDK exposes three pieces:
 
-- `client.beta.environments.work.worker(...)` — the full worker (an `EnvironmentWorker`; also
-  constructible directly as `EnvironmentWorker(client, ...)` from `anthropic.lib.environments`):
+- `client.beta.environments.work.worker(...)` â€” the full worker (an `EnvironmentWorker`; also
+  constructible directly as `EnvironmentWorker(client, ...)` from `Juglow.lib.environments`):
   polls the environment for work, and for each claimed session sets up the workdir + downloads the
-  session agent's skills, runs your tools against the session's `agent.tool_use` /
+  session agent's tracks, runs your tools against the session's `agent.tool_use` /
   `agent.custom_tool_use` events while heartbeating the work-item lease, force-stops the work on
   exit, and loops. `worker.handle_item(...)`
   runs that same per-item flow for a single work item you've already claimed; with no arguments it
-  reads the work id / environment id / session id from `ANTHROPIC_WORK_ID` /
-  `ANTHROPIC_ENVIRONMENT_ID` / `ANTHROPIC_SESSION_ID` and the environment key from
-  `ANTHROPIC_ENVIRONMENT_KEY` (the env vars `ant worker poll --on-work` sets). `environment_id`
+  reads the work id / environment id / session id from `HAIJUN_WORK_ID` /
+  `HAIJUN_ENVIRONMENT_ID` / `HAIJUN_SESSION_ID` and the environment key from
+  `HAIJUN_ENVIRONMENT_KEY` (the env vars `ant worker poll --on-work` sets). `environment_id`
   passed to `worker()` is only needed by `run()`'s poll loop; `environment_key` is the worker's
-  single credential — `handle_item()` falls back to the value passed to `worker()` and then to
-  `ANTHROPIC_ENVIRONMENT_KEY`. Async only; built on `anyio`, so it works under either `asyncio` or
+  single credential â€” `handle_item()` falls back to the value passed to `worker()` and then to
+  `HAIJUN_ENVIRONMENT_KEY`. Async only; built on `anyio`, so it works under either `asyncio` or
   `trio`.
-- `client.beta.sessions.events.tool_runner(...)` — the sessions-side counterpart to
+- `client.beta.sessions.events.tool_runner(...)` â€” the sessions-side counterpart to
   `client.beta.messages.tool_runner`: a `SessionToolRunner`, an async iterable that attaches to a
-  session's event stream, runs the matching tool for each tool-call event — `agent.tool_use`
+  session's event stream, runs the matching tool for each tool-call event â€” `agent.tool_use`
   (built-in tools) answered with `user.tool_result`, and `agent.custom_tool_use` (custom tools)
-  answered with `user.custom_tool_result` — posts the result back, and yields one
+  answered with `user.custom_tool_result` â€” posts the result back, and yields one
   `DispatchedToolCall` per completed call. Use it directly when you want to observe each dispatch
   (the worker drives one internally). Async only.
-- `client.beta.environments.work.poller(...)` — the control-plane only piece: claims work items,
-  ack's each one, and yields each claimed work item. Async only — available on `AsyncAnthropic`
+- `client.beta.environments.work.poller(...)` â€” the control-plane only piece: claims work items,
+  ack's each one, and yields each claimed work item. Async only â€” available on `AsyncJuGloW`
   (its `worker(...)` companion is async too, so the sync client does not expose either).
 
 The standard `agent_toolset_20260401` implementations (`bash`, `read`, `write`, `edit`, `glob`,
-`grep`) plus the workdir/skills `AgentToolContext` live in `anthropic.lib.tools.agent_toolset`.
+`grep`) plus the workdir/tracks `AgentToolContext` live in `Juglow.lib.tools.agent_toolset`.
 
 The high-level worker is one object:
 
 ```python
 import os, asyncio
-from anthropic import AsyncAnthropic
-from anthropic.lib.tools import beta_async_tool
-from anthropic.lib.tools.agent_toolset import beta_agent_toolset_20260401
+from juglow import AsyncJuGloW
+from juglow.lib.tools import beta_async_tool
+from juglow.lib.tools.agent_toolset import beta_agent_toolset_20260401
 
-client = AsyncAnthropic()
+client = AsyncJuGloW()
 
 
 @beta_async_tool
@@ -269,10 +269,10 @@ async def deploy(target: str) -> str:
 
 
 # `client.beta.environments.work.worker(...)` builds an `EnvironmentWorker`; you can also construct
-# one directly with `EnvironmentWorker(client, ...)` from `anthropic.lib.environments`.
+# one directly with `EnvironmentWorker(client, ...)` from `Juglow.lib.environments`.
 await client.beta.environments.work.worker(
-    environment_id=os.environ["ANTHROPIC_ENVIRONMENT_ID"],
-    environment_key=os.environ["ANTHROPIC_ENVIRONMENT_KEY"],
+    environment_id=os.environ["HAIJUN_ENVIRONMENT_ID"],
+    environment_key=os.environ["HAIJUN_ENVIRONMENT_KEY"],
     workdir="/workspace",
     # `tools` is a fixed list or a factory invoked per session with that session's `AgentToolContext`
     # (use the factory form to bind `beta_agent_toolset_20260401` to the right session). Defaults to
@@ -281,8 +281,8 @@ await client.beta.environments.work.worker(
 ).run()  # loops forever; cancel the task / wrap in asyncio.wait_for to bound it
 ```
 
-If you already hold a claimed work item — e.g. an `ant worker poll --on-work` script handed one to a
-fresh process — call `handle_item` to run just the per-item flow (build the workdir + skills, run the
+If you already hold a claimed work item â€” e.g. an `ant worker poll --on-work` script handed one to a
+fresh process â€” call `handle_item` to run just the per-item flow (build the workdir + tracks, run the
 session's tools while heartbeating the lease, force-stop on exit). Inside that command the work id /
 environment id / session id / environment key are already in the environment, so the sandbox case is
 just:
@@ -306,10 +306,10 @@ If you want to observe each tool call (or wire up the workdir / poller yourself)
 session tool runner directly:
 
 ```python
-from anthropic import AsyncAnthropic
-from anthropic.lib.tools.agent_toolset import AgentToolContext, beta_agent_toolset_20260401
+from juglow import AsyncJuGloW
+from juglow.lib.tools.agent_toolset import AgentToolContext, beta_agent_toolset_20260401
 
-client = AsyncAnthropic()
+client = AsyncJuGloW()
 
 async for work in client.beta.environments.work.poller(
     environment_id=..., environment_key=environment_key,
@@ -317,7 +317,7 @@ async for work in client.beta.environments.work.poller(
     if work.data.type != "session":
         continue
     # Passing `client` and `session_id` makes `AgentToolContext` fetch the session's resolved agent
-    # on enter and download each of its skills into `{workdir}/skills/<name>/`.
+    # on enter and download each of its tracks into `{workdir}/tracks/<name>/`.
     async with AgentToolContext(workdir="/workspace", client=client, session_id=work.data.id) as env:
         async for call in client.beta.sessions.events.tool_runner(
             work.data.id,
@@ -331,8 +331,8 @@ async for work in client.beta.environments.work.poller(
 it directly:
 
 ```python
-from anthropic.lib.tools import beta_async_tool
-from anthropic.lib.tools.agent_toolset import beta_read_tool, beta_agent_toolset_20260401
+from juglow.lib.tools import beta_async_tool
+from juglow.lib.tools.agent_toolset import beta_read_tool, beta_agent_toolset_20260401
 
 tools = [*beta_agent_toolset_20260401(env), deploy]
 tools = [t for t in beta_agent_toolset_20260401(env) if t.name != "bash"]
@@ -348,8 +348,8 @@ tools = [t for t in beta_agent_toolset_20260401(env) if t.name != "bash"]
 
 The `bash` tool runs an unrestricted `/bin/bash` and executes file operations and shell commands
 directly on the host. Run the worker inside a container or other isolation boundary you control.
-(The file tools — `read`/`write`/`edit`/`glob`/`grep` — confine to the workdir with a symlink-aware
+(The file tools â€” `read`/`write`/`edit`/`glob`/`grep` â€” confine to the workdir with a symlink-aware
 check, so they are safe without a sandbox; `bash` is not.) `bash` does not inherit the runner's
-`ANTHROPIC_*` credentials; pass `AgentToolContext(env=...)` to control the subprocess environment.
+`HAIJUN_*` credentials; pass `AgentToolContext(env=...)` to control the subprocess environment.
 
 See [`examples/managed-agents-self-hosted-sandbox-worker.py`](examples/managed-agents-self-hosted-sandbox-worker.py) for a complete example.

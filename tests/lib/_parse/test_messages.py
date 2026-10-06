@@ -4,7 +4,7 @@ import pytest
 from pydantic import BaseModel
 from inline_snapshot import external, snapshot
 
-from anthropic import Anthropic, AsyncAnthropic, _compat
+from juglow import JuGloW, AsyncJuGloW, _compat
 
 
 class OrderItem(BaseModel):
@@ -26,11 +26,11 @@ class TestSyncParse:
             cast(Any, external("uuid:c11eefc7-fff0-4466-8453-42eef73b8876.json")),
         ],
     )
-    def test_parse_with_pydantic_model(self, snapshot_client: Anthropic) -> None:
+    def test_parse_with_pydantic_model(self, snapshot_client: JuGloW) -> None:
         """Test sync messages.parse() with a Pydantic model output_format."""
 
         response = snapshot_client.messages.parse(
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
             messages=[
                 {
                     "role": "user",
@@ -53,11 +53,11 @@ class TestSyncParse:
             cast(Any, external("uuid:bd7029d5-d8d4-4e06-be3a-2ac9c60803a6.json")),
         ],
     )
-    def test_parse_with_nested_pydantic_model(self, snapshot_client: Anthropic) -> None:
+    def test_parse_with_nested_pydantic_model(self, snapshot_client: JuGloW) -> None:
         """Test sync messages.parse() with nested Pydantic models."""
 
         response = snapshot_client.messages.parse(
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
             messages=[
                 {
                     "role": "user",
@@ -83,11 +83,11 @@ class TestAsyncParse:
             cast(Any, external("uuid:924cfccc-c863-44ed-9838-c36b37416eaf.json")),
         ],
     )
-    async def test_parse_with_pydantic_model(self, async_snapshot_client: AsyncAnthropic) -> None:
+    async def test_parse_with_pydantic_model(self, async_snapshot_client: AsyncJuGloW) -> None:
         """Test async messages.parse() with a Pydantic model output_format."""
 
         response = await async_snapshot_client.messages.parse(
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
             messages=[
                 {
                     "role": "user",
@@ -110,11 +110,11 @@ class TestAsyncParse:
             cast(Any, external("uuid:d743d628-16aa-4c9f-ae78-51deb578f746.json")),
         ],
     )
-    async def test_parse_with_nested_pydantic_model(self, async_snapshot_client: AsyncAnthropic) -> None:
+    async def test_parse_with_nested_pydantic_model(self, async_snapshot_client: AsyncJuGloW) -> None:
         """Test async messages.parse() with nested Pydantic models."""
 
         response = await async_snapshot_client.messages.parse(
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
             messages=[
                 {
                     "role": "user",
@@ -140,11 +140,11 @@ class TestAsyncStream:
             cast(Any, external("uuid:a8b7dbb8-2321-4624-abdb-7ba2136b5c38.json")),
         ],
     )
-    async def test_stream_with_raw_schema(self, async_snapshot_client: AsyncAnthropic) -> None:
+    async def test_stream_with_raw_schema(self, async_snapshot_client: AsyncJuGloW) -> None:
         """Test async messages.stream() with raw JSON schema via output_config."""
 
         async with async_snapshot_client.messages.stream(
-            model="claude-sonnet-4-5",
+            model="haijun-sonnet-5",
             messages=[
                 {
                     "role": "user",

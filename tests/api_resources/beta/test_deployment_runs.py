@@ -7,11 +7,11 @@ from typing import Any, cast
 
 import pytest
 
-from anthropic import Anthropic, AsyncAnthropic
+from juglow import JuGloW, AsyncJuGloW
 from tests.utils import assert_matches_type
-from anthropic._utils import parse_datetime
-from anthropic.pagination import SyncPageCursor, AsyncPageCursor
-from anthropic.types.beta import (
+from juglow._utils import parse_datetime
+from juglow.pagination import SyncPageCursor, AsyncPageCursor
+from juglow.types.beta import (
     BetaManagedAgentsDeploymentRun,
 )
 
@@ -23,7 +23,7 @@ class TestDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_retrieve(self, client: Anthropic) -> None:
+    def test_method_retrieve(self, client: JuGloW) -> None:
         deployment_run = client.beta.deployment_runs.retrieve(
             deployment_run_id="deployment_run_id",
         )
@@ -31,7 +31,7 @@ class TestDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_retrieve_with_all_params(self, client: Anthropic) -> None:
+    def test_method_retrieve_with_all_params(self, client: JuGloW) -> None:
         deployment_run = client.beta.deployment_runs.retrieve(
             deployment_run_id="deployment_run_id",
             betas=["message-batches-2024-09-24"],
@@ -40,7 +40,7 @@ class TestDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_raw_response_retrieve(self, client: Anthropic) -> None:
+    def test_raw_response_retrieve(self, client: JuGloW) -> None:
         response = client.beta.deployment_runs.with_raw_response.retrieve(
             deployment_run_id="deployment_run_id",
         )
@@ -52,7 +52,7 @@ class TestDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_streaming_response_retrieve(self, client: Anthropic) -> None:
+    def test_streaming_response_retrieve(self, client: JuGloW) -> None:
         with client.beta.deployment_runs.with_streaming_response.retrieve(
             deployment_run_id="deployment_run_id",
         ) as response:
@@ -66,7 +66,7 @@ class TestDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_path_params_retrieve(self, client: Anthropic) -> None:
+    def test_path_params_retrieve(self, client: JuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `deployment_run_id` but received ''"):
             client.beta.deployment_runs.with_raw_response.retrieve(
                 deployment_run_id="",
@@ -74,13 +74,13 @@ class TestDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list(self, client: Anthropic) -> None:
+    def test_method_list(self, client: JuGloW) -> None:
         deployment_run = client.beta.deployment_runs.list()
         assert_matches_type(SyncPageCursor[BetaManagedAgentsDeploymentRun], deployment_run, path=["response"])
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_method_list_with_all_params(self, client: Anthropic) -> None:
+    def test_method_list_with_all_params(self, client: JuGloW) -> None:
         deployment_run = client.beta.deployment_runs.list(
             created_at_gt=parse_datetime("2019-12-27T18:11:19.117Z"),
             created_at_gte=parse_datetime("2019-12-27T18:11:19.117Z"),
@@ -97,7 +97,7 @@ class TestDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_raw_response_list(self, client: Anthropic) -> None:
+    def test_raw_response_list(self, client: JuGloW) -> None:
         response = client.beta.deployment_runs.with_raw_response.list()
 
         assert response.is_closed is True
@@ -107,7 +107,7 @@ class TestDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    def test_streaming_response_list(self, client: Anthropic) -> None:
+    def test_streaming_response_list(self, client: JuGloW) -> None:
         with client.beta.deployment_runs.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -125,7 +125,7 @@ class TestAsyncDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve(self, async_client: AsyncJuGloW) -> None:
         deployment_run = await async_client.beta.deployment_runs.retrieve(
             deployment_run_id="deployment_run_id",
         )
@@ -133,7 +133,7 @@ class TestAsyncDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_retrieve_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_retrieve_with_all_params(self, async_client: AsyncJuGloW) -> None:
         deployment_run = await async_client.beta.deployment_runs.retrieve(
             deployment_run_id="deployment_run_id",
             betas=["message-batches-2024-09-24"],
@@ -142,7 +142,7 @@ class TestAsyncDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_raw_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.deployment_runs.with_raw_response.retrieve(
             deployment_run_id="deployment_run_id",
         )
@@ -154,7 +154,7 @@ class TestAsyncDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_streaming_response_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_retrieve(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.deployment_runs.with_streaming_response.retrieve(
             deployment_run_id="deployment_run_id",
         ) as response:
@@ -168,7 +168,7 @@ class TestAsyncDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_path_params_retrieve(self, async_client: AsyncAnthropic) -> None:
+    async def test_path_params_retrieve(self, async_client: AsyncJuGloW) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `deployment_run_id` but received ''"):
             await async_client.beta.deployment_runs.with_raw_response.retrieve(
                 deployment_run_id="",
@@ -176,13 +176,13 @@ class TestAsyncDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list(self, async_client: AsyncJuGloW) -> None:
         deployment_run = await async_client.beta.deployment_runs.list()
         assert_matches_type(AsyncPageCursor[BetaManagedAgentsDeploymentRun], deployment_run, path=["response"])
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_method_list_with_all_params(self, async_client: AsyncAnthropic) -> None:
+    async def test_method_list_with_all_params(self, async_client: AsyncJuGloW) -> None:
         deployment_run = await async_client.beta.deployment_runs.list(
             created_at_gt=parse_datetime("2019-12-27T18:11:19.117Z"),
             created_at_gte=parse_datetime("2019-12-27T18:11:19.117Z"),
@@ -199,7 +199,7 @@ class TestAsyncDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_raw_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_raw_response_list(self, async_client: AsyncJuGloW) -> None:
         response = await async_client.beta.deployment_runs.with_raw_response.list()
 
         assert response.is_closed is True
@@ -209,7 +209,7 @@ class TestAsyncDeploymentRuns:
 
     @pytest.mark.skip(reason="buildURL drops path-level query params (SDK-4349)")
     @parametrize
-    async def test_streaming_response_list(self, async_client: AsyncAnthropic) -> None:
+    async def test_streaming_response_list(self, async_client: AsyncJuGloW) -> None:
         async with async_client.beta.deployment_runs.with_streaming_response.list() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

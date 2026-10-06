@@ -1,4 +1,4 @@
-import re
+﻿import re
 from typing import cast
 from typing_extensions import Protocol
 
@@ -6,9 +6,9 @@ import httpx
 import pytest
 from respx import MockRouter
 
-from anthropic import AnthropicAWS, AsyncAnthropicAWS
-from anthropic._exceptions import AnthropicError
-from anthropic.lib.credentials import StaticToken
+from juglow import JuGloWAWS, AsyncJuGloWAWS
+from juglow._exceptions import JuGloWError
+from juglow.lib.credentials import StaticToken
 
 
 class MockRequestCall(Protocol):
@@ -19,13 +19,13 @@ class MockRequestCall(Protocol):
 
 
 def test_init_api_key_mode() -> None:
-    client = AnthropicAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
+    client = JuGloWAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
     assert client.api_key == "test-key"
     assert client._use_sigv4 is False
 
 
 def test_init_sigv4_explicit_creds() -> None:
-    client = AnthropicAWS(
+    client = JuGloWAWS(
         aws_access_key="AKID",
         aws_secret_key="secret",
         aws_region="us-west-2",
@@ -38,43 +38,43 @@ def test_init_sigv4_explicit_creds() -> None:
 
 
 def test_init_sigv4_profile() -> None:
-    client = AnthropicAWS(aws_profile="my-profile", aws_region="eu-west-1", workspace_id="ws-123")
+    client = JuGloWAWS(aws_profile="my-profile", aws_region="eu-west-1", workspace_id="ws-123")
     assert client._use_sigv4 is True
     assert client.aws_profile == "my-profile"
 
 
 def test_init_sigv4_default_credential_chain() -> None:
-    client = AnthropicAWS(aws_region="us-east-1", workspace_id="ws-123")
+    client = JuGloWAWS(aws_region="us-east-1", workspace_id="ws-123")
     assert client._use_sigv4 is True
     assert client.api_key is None
 
 
 def test_init_requires_region_for_sigv4(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("AWS_REGION", raising=False)
-    with pytest.raises(AnthropicError, match="No AWS region was provided"):
-        AnthropicAWS(aws_access_key="AKID", aws_secret_key="secret", workspace_id="ws-123")
+    with pytest.raises(JuGloWError, match="No AWS region was provided"):
+        JuGloWAWS(aws_access_key="AKID", aws_secret_key="secret", workspace_id="ws-123")
 
 
 def test_init_requires_workspace_id(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.delenv("ANTHROPIC_AWS_WORKSPACE_ID", raising=False)
-    with pytest.raises(AnthropicError, match="No workspace ID found"):
-        AnthropicAWS(api_key="test-key", aws_region="us-east-1")
+    monkeypatch.delenv("HAIJUN_AWS_WORKSPACE_ID", raising=False)
+    with pytest.raises(JuGloWError, match="No workspace ID found"):
+        JuGloWAWS(api_key="test-key", aws_region="us-east-1")
 
 
 def test_init_workspace_id_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("ANTHROPIC_AWS_WORKSPACE_ID", "env-workspace")
-    client = AnthropicAWS(api_key="test-key", aws_region="us-east-1")
+    monkeypatch.setenv("HAIJUN_AWS_WORKSPACE_ID", "env-workspace")
+    client = JuGloWAWS(api_key="test-key", aws_region="us-east-1")
     assert client.workspace_id == "env-workspace"
 
 
 def test_init_async_api_key_mode() -> None:
-    client = AsyncAnthropicAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
+    client = AsyncJuGloWAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
     assert client.api_key == "test-key"
     assert client._use_sigv4 is False
 
 
 def test_init_async_sigv4() -> None:
-    client = AsyncAnthropicAWS(
+    client = AsyncJuGloWAWS(
         aws_access_key="AKID",
         aws_secret_key="secret",
         aws_region="us-west-2",
@@ -84,9 +84,9 @@ def test_init_async_sigv4() -> None:
 
 
 def test_init_async_requires_workspace_id(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.delenv("ANTHROPIC_AWS_WORKSPACE_ID", raising=False)
-    with pytest.raises(AnthropicError, match="No workspace ID found"):
-        AsyncAnthropicAWS(api_key="test-key", aws_region="us-east-1")
+    monkeypatch.delenv("HAIJUN_AWS_WORKSPACE_ID", raising=False)
+    with pytest.raises(JuGloWError, match="No workspace ID found"):
+        AsyncJuGloWAWS(api_key="test-key", aws_region="us-east-1")
 
 
 # --- Partial credential validation ---
@@ -94,25 +94,25 @@ def test_init_async_requires_workspace_id(monkeypatch: pytest.MonkeyPatch) -> No
 
 def test_partial_creds_access_key_only() -> None:
     with pytest.raises(ValueError, match="aws_access_key.*without.*aws_secret_key"):
-        AnthropicAWS(aws_access_key="AKID", aws_region="us-east-1", workspace_id="ws-123")
+        JuGloWAWS(aws_access_key="AKID", aws_region="us-east-1", workspace_id="ws-123")
 
 
 def test_partial_creds_secret_key_only() -> None:
     with pytest.raises(ValueError, match="aws_secret_key.*without.*aws_access_key"):
-        AnthropicAWS(aws_secret_key="secret", aws_region="us-east-1", workspace_id="ws-123")
+        JuGloWAWS(aws_secret_key="secret", aws_region="us-east-1", workspace_id="ws-123")
 
 
 def test_partial_creds_async_access_key_only() -> None:
     with pytest.raises(ValueError, match="aws_access_key.*without.*aws_secret_key"):
-        AsyncAnthropicAWS(aws_access_key="AKID", aws_region="us-east-1", workspace_id="ws-123")
+        AsyncJuGloWAWS(aws_access_key="AKID", aws_region="us-east-1", workspace_id="ws-123")
 
 
 # --- skipAuth ---
 
 
 def test_skip_auth_no_workspace_required(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.delenv("ANTHROPIC_AWS_WORKSPACE_ID", raising=False)
-    client = AnthropicAWS(skip_auth=True, base_url="https://custom.example.com")
+    monkeypatch.delenv("HAIJUN_AWS_WORKSPACE_ID", raising=False)
+    client = JuGloWAWS(skip_auth=True, base_url="https://custom.example.com")
     assert client._skip_auth is True
     assert client._use_sigv4 is False
     assert client.workspace_id is None
@@ -120,15 +120,15 @@ def test_skip_auth_no_workspace_required(monkeypatch: pytest.MonkeyPatch) -> Non
 
 def test_skip_auth_no_region_or_base_url_required(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("AWS_REGION", raising=False)
-    monkeypatch.delenv("ANTHROPIC_AWS_BASE_URL", raising=False)
-    monkeypatch.delenv("ANTHROPIC_AWS_WORKSPACE_ID", raising=False)
-    client = AnthropicAWS(skip_auth=True)
+    monkeypatch.delenv("HAIJUN_AWS_BASE_URL", raising=False)
+    monkeypatch.delenv("HAIJUN_AWS_WORKSPACE_ID", raising=False)
+    client = JuGloWAWS(skip_auth=True)
     assert client._skip_auth is True
 
 
 def test_skip_auth_async(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.delenv("ANTHROPIC_AWS_WORKSPACE_ID", raising=False)
-    client = AsyncAnthropicAWS(skip_auth=True, base_url="https://custom.example.com")
+    monkeypatch.delenv("HAIJUN_AWS_WORKSPACE_ID", raising=False)
+    client = AsyncJuGloWAWS(skip_auth=True, base_url="https://custom.example.com")
     assert client._skip_auth is True
     assert client._use_sigv4 is False
 
@@ -140,11 +140,11 @@ def test_skip_auth_no_auth_headers(respx_mock: MockRouter) -> None:
         return_value=httpx.Response(200, json={"foo": "bar"})
     )
 
-    client = AnthropicAWS(skip_auth=True, base_url="https://custom.example.com")
+    client = JuGloWAWS(skip_auth=True, base_url="https://custom.example.com")
     client.messages.create(
         max_tokens=1024,
         messages=[{"role": "user", "content": "Hello"}],
-        model="claude-sonnet-4-20250514",
+        model="haijun-sonnet-20250514",
     )
 
     calls = cast("list[MockRequestCall]", respx_mock.calls)
@@ -152,29 +152,29 @@ def test_skip_auth_no_auth_headers(respx_mock: MockRouter) -> None:
     assert "X-Api-Key" not in calls[0].request.headers
     assert "Authorization" not in calls[0].request.headers
     assert "X-Amz-Date" not in calls[0].request.headers
-    assert "anthropic-workspace-id" not in calls[0].request.headers
+    assert "Juglow-workspace-id" not in calls[0].request.headers
 
 
 # --- Environment Variables ---
 
 
 def test_env_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "env-key")
+    monkeypatch.setenv("HAIJUN_AWS_API_KEY", "env-key")
     monkeypatch.delenv("AWS_REGION", raising=False)
-    client = AnthropicAWS(base_url="https://example.com", workspace_id="ws-123")
+    client = JuGloWAWS(base_url="https://example.com", workspace_id="ws-123")
     assert client.api_key == "env-key"
     assert client._use_sigv4 is False
 
 
 def test_env_region(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("AWS_REGION", "ap-southeast-1")
-    client = AnthropicAWS(api_key="test-key", workspace_id="ws-123")
+    client = JuGloWAWS(api_key="test-key", workspace_id="ws-123")
     assert client.aws_region == "ap-southeast-1"
 
 
 def test_env_base_url(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("ANTHROPIC_AWS_BASE_URL", "https://custom-gateway.example.com")
-    client = AnthropicAWS(api_key="test-key", workspace_id="ws-123")
+    monkeypatch.setenv("HAIJUN_AWS_BASE_URL", "https://custom-gateway.example.com")
+    client = JuGloWAWS(api_key="test-key", workspace_id="ws-123")
     assert str(client.base_url).rstrip("/") == "https://custom-gateway.example.com"
 
 
@@ -182,16 +182,16 @@ def test_env_base_url(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_api_key_arg_takes_precedence_over_env(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "env-key")
-    client = AnthropicAWS(api_key="arg-key", aws_region="us-east-1", workspace_id="ws-123")
+    monkeypatch.setenv("HAIJUN_AWS_API_KEY", "env-key")
+    client = JuGloWAWS(api_key="arg-key", aws_region="us-east-1", workspace_id="ws-123")
     assert client.api_key == "arg-key"
     assert client._use_sigv4 is False
 
 
 def test_explicit_aws_creds_suppress_env_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Explicit SigV4 constructor args should suppress ANTHROPIC_AWS_API_KEY env var."""
-    monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "env-key")
-    client = AnthropicAWS(
+    """Explicit SigV4 constructor args should suppress HAIJUN_AWS_API_KEY env var."""
+    monkeypatch.setenv("HAIJUN_AWS_API_KEY", "env-key")
+    client = JuGloWAWS(
         aws_access_key="AKID",
         aws_secret_key="secret",
         aws_region="us-east-1",
@@ -202,8 +202,8 @@ def test_explicit_aws_creds_suppress_env_api_key(monkeypatch: pytest.MonkeyPatch
 
 
 def test_aws_profile_suppresses_env_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("ANTHROPIC_AWS_API_KEY", "env-key")
-    client = AnthropicAWS(aws_profile="my-profile", aws_region="us-east-1", workspace_id="ws-123")
+    monkeypatch.setenv("HAIJUN_AWS_API_KEY", "env-key")
+    client = JuGloWAWS(aws_profile="my-profile", aws_region="us-east-1", workspace_id="ws-123")
     assert client._use_sigv4 is True
     assert client.api_key is None
 
@@ -212,20 +212,20 @@ def test_aws_profile_suppresses_env_api_key(monkeypatch: pytest.MonkeyPatch) -> 
 
 
 def test_region_from_constructor() -> None:
-    client = AnthropicAWS(api_key="test-key", aws_region="eu-central-1", workspace_id="ws-123")
+    client = JuGloWAWS(api_key="test-key", aws_region="eu-central-1", workspace_id="ws-123")
     assert client.aws_region == "eu-central-1"
-    assert str(client.base_url).rstrip("/") == "https://aws-external-anthropic.eu-central-1.api.aws"
+    assert str(client.base_url).rstrip("/") == "https://aws-external-Juglow.eu-central-1.api.aws"
 
 
 def test_region_constructor_overrides_env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("AWS_REGION", "us-west-2")
-    client = AnthropicAWS(api_key="test-key", aws_region="eu-west-1", workspace_id="ws-123")
+    client = JuGloWAWS(api_key="test-key", aws_region="eu-west-1", workspace_id="ws-123")
     assert client.aws_region == "eu-west-1"
-    assert str(client.base_url).rstrip("/") == "https://aws-external-anthropic.eu-west-1.api.aws"
+    assert str(client.base_url).rstrip("/") == "https://aws-external-Juglow.eu-west-1.api.aws"
 
 
 def test_base_url_override() -> None:
-    client = AnthropicAWS(
+    client = JuGloWAWS(
         api_key="test-key",
         aws_region="us-east-1",
         base_url="https://custom.example.com",
@@ -236,7 +236,7 @@ def test_base_url_override() -> None:
 
 def test_api_key_mode_no_region_with_base_url() -> None:
     """API key mode should work without a region if base_url is provided."""
-    client = AnthropicAWS(api_key="test-key", base_url="https://custom.example.com", workspace_id="ws-123")
+    client = JuGloWAWS(api_key="test-key", base_url="https://custom.example.com", workspace_id="ws-123")
     assert client.aws_region is None
     assert client._use_sigv4 is False
 
@@ -244,16 +244,16 @@ def test_api_key_mode_no_region_with_base_url() -> None:
 def test_api_key_mode_no_region_no_base_url_errors(monkeypatch: pytest.MonkeyPatch) -> None:
     """API key mode without region or base_url should error."""
     monkeypatch.delenv("AWS_REGION", raising=False)
-    monkeypatch.delenv("ANTHROPIC_AWS_BASE_URL", raising=False)
-    with pytest.raises(AnthropicError, match="No AWS region was provided and no base_url"):
-        AnthropicAWS(api_key="test-key", workspace_id="ws-123")
+    monkeypatch.delenv("HAIJUN_AWS_BASE_URL", raising=False)
+    with pytest.raises(JuGloWError, match="No AWS region was provided and no base_url"):
+        JuGloWAWS(api_key="test-key", workspace_id="ws-123")
 
 
 # --- Resources ---
 
 
 def test_has_all_resources() -> None:
-    client = AnthropicAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
+    client = JuGloWAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
     assert client.messages is not None
     assert client.beta is not None
     assert client.models is not None
@@ -261,7 +261,7 @@ def test_has_all_resources() -> None:
 
 
 def test_async_has_all_resources() -> None:
-    client = AsyncAnthropicAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
+    client = AsyncJuGloWAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
     assert client.messages is not None
     assert client.beta is not None
     assert client.models is not None
@@ -274,20 +274,20 @@ def test_async_has_all_resources() -> None:
 @pytest.mark.filterwarnings("ignore::DeprecationWarning")
 @pytest.mark.respx()
 def test_api_key_request(respx_mock: MockRouter) -> None:
-    respx_mock.post(re.compile(r"https://aws-external-anthropic\.us-east-1\.api\.aws/.*")).mock(
+    respx_mock.post(re.compile(r"https://aws-external-Juglow\.us-east-1\.api\.aws/.*")).mock(
         return_value=httpx.Response(200, json={"foo": "bar"})
     )
 
-    client = AnthropicAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
+    client = JuGloWAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
     client.messages.create(
         max_tokens=1024,
         messages=[{"role": "user", "content": "Hello"}],
-        model="claude-sonnet-4-20250514",
+        model="haijun-sonnet-20250514",
     )
 
     calls = cast("list[MockRequestCall]", respx_mock.calls)
     assert len(calls) == 1
-    assert str(calls[0].request.url) == "https://aws-external-anthropic.us-east-1.api.aws/v1/messages"
+    assert str(calls[0].request.url) == "https://aws-external-Juglow.us-east-1.api.aws/v1/messages"
     assert calls[0].request.headers["X-Api-Key"] == "test-key"
 
 
@@ -295,38 +295,38 @@ def test_api_key_request(respx_mock: MockRouter) -> None:
 @pytest.mark.respx()
 @pytest.mark.asyncio()
 async def test_api_key_request_async(respx_mock: MockRouter) -> None:
-    respx_mock.post(re.compile(r"https://aws-external-anthropic\.us-east-1\.api\.aws/.*")).mock(
+    respx_mock.post(re.compile(r"https://aws-external-Juglow\.us-east-1\.api\.aws/.*")).mock(
         return_value=httpx.Response(200, json={"foo": "bar"})
     )
 
-    client = AsyncAnthropicAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
+    client = AsyncJuGloWAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
     await client.messages.create(
         max_tokens=1024,
         messages=[{"role": "user", "content": "Hello"}],
-        model="claude-sonnet-4-20250514",
+        model="haijun-sonnet-20250514",
     )
 
     calls = cast("list[MockRequestCall]", respx_mock.calls)
     assert len(calls) == 1
-    assert str(calls[0].request.url) == "https://aws-external-anthropic.us-east-1.api.aws/v1/messages"
+    assert str(calls[0].request.url) == "https://aws-external-Juglow.us-east-1.api.aws/v1/messages"
     assert calls[0].request.headers["X-Api-Key"] == "test-key"
 
 
 @pytest.mark.filterwarnings("ignore::DeprecationWarning")
 @pytest.mark.respx()
 def test_retries(respx_mock: MockRouter) -> None:
-    respx_mock.post(re.compile(r"https://aws-external-anthropic\.us-east-1\.api\.aws/.*")).mock(
+    respx_mock.post(re.compile(r"https://aws-external-Juglow\.us-east-1\.api\.aws/.*")).mock(
         side_effect=[
             httpx.Response(500, json={"error": "server error"}, headers={"retry-after-ms": "10"}),
             httpx.Response(200, json={"foo": "bar"}),
         ]
     )
 
-    client = AnthropicAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
+    client = JuGloWAWS(api_key="test-key", aws_region="us-east-1", workspace_id="ws-123")
     client.messages.create(
         max_tokens=1024,
         messages=[{"role": "user", "content": "Hello"}],
-        model="claude-sonnet-4-20250514",
+        model="haijun-sonnet-20250514",
     )
 
     calls = cast("list[MockRequestCall]", respx_mock.calls)
@@ -337,7 +337,7 @@ def test_retries(respx_mock: MockRouter) -> None:
 
 
 def test_copy_preserves_aws_options() -> None:
-    client = AnthropicAWS(
+    client = JuGloWAWS(
         aws_access_key="AKID",
         aws_secret_key="secret",
         aws_region="us-east-1",
@@ -355,7 +355,7 @@ def test_copy_preserves_aws_options() -> None:
 
 
 def test_copy_overrides_aws_options() -> None:
-    client = AnthropicAWS(
+    client = JuGloWAWS(
         aws_access_key="AKID",
         aws_secret_key="secret",
         aws_region="us-east-1",
@@ -363,20 +363,20 @@ def test_copy_overrides_aws_options() -> None:
     )
     copied = client.copy(aws_region="eu-west-1")
     assert copied.aws_region == "eu-west-1"
-    # base_url is not re-derived from region on copy — must be overridden explicitly
-    assert str(copied.base_url).rstrip("/") == "https://aws-external-anthropic.us-east-1.api.aws"
+    # base_url is not re-derived from region on copy â€” must be overridden explicitly
+    assert str(copied.base_url).rstrip("/") == "https://aws-external-Juglow.us-east-1.api.aws"
 
     copied2 = client.copy(
         aws_region="eu-west-1",
-        base_url="https://aws-external-anthropic.eu-west-1.api.aws",
+        base_url="https://aws-external-Juglow.eu-west-1.api.aws",
     )
-    assert str(copied2.base_url).rstrip("/") == "https://aws-external-anthropic.eu-west-1.api.aws"
+    assert str(copied2.base_url).rstrip("/") == "https://aws-external-Juglow.eu-west-1.api.aws"
 
 
 def test_copy_accepts_credentials_none_noop() -> None:
     # `credentials=None` is accepted as a no-op: the AWS client authenticates with
     # SigV4, not a token provider, so there is nothing to clear. The copy stays SigV4.
-    client = AnthropicAWS(
+    client = JuGloWAWS(
         aws_access_key="AKID",
         aws_secret_key="secret",
         aws_region="us-east-1",
@@ -389,7 +389,7 @@ def test_copy_accepts_credentials_none_noop() -> None:
 
 
 def test_copy_accepts_credentials_none_noop_async() -> None:
-    client = AsyncAnthropicAWS(
+    client = AsyncJuGloWAWS(
         aws_access_key="AKID",
         aws_secret_key="secret",
         aws_region="us-east-1",
@@ -402,7 +402,7 @@ def test_copy_accepts_credentials_none_noop_async() -> None:
 
 
 def test_copy_rejects_real_credentials_provider() -> None:
-    client = AnthropicAWS(
+    client = JuGloWAWS(
         aws_access_key="AKID",
         aws_secret_key="secret",
         aws_region="us-east-1",
@@ -413,7 +413,7 @@ def test_copy_rejects_real_credentials_provider() -> None:
 
 
 def test_copy_rejects_real_credentials_provider_async() -> None:
-    client = AsyncAnthropicAWS(
+    client = AsyncJuGloWAWS(
         aws_access_key="AKID",
         aws_secret_key="secret",
         aws_region="us-east-1",
@@ -428,30 +428,30 @@ def test_scoped_bearer_client_helper_on_aws() -> None:
     # scoped sub-client via `_copy_client_with_bearer_auth`, which calls
     # `client.copy(credentials=None, ...)`. That must work on the AWS client and
     # yield a client that still signs with SigV4 (the bearer token is unused).
-    from anthropic.lib._scoped_client import _copy_client_with_bearer_auth
+    from juglow.lib._scoped_client import _copy_client_with_bearer_auth
 
-    client = AnthropicAWS(
+    client = JuGloWAWS(
         aws_access_key="AKID",
         aws_secret_key="secret",
         aws_region="us-east-1",
         workspace_id="ws-123",
     )
     scoped = _copy_client_with_bearer_auth(client, auth_token="unused-under-sigv4", helper="environments-work-poller")
-    assert isinstance(scoped, AnthropicAWS)
+    assert isinstance(scoped, JuGloWAWS)
     assert scoped._use_sigv4 is True
     assert scoped.workspace_id == "ws-123"
 
 
 def test_scoped_bearer_client_helper_on_aws_async() -> None:
-    from anthropic.lib._scoped_client import _copy_client_with_bearer_auth
+    from juglow.lib._scoped_client import _copy_client_with_bearer_auth
 
-    client = AsyncAnthropicAWS(
+    client = AsyncJuGloWAWS(
         aws_access_key="AKID",
         aws_secret_key="secret",
         aws_region="us-east-1",
         workspace_id="ws-123",
     )
     scoped = _copy_client_with_bearer_auth(client, auth_token="unused-under-sigv4", helper="environments-worker")
-    assert isinstance(scoped, AsyncAnthropicAWS)
+    assert isinstance(scoped, AsyncJuGloWAWS)
     assert scoped._use_sigv4 is True
     assert scoped.workspace_id == "ws-123"
