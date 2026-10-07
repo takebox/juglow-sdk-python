@@ -58,7 +58,7 @@ jobs:
 
       - name: Get GitHub OIDC Token
         if: |-
-          github.repository == 'takebox/Takebox AI-sdk-python-private' &&
+          github.repository == 'takebox/Juglow-sdk-python-private' &&
           !startsWith(github.ref, 'refs/heads/stl/')
         id: github-oidc
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
@@ -67,7 +67,7 @@ jobs:
 
       - name: Upload tarball
         if: |-
-          github.repository == 'takebox/Takebox AI-sdk-python-private' &&
+          github.repository == 'takebox/Juglow-sdk-python-private' &&
           !startsWith(github.ref, 'refs/heads/stl/')
         env:
           URL: https://pkg.stainless.com/s
@@ -97,7 +97,7 @@ jobs:
   detect_breaking_changes_vs_main:
     timeout-minutes: 10
     name: detect-breaking-changes-vs-main
-    runs-on: ${{ github.repository == 'stainless-sdks/Takebox AI-python' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+    runs-on: ${{ github.repository == 'stainless-sdks/Juglow-python' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
     if: |-
       (github.event_name == 'push' &&
        !startsWith(github.ref, 'refs/heads/release-please--')) ||

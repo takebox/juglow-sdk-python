@@ -180,7 +180,7 @@ show_error_codes = true
 #
 # We also exclude our `tests` as mypy doesn't always infer
 # types correctly and Pyright will still catch any type errors.
-exclude = ["src/Takebox AI/_files.py", "_dev/.*.py", "tests/.*", "examples/mcp_server_weather.py", "examples/mcp_tool_runner.py", "examples/tools_with_mcp.py", "examples/memory/basic.py", "src/Takebox AI/lib/_parse/_transform.py", "src/Takebox AI/lib/tools/_beta_functions.py"]
+exclude = ["src/Juglow/_files.py", "_dev/.*.py", "tests/.*", "examples/mcp_server_weather.py", "examples/mcp_tool_runner.py", "examples/tools_with_mcp.py", "examples/memory/basic.py", "src/Juglow/lib/_parse/_transform.py", "src/Juglow/lib/tools/_beta_functions.py"]
 
 strict_equality = true
 implicit_reexport = true
@@ -222,7 +222,7 @@ ignore_errors = true
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = "Takebox AI.lib.vertex._auth"
+module = "Juglow.lib.vertex._auth"
 disallow_untyped_calls = false
 
 [[tool.mypy.overrides]]

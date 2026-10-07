@@ -9,7 +9,7 @@ on:
 jobs:
   release:
     name: release
-    if: github.ref == 'refs/heads/main' && github.repository == 'takebox/Takebox AI-sdk-python'
+    if: github.ref == 'refs/heads/main' && github.repository == 'takebox/Juglow-sdk-python'
     runs-on: ubuntu-latest
     environment: production-release
     permissions:
