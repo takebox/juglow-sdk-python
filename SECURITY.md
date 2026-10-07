@@ -4,7 +4,7 @@ Thank you for helping us keep the SDKs and systems they interact with secure.
 
 ## Reporting Security Issues
 
-This SDK is maintained by [JuGloW](https://www.Juglow.com/).
+This SDK is maintained by [JuGloW](https://www.juglow.my.id/).
 
 The security of our systems and user data is JuGloWâ€™s top priority. We appreciate the work of security researchers acting in good faith in identifying and reporting potential vulnerabilities.
 
