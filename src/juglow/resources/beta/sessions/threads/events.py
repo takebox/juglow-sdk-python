@@ -117,6 +117,7 @@ class Events(SyncAPIResource):
             ),
             model=cast(
                 Any, BetaManagedAgentsSessionEvent ),  # Union types cannot be passed in as arguments in the type system )
+        )
 
     def stream(
         self,
@@ -282,6 +283,7 @@ class AsyncEvents(AsyncAPIResource):
             ),
             model=cast(
                 Any, BetaManagedAgentsSessionEvent ),  # Union types cannot be passed in as arguments in the type system )
+        )
 
     async def stream(
         self,

@@ -102,6 +102,7 @@ class Resources(SyncAPIResource):
                 cast_to=cast(
                     Any, ResourceRetrieveResponse ),  # Union types cannot be passed in as arguments in the type system ),
         )
+        )
 
     def update(
         self,
@@ -163,6 +164,7 @@ class Resources(SyncAPIResource):
                     extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
                 cast_to=cast(
                     Any, ResourceUpdateResponse ),  # Union types cannot be passed in as arguments in the type system ),
+        )
         )
 
     def list(
@@ -229,6 +231,7 @@ class Resources(SyncAPIResource):
             ),
             model=cast(
                 Any, BetaManagedAgentsSessionResource ),  # Union types cannot be passed in as arguments in the type system )
+        )
 
     def delete(
         self,
@@ -420,6 +423,7 @@ class AsyncResources(AsyncAPIResource):
                 cast_to=cast(
                     Any, ResourceRetrieveResponse ),  # Union types cannot be passed in as arguments in the type system ),
         )
+        )
 
     async def update(
         self,
@@ -481,6 +485,7 @@ class AsyncResources(AsyncAPIResource):
                     extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout ),
                 cast_to=cast(
                     Any, ResourceUpdateResponse ),  # Union types cannot be passed in as arguments in the type system ),
+        )
         )
 
     def list(
@@ -547,6 +552,7 @@ class AsyncResources(AsyncAPIResource):
             ),
             model=cast(
                 Any, BetaManagedAgentsSessionResource ),  # Union types cannot be passed in as arguments in the type system )
+        )
 
     async def delete(
         self,

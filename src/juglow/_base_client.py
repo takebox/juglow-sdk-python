@@ -328,7 +328,8 @@ class AsyncPaginator(Generic[_T, AsyncPageT]):
         # https://github.com/microsoft/pyright/issues/3464
         page = cast(
             AsyncPageT,
-            await self,  # type: ignore )
+            await self,  # type: ignore
+        )
         async for item in page:
             yield item
 
@@ -730,7 +731,8 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
     def _validate_headers(
         self,
         headers: Headers,  # noqa: ARG002
-        custom_headers: Headers,  # noqa: ARG002 ) -> None:
+        custom_headers: Headers,  # noqa: ARG002
+    ) -> None:
         """Validate the given default headers and custom headers.
 
         Does nothing by default.
@@ -1061,13 +1063,15 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
 
     def _prepare_options(
         self,
-        options: FinalRequestOptions,  # noqa: ARG002 ) -> FinalRequestOptions:
+        options: FinalRequestOptions,  # noqa: ARG002
+    ) -> FinalRequestOptions:
         """Hook for mutating the given options"""
         return options
 
     def _prepare_request(
         self,
-        request: httpx.Request,  # noqa: ARG002 ) -> None:
+        request: httpx.Request,  # noqa: ARG002
+    ) -> None:
         """This method is used as a callback for mutating the `Request` object
         after it has been constructed.
         This is useful for cases where you want to add certain headers based off of
@@ -1793,13 +1797,15 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
 
     async def _prepare_options(
         self,
-        options: FinalRequestOptions,  # noqa: ARG002 ) -> FinalRequestOptions:
+        options: FinalRequestOptions,  # noqa: ARG002
+    ) -> FinalRequestOptions:
         """Hook for mutating the given options"""
         return options
 
     async def _prepare_request(
         self,
-        request: httpx.Request,  # noqa: ARG002 ) -> None:
+        request: httpx.Request,  # noqa: ARG002
+    ) -> None:
         """This method is used as a callback for mutating the `Request` object
         after it has been constructed.
         This is useful for cases where you want to add certain headers based off of

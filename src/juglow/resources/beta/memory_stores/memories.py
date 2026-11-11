@@ -358,6 +358,7 @@ class Memories(SyncAPIResource):
             ),
             model=cast(
                 Any, BetaManagedAgentsMemoryListItem ),  # Union types cannot be passed in as arguments in the type system )
+        )
 
     def delete(
         self,
@@ -747,6 +748,7 @@ class AsyncMemories(AsyncAPIResource):
             ),
             model=cast(
                 Any, BetaManagedAgentsMemoryListItem ),  # Union types cannot be passed in as arguments in the type system )
+        )
 
     async def delete(
         self,
